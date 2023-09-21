@@ -1,0 +1,29 @@
+/*
+===========================================
+...............UI ELEMENTS ................
+===========================================
+*/
+.flat-btn {
+    border-radius: 4px !important;
+    color: #FCFDFE !important;
+    font-family: var(--base-font-condensed-bold), sans-serif !important; 
+    font-size: 12px !important;
+    font-weight: 500 !important;
+    vertical-align: middle !important;
+    padding-top: .625rem !important;
+    padding-bottom: .4375rem !important;
+    line-height: 1.4285714286 !important;
+    letter-spacing: 0.5px !important;
+    max-height: 36px !important;
+}
+
+.flat-btn-primary {
+    background-color: var(--flat-btn-primary) !important;
+    box-shadow: 0px -2px 0px 0px rgba(24, 36, 51, 0.24) inset !important;
+    -webkit-box-shadow: 0px -2px 0px 0px rgba(24, 36, 51, 0.24) inset !important;
+    -moz-box-shadow: 0px -2px 0px 0px rgba(24, 36, 51, 0.24) inset !important;
+}
+
+.flat-btn-primary:hover {
+    background-color: var(--base-primary-lighter) !important;
+}

@@ -1,0 +1,24 @@
+ .overflow-y-auto {
+    overflow-y: auto;
+ }
+
+.navbar-item-link-button
+{
+    font-size: 12px !important;
+    font-weight: 600 !important;
+    text-transform: uppercase !important;
+    color: #737373 !important;
+    font-family: var(--base-font-condensed-bold), sans-serif !important; 
+}
+
+.navbar-item-link-button:hover {
+    color: var(--base-primary-color) !important;
+    background-color: #FCFDFE !important;
+}
+
+.center-flex
+{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}

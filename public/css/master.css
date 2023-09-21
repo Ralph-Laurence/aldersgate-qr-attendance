@@ -1,0 +1,120 @@
+* {
+    box-sizing: content-box;
+}
+
+:root {
+    --base-bg-color: #F6F8FB;
+    /* --base-bg-color: #F7FAFC; */
+    --base-dark-color: #1a202c;
+    --base-primary-color: #176D3B;
+    --base-primary-lighter: #2FB344;
+    --base-accent-color: #FFC107;
+    /* --base-accent-color: #F9D901; */
+
+    --base-font: "Roboto";
+    --base-font-condensed: "Roboto Condensed";
+    --base-font-condensed-bold: "Roboto Condensed Bold";
+    --primary-font: "Poppins";
+    --accent-font: "Anek";
+    --extra-font: "Anton";
+
+    --flat-btn-primary: #00B050;
+}
+
+@font-face {
+    font-family: "Anek";
+    src: url(fonts/AnekDevanagari.ttf);
+}
+
+@font-face {
+    font-family: "Anton";
+    src: url(fonts/Anton-Regular.ttf);
+}
+
+@font-face {
+    font-family: "Poppins";
+    src: url(fonts/Poppins-Regular.ttf);
+}
+
+@font-face {
+    font-family: "Roboto";
+    src: url(fonts/Roboto-Regular.ttf);
+}
+
+@font-face {
+    font-family: "Roboto Condensed";
+    src: url(fonts/RobotoCondensed-Regular.ttf);
+}
+
+@font-face {
+    font-family: "Roboto Condensed Bold";
+    src: url(fonts/RobotoCondensed-Bold.ttf);
+}
+
+html, body {
+    background-color: var(--base-bg-color);
+    color: var(--base-dark-color);
+    font-family: var(--base-font), sans-serif;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    overflow: hidden;
+}
+
+.antialiased {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+.master-header {
+    flex: 0 1 auto;
+}
+
+.master-content {
+    flex: 1 1 auto;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+.master-footer {
+    flex: 0 1 42px !important;
+}
+
+/*
+===========================================
+...............FONTS ......................
+===========================================
+*/
+.font-condensed {
+    font-family: var(--base-font-condensed), Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif !important;
+}
+
+.font-accent {
+    font-family: var(--accent-font), Arial, Helvetica, sans-serif !important;
+}
+
+/*
+===========================================
+...............TEXT COLORS ................
+===========================================
+*/
+.text-primary-color {
+    color: var(--base-primary-color);
+}
+
+/*
+===========================================
+............BACKGROUND COLORS .............
+===========================================
+*/
+.base-bg-color {
+    background-color: var(--base-bg-color) !important;
+}
+
+.primary-bg-color {
+    background-color: var(--base-primary-color) !important;
+}
+
+.accent-bg-color {
+    background-color: var(--base-accent-color) !important;
+}
