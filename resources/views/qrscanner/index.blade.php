@@ -40,9 +40,7 @@
     }
 </style>
 @endpush
-@php
-$footerBehaviour = 'floating';
-@endphp
+ 
 @section('content')
 
 {{-- BEGIN MASTER CONTENT --}}
@@ -72,7 +70,10 @@ $footerBehaviour = 'floating';
                 <!-- CONTROL RIBBON -->
                 <div class="camera-control-ribbon d-flex flex-row align-items-center p-2">
                     <h6 class="mb-0 me-auto"><i class="fas fa-camera me-1"></i> {{ "Camera" }}</h6>
+                    
                     <button class="btn py-1 px-2 mx-2 flat-btn flat-btn-warning text-dark d-none btn-open-cam">{{ "Open" }}</button>
+                    <button class="btn py-1 px-2 mx-2 flat-btn flat-btn-danger d-none btn-stop-cam">{{ "Stop" }}</button>
+
                     <select class="camera-selector">
                         <option selected disabled>{{ 'Select Camera' }}</option> 
                     </select>
@@ -108,6 +109,7 @@ $footerBehaviour = 'floating';
     var videoSurface = undefined;
     var qrScanner = undefined; 
     var attachedCameras = [];
+    let WAIT_SECS_SHOW_HIDE_CAMERA_BUTTONS = 3000;
 
     $(document).ready(function () 
     {
@@ -136,7 +138,7 @@ $footerBehaviour = 'floating';
         // Refresh button on cameras list
         $(".btn-refresh-cam-list").on('click', () => getAttachedCameras());
 
-        // "Open Cam" button
+        // "Open" c"am button
         $(".btn-open-cam").on('click', () => openSelectedCamera());
     }
     //
@@ -180,6 +182,8 @@ $footerBehaviour = 'floating';
 
                 // Enable the "Open Cam" button
                 $(".btn-open-cam").toggleClass("d-none", false);
+                $(".btn-stop-cam").toggleClass("d-none", true);
+
             }
             else
             {
@@ -215,9 +219,10 @@ $footerBehaviour = 'floating';
     // selected from the selectmenu
     //
     function openSelectedCamera()
-    {
-        // Always destroy the instance of old scanner
-        createScanner();
+    {  
+        // Hide the "Open" button
+        showOpenCamButton(false);
+        //debugger
 
         // Get the selected camera's Id from the selectmenu
         var selectedCamId = $('.camera-selector option:selected').attr('value');
@@ -229,13 +234,24 @@ $footerBehaviour = 'floating';
             return;
         }
         
+        // Always destroy the instance of old scanner
+        createScanner();
+
         // Get a reference of the camera object from the array
         var camera = attachedCameras[selectedCamId];
 
         // Start the camera
-        qrScanner.start(camera).then(() => 
-        {
-
+        qrScanner.start(camera).then(result => 
+        { 
+            return delayPromise(WAIT_SECS_SHOW_HIDE_CAMERA_BUTTONS).then(() => 
+            {
+                // "Stop" cam button
+                $(".btn-stop-cam")
+                    .off('click')
+                    .on('click', () => stopScanner(qrScanner))
+                    .removeClass('d-none')
+                    .show();
+            });
         })
         .catch(err => 
         {
@@ -250,23 +266,54 @@ $footerBehaviour = 'floating';
         if (scanner === undefined || scanner === null)
             return;
 
-        scanner.stop().then(() => 
+        showStopCamButton(false);
+        //debugger
+ 
+        scanner.stop().then(result => 
         {
-            // https://stackoverflow.com/a/54514807
-            var videoEl = document.getElementById('camera-view');
-            // now get the steam 
-            stream = videoEl.srcObject;
-            // now get all tracks
-            tracks = stream.getTracks();
-            // now close each track by having forEach loop
-            tracks.forEach(function (track)
-            {
-                // stopping every track
-                track.stop();
-            });
-            // assign null to srcObject of video
-            videoEl.srcObject = null;
+            // Stop streaming
+            closeCameraDevice();
+            
+            // Hide the "Stop" button, wait for 3secs then show the "Open" button again
+            return delayPromise(WAIT_SECS_SHOW_HIDE_CAMERA_BUTTONS)
+                .then(() => {
+                    showOpenCamButton(true);
+                    //debugger
+                });
+        })
+        .catch(err => 
+        {
+            alert(err.toString());
         });
+    }
+    //
+    // Stop the camera device from streaming
+    //
+    function closeCameraDevice() 
+    {  
+        // https://stackoverflow.com/a/54514807
+        /*
+        var videoEl = document.getElementById('camera-view');
+        // now get the steam
+        stream = videoEl.srcObject;
+        // now get all tracks
+        tracks = stream.getTracks();
+        // now close each track by having forEach loop
+        tracks.forEach(function (track)
+        {
+        // stopping every track
+        track.stop();
+        });
+        // assign null to srcObject of video
+        videoEl.srcObject = null;
+        */
+        if(!videoSurface.srcObject)
+            return;
+
+        videoSurface.srcObject.getTracks().forEach(track => {
+            track.stop();
+        });
+        videoSurface.srcObject = null;
     }
     //
     // Create a new instance of QR Scanner
@@ -278,8 +325,13 @@ $footerBehaviour = 'floating';
         if (qrScanner)
         {
             console.warn('an existing instance will be removed');
-            stopScanner(qrScanner);
-            qrScanner.off('scan');
+            //stopScanner(qrScanner);
+
+            qrScanner.stop().then(result => closeCameraDevice() );
+
+            if (qrScanner.listenerCount('scan') > 0)
+                qrScanner.removeAllListeners();
+
             qrScanner = undefined;
         }
 
@@ -289,12 +341,43 @@ $footerBehaviour = 'floating';
         });
 
         // Bind event listener that handles the logic after scan completes
-        qrScanner.on('scan', function(content)
+        qrScanner.addListener('scan', function(content)
         {
             alert(content);
         });
 
         console.warn('a new Scanner instance created');
+    }
+
+    function showOpenCamButton(show)
+    {
+        if (!show)
+        {
+            $(".btn-open-cam").hide();
+            return;
+        }
+
+        $(".btn-open-cam").show();
+
+        console.trace("showOpenCamButton() called");
+    }
+
+    function showStopCamButton(show)
+    {
+        if (!show)
+        {
+            $(".btn-stop-cam").hide();
+            return;
+        }
+
+        $(".btn-stop-cam").show();
+
+        console.trace("showStopCamButton() called");
+    }
+
+    function delayPromise(millis)
+    {
+        return new Promise(resolve => setTimeout(resolve, millis));
     }
 </script>
 @endpush 
