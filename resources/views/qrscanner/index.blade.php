@@ -129,6 +129,9 @@
          
         // Initialize the camera selectmenu and disable it on load
         $(".camera-selector").selectmenu({ disabled: true });
+
+        // Get the attached cameras on load
+        getAttachedCameras();
     }
     //
     // Bind event handlers here
@@ -147,6 +150,9 @@
     //
     function getAttachedCameras()
     {
+        // Disable the select list
+        showCameraSelectList(false);
+
         Instascan.Camera.getCameras().then(function(cameras)
         {
             if (cameras.length > 0)
@@ -178,17 +184,31 @@
                 });
  
                 // Rebuild the camera select menu
-                refreshCameraSelectMenu(false);
+                // refreshCameraSelectMenu(false);
+                $(".camera-selector").selectmenu({ 
+                    disabled: false,
+                    change: function(event, ui)
+                    {
+                        var value = $(".camera-selector option:selected").attr('value'); //event.target.value;
 
-                // Enable the "Open Cam" button
-                $(".btn-open-cam").toggleClass("d-none", false);
-                $(".btn-stop-cam").toggleClass("d-none", true);
+                        // Only show the "Open" button when there is a valid camera selected
+                        if (value !== undefined)
+                            showOpenCamButton(true);
+                        else 
+                            showOpenCamButton(false);
+                    }
+                }).selectmenu('refresh');
 
+                // Enable the "Open Cam" button 
+                showStopCamButton(false); 
             }
             else
             {
                 console.error('No cameras found on this device.');
             }
+
+            // Enable the camera select list
+            showCameraSelectList(true);
         })
         .catch(function(e)
         {
@@ -222,7 +242,9 @@
     {  
         // Hide the "Open" button
         showOpenCamButton(false);
-        //debugger
+        
+        // Disable the camera select list
+        showCameraSelectList(false);
 
         // Get the selected camera's Id from the selectmenu
         var selectedCamId = $('.camera-selector option:selected').attr('value');
@@ -231,6 +253,9 @@
         if (!attachedCameras.hasOwnProperty(selectedCamId))
         {
             alert("Can't start camera");
+
+            // Enable the camera select list
+            showCameraSelectList(true);
             return;
         }
         
@@ -266,8 +291,7 @@
         if (scanner === undefined || scanner === null)
             return;
 
-        showStopCamButton(false);
-        //debugger
+        showStopCamButton(false); 
  
         scanner.stop().then(result => 
         {
@@ -276,9 +300,12 @@
             
             // Hide the "Stop" button, wait for 3secs then show the "Open" button again
             return delayPromise(WAIT_SECS_SHOW_HIDE_CAMERA_BUTTONS)
-                .then(() => {
+                .then(() => 
+                {
                     showOpenCamButton(true);
-                    //debugger
+                    
+                    // Enable the camera select list
+                    showCameraSelectList(true);
                 });
         })
         .catch(err => 
@@ -323,10 +350,7 @@
         // If there is an active instance of scanner, force stop it from 
         // scanning, unbind its events then destroy its object reference
         if (qrScanner)
-        {
-            console.warn('an existing instance will be removed');
-            //stopScanner(qrScanner);
-
+        { 
             qrScanner.stop().then(result => closeCameraDevice() );
 
             if (qrScanner.listenerCount('scan') > 0)
@@ -344,9 +368,7 @@
         qrScanner.addListener('scan', function(content)
         {
             alert(content);
-        });
-
-        console.warn('a new Scanner instance created');
+        }); 
     }
 
     function showOpenCamButton(show)
@@ -357,9 +379,7 @@
             return;
         }
 
-        $(".btn-open-cam").show();
-
-        console.trace("showOpenCamButton() called");
+        $(".btn-open-cam").toggleClass('d-none', false).show(); 
     }
 
     function showStopCamButton(show)
@@ -370,9 +390,20 @@
             return;
         }
 
-        $(".btn-stop-cam").show();
+        $(".btn-stop-cam").show(); 
+    }
 
-        console.trace("showStopCamButton() called");
+    function showCameraSelectList(show)
+    {
+        if (!show)
+        {
+            refreshCameraSelectMenu(true);
+            $(".btn-refresh-cam-list").toggleClass('disabled', true);
+            return;
+        }
+
+        refreshCameraSelectMenu(false);
+        $(".btn-refresh-cam-list").toggleClass('disabled', false);
     }
 
     function delayPromise(millis)
