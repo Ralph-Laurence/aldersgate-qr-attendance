@@ -11,7 +11,8 @@
     font-family: var(--base-font-condensed-bold), sans-serif !important; 
 }
 
-.navbar-item-link-button:hover {
+.navbar-item-link-button:hover 
+{
     color: var(--base-primary-color) !important;
     background-color: #FCFDFE !important;
 }
@@ -21,4 +22,21 @@
     display: flex;
     align-items: center;
     justify-content: center;
+}
+
+.display-none
+{
+    display: none;
+}
+
+.i-drop-down button.dropdown-toggle
+{
+    background-color: #E2E2E2 !important;
+}
+
+.i-drop-down .dropdown-menu li:hover a,
+.i-drop-down .dropdown-menu li:hover button,
+.i-drop-down-no-bg .dropdown-menu li:hover a
+{
+    color: var(--base-primary-color) !important;
 }

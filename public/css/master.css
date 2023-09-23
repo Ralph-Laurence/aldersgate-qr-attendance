@@ -1,5 +1,5 @@
 * {
-    box-sizing: content-box;
+    box-sizing: border-box;
 }
 
 :root {
@@ -9,6 +9,7 @@
     --base-primary-color: #176D3B;
     --base-primary-lighter: #2FB344;
     --base-accent-color: #FFC107;
+    --base-color-danger: #D63939;
     /* --base-accent-color: #F9D901; */
 
     --base-font: "Roboto";
@@ -18,7 +19,12 @@
     --accent-font: "Anek";
     --extra-font: "Anton";
 
-    --flat-btn-primary: #00B050;
+    --flat-bg-primary: #00B050;
+
+    --error-dialog-bg-danger: #EE3B3F;
+    --error-dialog-bg-warning: #D4B155;
+
+    --control-default-color: #E2E2E2;
 }
 
 @font-face {
@@ -61,6 +67,14 @@ html, body {
     overflow: hidden;
 }
 
+h1, h2, h3, h4, h5, h6 {
+    margin: 0;
+}
+
+::selection {
+    background-color: #D3E1F3;
+}
+
 .antialiased {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
@@ -72,8 +86,22 @@ html, body {
 
 .master-content {
     flex: 1 1 auto;
-    overflow-x: hidden;
-    overflow-y: auto;
+    /* overflow-x: hidden; */
+    /* overflow-y: auto; */
+    max-width: 1456px;
+}
+
+.flex-1-1-auto {
+    flex: 1 1 auto;
+}
+
+/* THE MASTER LAYOUT CONTENTS DONT SUPPORT 4K screens */
+@media screen and (min-width: 1457px) {
+    .master-content {
+        margin-left: auto;
+        margin-right: auto;
+        width: 1456px;
+    }
 }
 
 .master-footer {
@@ -115,6 +143,18 @@ html, body {
     background-color: var(--base-primary-color) !important;
 }
 
+.flat-bg-primary {
+    background-color: var(--flat-bg-primary) !important;
+}
+
 .accent-bg-color {
     background-color: var(--base-accent-color) !important;
+}
+
+.base-color-danger {
+    background-color: var(--base-color-danger) !important;
+}
+
+.control-default-color {
+    background-color: var(--control-default-color) !important;
 }

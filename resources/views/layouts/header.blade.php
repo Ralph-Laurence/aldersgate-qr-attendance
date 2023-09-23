@@ -1,5 +1,5 @@
 <div class="master-header">
-    <div class="p-2 primary-bg-color text-light text-center font-condensed">
+    <div class="p-2 flat-bg-primary text-light text-center font-condensed">
         {{ 'Library Attendance Monitoring System (LAMS)' }}
     </div>
     <header class="navbar navbar-expand-md bg-white d-print-none shadow-none border-bottom">
@@ -33,7 +33,7 @@
                 <div class="nav-item dropdown">
                     <ul class="navbar-nav">
                         <!-- Dropdown -->
-                        <li class="nav-item dropdown">
+                        <li class="nav-item dropdown i-drop-down-no-bg">
                             <a class="nav-link dropdown-toggle navbar-item-link-button" href="#"
                                 id="navbarDropdownMenuLink" role="button" data-mdb-toggle="dropdown"
                                 aria-expanded="false">

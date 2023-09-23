@@ -1,0 +1,261 @@
+@extends('layouts.master')
+@include('layouts.jqueryui')
+@push('styles') 
+<style>
+    .attendance-sheet-wrapper {
+        width: 700px;
+        max-width: 700px;
+        height: 384px;
+    }
+
+    .cap {
+        height: 6px;
+        min-height: 6px;
+    }
+
+    @media screen and (min-width: 776px) and (max-width: 1199px) {
+        .scanner-wrapper {
+            max-width: 700px;
+            max-height: 420px;
+        }
+
+        .attendance-sheet-wrapper {
+            /* max-width: 1080px; */
+            max-height: 420px;
+        }
+    }
+
+
+    #camera-view {
+        background-color: #F8F9FA;
+        border: 1px solid #CCCCCC;
+        border-radius: 4px;
+    }
+
+    .off-cam-overlay 
+    {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: absolute;
+        left: 0;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        width: 100%;
+        height: 100%;
+    } 
+  
+</style>
+@endpush
+@php
+$footerBehaviour = 'floating';
+@endphp
+@section('content')
+<div class="w-100 text-center px-2 pt-2 font-accent">
+    <h6>{{ 'How to use the QR code attendance system?' }}</h6>
+    <div class="alert text-dark py-2" style="background-color: #ECE7CE !important;" role="alert">
+        {{ 'Point your QR Code towards the camera to begin scanning. Your attendance details will be recorded on the
+        attendance sheet.' }}
+    </div>
+</div>
+<div class="stackable-contents-wrapper d-flex flex-xl-row flex-column justify-content-center font-accent">
+    {{-- SCANNER CAMERA --}}
+    <div class="stackable-contents-child flex-fill mt-0 d-flex justify-content-center px-0 w-xl-50 w-100 px-md-5 px-lg-2 px-sm-4">
+
+        <div class="scanner-wrapper d-flex w-100 w-md-auto flex-column bg-white border rounded overflow-hidden shadow-2-soft">
+            <div class="cap accent-bg-color w-100"></div>
+            <div class="d-flex align-items-center p-2">
+                <div class="fs-6 flex-fill"><i class="fas fa-camera me-2"></i>{{ 'Camera' }}</div>
+                <button class="btn flat-btn flat-btn-warning btn-open-camera text-dark mx-2 disabled d-none">{{ "Open Camera" }}</button>
+                <select name="camera-list" id="camera-list">
+                    <option selected disabled>{{ 'Select Camera' }}</option> 
+                </select>
+            </div>
+            <div class="scanner-video px-2 pb-2">
+                <video autoplay id="camera-view" class="m-0 w-100 h-100"></video>
+                {{-- <div class="off-cam-overlay"> 
+                    <div><i class="fas fa-info-circle me-2"></i>{{ 'Please ensure that your browser has permission to access the camera.' }}</div>
+                </div> --}}
+            </div>
+        </div>
+
+    </div>
+    {{-- ATTENDANCE SHEET --}}
+    <div class="stackable-contents-child flex-fill w-100 w-xl-50 px-md-2 d-flex justify-content-center">
+
+        <div
+            class="attendance-sheet-wrapper mx-0 my-2 m-sm-4 mt-xl-0 mx-md-4 mx-xl-0 d-flex flex-column bg-white border rounded overflow-hidden shadow-2-soft">
+            <div class="cap primary-bg-color w-100" style="height: 6px;"></div>
+            <div
+                class="attendance-sheet-title font-condensed w-100 d-flex flex-column flex-sm-row justify-content-center">
+                <div class="attendance-sheet-heading p-2 flex-fill d-flex align-items-center w-100">
+                    <div class="fs-5 text-primary-color"><i class="fas fa-calendar-days me-2"></i>{{ 'Students\'
+                        Attendance Sheet' }}</div>
+                </div>
+                <div class="attendance-sheet-heading p-2 d-flex flex-row align-items-center flex-fill w-100">
+                    <div
+                        class="flex-fill d-flex flex-column align-items-center justify-content-center control-default-color pt-2 rounded">
+                        <span style=" attendance-calendar-date font-size: 18px; line-height: 16px;">{{ date('M. d, Y')
+                            }}</span>
+                        <small class="text-uppercase attendance-calendar-dayname">{{ date('l') }}</small>
+                    </div>
+                    <div class="flex-fill d-flex align-items-center justify-content-center">
+                        <i class="fas fa-clock me-2"></i>
+                        <div class="attendance-calendar-time fs-5">{{ date('g:i A') }}</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="p-2">
+                <table class="table align-middle mb-0 bg-white">
+                    <thead class="bg-light">
+                        <tr>
+                            <th class="px-2 text-center text-primary-color">{{ 'Name & ID No.' }}</th>
+                            <th class="px-2 text-center text-primary-color">{{ 'Course' }}</th>
+                            <th class="px-2 text-center">
+                                <h5 class="m-0"><span class="badge badge-success fw-normal">{{ 'Time In' }}</span></h5>
+                            </th>
+                            <th class="px-2 text-center">
+                                <h5 class="m-0"><span class="badge badge-warning fw-normal">{{ 'Time Out' }}</span></h5>
+                            </th>
+                            <th class="px-2 text-center text-primary-color">{{ 'Duration' }}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <img src="https://mdbootstrap.com/img/new/avatars/8.jpg" alt=""
+                                        style="width: 45px; height: 45px" class="rounded-circle" />
+                                    <div class="ms-3">
+                                        <p class="fw-bold mb-1">John Doe</p>
+                                        <p class="text-muted mb-0">02-11117</p>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="px-2 text-center">
+                                <p class="fw-normal mb-1">BSIT</p>
+                                {{-- <p class="text-muted mb-0">7:46 AM</p> --}}
+                            </td>
+                            <td class="px-2 text-center">
+                                {{-- <span class="badge badge-success rounded-pill d-inline">Active</span> --}}
+                                <p class="text-muted mb-0">7:46 AM</p>
+                            </td>
+                            <td class="px-2 text-center">9:26 AM</td>
+                            <td class="px-2 text-center">
+                                <button type="button" class="btn btn-link btn-sm btn-rounded">
+                                    1h 10min
+                                </button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <img src="https://mdbootstrap.com/img/new/avatars/6.jpg" class="rounded-circle"
+                                        alt="" style="width: 45px; height: 45px" />
+                                    <div class="ms-3">
+                                        <p class="fw-bold mb-1">Alex Ray</p>
+                                        <p class="text-muted mb-0">02-11182</p>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <p class="fw-normal mb-1">BSBA</p>
+                                {{-- <p class="text-muted mb-0">Finance</p> --}}
+                            </td>
+                            <td>
+                                {{-- <span class="badge badge-primary rounded-pill d-inline">Onboarding</span> --}}
+                                <p class="text-muted mb-0">8:21 AM</p>
+                            </td>
+                            <td>11:45 AM</td>
+                            <td>
+                                <button type="button" class="btn btn-link btn-rounded btn-sm fw-bold"
+                                    data-mdb-ripple-color="dark">
+                                    4h 1min
+                                </button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <img src="https://mdbootstrap.com/img/new/avatars/7.jpg" class="rounded-circle"
+                                        alt="" style="width: 45px; height: 45px" />
+                                    <div class="ms-3">
+                                        <p class="fw-bold mb-1">Kate Hunington</p>
+                                        <p class="text-muted mb-0">02-11132</p>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <p class="fw-normal mb-1">BSArchi</p>
+                            </td>
+                            <td>
+                                <p class="text-muted mb-0">11:19 AM</p>
+                            </td>
+                            <td>5:00 PM</td>
+                            <td>
+                                <button type="button" class="btn btn-link btn-rounded btn-sm fw-bold"
+                                    data-mdb-ripple-color="dark">
+                                    5h 19min
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div> 
+    </div>
+</div>
+@include('custom.error-dialog')
+@include('custom.warn-dialog')
+@endsection
+
+@push('scripts') 
+<script src="{{ asset('js/lib/momentjs/moment-with-locales.js') }}"></script>
+<script src="{{ asset('js/lib/instascan/instascan.min.js') }}"></script>
+<script>
+    const MSG_WHEN_NO_CAMERA_FOUND = "{{ 'No cameras found on this device.Please ensure that a compatible camera is plugged in.' }}";
+    const MSG_CAMERA_NOT_ALLOWED = "{{ 'To continue, please allow your browser to access the camera.This is necessary for the functionality of the system.' }}";
+    const DROPDOWN_LABEL_SELECT_CAMERA = "{{ 'Select Camera' }}";
+    const MSG_CAM_DETECTED_NOT_CONNECTED = "{{ 'Camera Detected but Not Connected: The system has detected the name of your camera, but it seems it isn\'t properly connected. Please ensure your camera is plugged in and try again.' }}";
+    const MSG_INVALID_CAM = "{{ 'The selected camera is invalid. Please plug in a compatible camera.' }}";
+</script>
+<script src="{{ asset('js/qr-scanner.index.js') }}"></script>
+{{-- <script type="text/javascript">
+    // Find the <video> element with its id "camera-view"
+        const video = $('#camera-view').get(0);
+
+        // Create an object of the scanner passing the video element in constructor
+        let scanner = new Instascan.Scanner({
+            video: video
+        });
+
+        // Bind event listener that handles the logic after scan completes
+        $(scanner).on('scan', function(content) 
+        {
+            alert(content);
+        });
+
+        Instascan.Camera.getCameras().then(function(cameras) 
+        {
+            if (cameras.length > 0) 
+            {
+                //$(scanner).start(cameras[0]);
+                $(scanner).on('scan', function(content) 
+                {
+                    alert('QR code scanned! Content: ' + content);
+                    // You can perform additional actions with the scanned content here
+                });
+            } 
+            else 
+            {
+                console.error('No cameras found on this device.');
+            }
+        })
+        .catch(function(e) 
+        {
+            alert('Error accessing camera: ' + e);
+        });
+</script> --}}
+@endpush

@@ -3,7 +3,8 @@
 ...............UI ELEMENTS ................
 ===========================================
 */
-.flat-btn {
+.flat-btn
+{
     border-radius: 4px !important;
     color: #FCFDFE !important;
     font-family: var(--base-font-condensed-bold), sans-serif !important; 
@@ -15,13 +16,39 @@
     line-height: 1.4285714286 !important;
     letter-spacing: 0.5px !important;
     max-height: 36px !important;
-}
-
-.flat-btn-primary {
-    background-color: var(--flat-btn-primary) !important;
     box-shadow: 0px -2px 0px 0px rgba(24, 36, 51, 0.24) inset !important;
     -webkit-box-shadow: 0px -2px 0px 0px rgba(24, 36, 51, 0.24) inset !important;
     -moz-box-shadow: 0px -2px 0px 0px rgba(24, 36, 51, 0.24) inset !important;
+}
+
+.flat-btn-primary {
+    background-color: var(--flat-bg-primary) !important; 
+}
+
+.flat-btn-danger {
+    background-color: var(--base-color-danger) !important; 
+}
+
+.flat-btn-warning {
+    background-color: var(--base-accent-color) !important; 
+}
+
+.flat-btn-warning:hover {
+    background-color: #FFC959 !important; 
+}
+
+.flat-btn-default 
+{
+    background-color: var(--control-default-color) !important; 
+    color: #212121 !important;
+}
+
+.flat-btn-default:hover {
+    background-color: #CCE2FD !important;
+}
+
+.flat-btn-danger:hover {
+    background-color: #EA4D4D !important;
 }
 
 .flat-btn-primary:hover {
