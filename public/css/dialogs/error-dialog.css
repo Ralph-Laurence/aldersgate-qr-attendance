@@ -1,5 +1,5 @@
 #errorDialog .dialog-bg-color {
-    background-color: var(--error-dialog-bg-danger) !important;
+    background-color: var(--danger-color) !important;
 }
 
 #errorDialog .backdrop-image {

@@ -14,12 +14,12 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-// Route::get('/', function () {
-//     return view('welcome');
-// });
+Route::get('/', function () {
+    return view('welcome');
+});
 
 Route::controller(QRScannerController::class)->group(function()
 {
-    Route::get('/qr-attendance', 'index')->name("qr-scan");
+    Route::get('/qr-attendance', 'index')->name('qr-scanner');
+    Route::post('/qr-attendance/scan-result', 'update')->name('qr-scan-result');
 });
-

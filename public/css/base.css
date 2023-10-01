@@ -1,0 +1,95 @@
+:root 
+{
+    --base-color: #116530;
+    --base-dark-color: #1a202c;
+
+    --base-primary-color: #00B050;
+    --base-primary-600: #2FB344;
+    --base-primary-dark: #008A5B;
+
+    --control-color: #E2E2E2;
+    --control-text-color: #212121;
+
+    --danger-color: #D63939;
+    --danger-color-200: #EE3B3F;
+
+    --selection-text-color: #383746;
+
+    --warning-color: #FFC959;
+    --warning-color-100: #FFECB5;
+    --warning-color-200: #FFDB90;
+    --warning-color-600: #FEB72B;
+    --warning-text-color: #382809;
+
+    --base-font: "Nunito";
+    --base-font-condensed: "Roboto Condensed";
+    --base-font-condensed-bold: "Roboto Condensed Bold";
+    --brand-font: "Scandia";
+}
+
+::selection {
+    background-color: var(--warning-color-100);
+    color: var(--selection-text-color);
+}
+ 
+html, body {
+    background-color: var(--base-bg-color);
+    color: var(--base-dark-color);
+    font-family: var(--base-font), sans-serif;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    overflow: hidden;
+}
+
+
+@font-face {
+    font-family: "Nunito";
+    src: url('fonts/Nunito.ttf');
+}
+
+@font-face {
+    font-family: "Scandia";
+    src: url('fonts/Scandia-Medium.ttf');
+}
+
+@font-face {
+    font-family: "Scandia-Regular";
+    src: url('fonts/Scandia-Regular.ttf');
+}
+
+@font-face {
+    font-family: "Roboto Condensed";
+    src: url(fonts/RobotoCondensed-Regular.ttf);
+}
+
+@font-face {
+    font-family: "Roboto Condensed Bold";
+    src: url(fonts/RobotoCondensed-Bold.ttf);
+}
+
+.font-brand {
+    font-family: var(--brand-font), Arial, Helvetica, sans-serif !important;
+}
+
+.font-condensed {
+    font-family: var(--base-font-condensed), Arial, Helvetica, sans-serif !important;
+}
+
+.font-condensed-bold {
+    font-family: var(--base-font-condensed-bold), Arial, Helvetica, sans-serif !important;
+}
+
+.center-flex {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+} 
+
+.bg-control {
+    background-color: var(--control-color) !important;
+}
+
+.text-base-primary-dark {
+    color: var(--base-primary-dark);
+}

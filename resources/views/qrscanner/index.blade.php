@@ -1,415 +1,263 @@
-@extends('layouts.master')
-@push('styles')
-<link rel="stylesheet" href="{{ asset('css/lib/jquery-ui/jquery-ui.min.css') }}">
-<link rel="stylesheet" href="{{ asset('css/lib/jquery-ui/jquery-ui.structure.min.css') }}">
-<link rel="stylesheet" href="{{ asset('css/lib/jquery-ui/jquery-ui.theme.min.css') }}">
-<style>
-    .camera-scanner-wrapper {
-        width: 470px;
-        height: 380px;
-        max-width: 470px;
-        max-height: 380px;
+@extends('layouts.qr-scanner-parent')
 
-        /* box-shadow: inset 0px 3px 0px 0px var(--base-accent-color) !important;
-        -webkit-box-shadow: inset 0px 3px 0px 0px var(--base-accent-color) !important;
-        -moz-box-shadow: inset 0px 3px 0px 0px var(--base-accent-color) !important; */
-    } 
-
-    .camera-selector {
-        display: none;
-    }
-
-    #camera-view {
-        object-fit: cover !important; 
-        background-color: #F8F9FA;
-        border: 1px solid #CCCCCC;
-        border-radius: 4px;
-    }
-
-    .cap {
-        min-height: 6px;
-        height: 6px;
-    }
-
-    .ui-selectmenu-button.ui-button 
-    {
-        font-family: var(--base-font-condensed), 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;
-        padding-top: 4px !important;
-        padding-bottom: 4px !important;
-        max-width: 180px !important;
-    }
-</style>
+@push('stylesheets')
+<link rel="stylesheet" href="{{ asset('css/base.css') }}">
+<link rel="stylesheet" href="{{ asset('css/controls.css') }}">
+<link rel="stylesheet" href="{{ asset('css/scanner-page.css') }}">
 @endpush
- 
+
 @section('content')
-
-{{-- BEGIN MASTER CONTENT --}}
-<div class="master-content d-flex flex-column">
-
-    {{-- USER GUIDE ALERT --}}
-    <div class="w-100 text-center px-4 pt-2 font-accent">
-        <h6>{{ 'How to use the QR code attendance system?' }}</h6>
-        <div class="alert text-dark py-2" style="background-color: #ECE7CE !important;" role="alert">
-            {{ 'Point your QR Code towards the camera to begin scanning. Your attendance details will be recorded on
-            the attendance sheet.' }}
-        </div>
-    </div>
-    {{-- USER GUIDE ALERT --}}
-
-    {{-- BEGIN STACKABLE CONTENT WRAPPER --}}
-    <div class="stackable-content-wrapper d-flex flex-column flex-xl-row flex-grow-1">
-
-        {{-- BEGIN STACKABLE CONTENT -> CONTAINER FOR CAMERA SCANNER--}}
-        <div class="d-flex stackable-content w-md-75 w-l-100 px-4 pb-4 pt-0 justify-content-center">
+<div class=":relative :flex :items-top :justify-center :min-h-screen :bg-gray-100 dark:bg-gray-900 sm:items-center sm:pt-0">
  
-            <div class="camera-scanner-wrapper d-flex flex-column bg-white border rounded-3 overflow-hidden pb-2 ">
+    <div class=":max-w-6xl :mx-auto sm:px-6 lg:px-8">
+        <div class=":flex :justify-center :pt-8 sm:justify-start :items-center sm:pt-0">
+             
+            <div class="header-banner d-flex flex-row">
+                <div class="banner-brand-logo">
+                    <img src="{{ asset('img/aldersgate.svg') }}" width="70" height="70">
+                </div>
+                <div class="banner-brand-label mx-3">
+                    <div class="fs-2">{{ "Aldersgate College Inc." }}</div>
+                    <div class="fs-6" style="font-size: 15px;  color: #3D5656;">
+                        {{ "QR Code Library Attendance Monitoring System" }}
+                    </div>
+                </div>
+            </div>
+            
+            <div class="nav-items ms-auto d-none d-xl-flex flex-row gap-1">
                 
-                <!-- TOP BORDER -->
-                <div class="cap accent-bg-color"></div>
+                <button type="button" class="btn btn-link px-3 navbar-item-link-button url d-flex align-items-center gap-2">
+                    <img src="{{ asset('img/icn-info.png') }}" width="20" height="20">
+                    <span>{{ 'About' }}</span>
+                </button>
 
-                <!-- CONTROL RIBBON -->
-                <div class="camera-control-ribbon d-flex flex-row align-items-center p-2">
-                    <h6 class="mb-0 me-auto"><i class="fas fa-camera me-1"></i> {{ "Camera" }}</h6>
-                    
-                    <button class="btn py-1 px-2 mx-2 flat-btn flat-btn-warning text-dark d-none btn-open-cam">{{ "Open" }}</button>
-                    <button class="btn py-1 px-2 mx-2 flat-btn flat-btn-danger d-none btn-stop-cam">{{ "Stop" }}</button>
+                <button type="button" class="btn btn-link px-3 navbar-item-link-button url d-flex align-items-center gap-2">
+                    <img src="{{ asset('img/icn-support.png') }}" width="20" height="20">
+                    <span>{{ 'Support' }}</span>
+                </button>
+                
+                <button type="button" class="btn btn-link px-3 navbar-item-link-button url d-flex align-items-center gap-2">
+                    <img src="{{ asset('img/icn-options.png') }}" width="20" height="20">
+                    <span>{{ 'Options' }}</span>
+                </button>
 
-                    <select class="camera-selector">
-                        <option selected disabled>{{ 'Select Camera' }}</option> 
-                    </select>
-                    <button class="btn py-1 px-2 ms-2 flat-btn flat-btn-default btn-refresh-cam-list" 
+                <button class="btn flat-btn flat-btn-primary">
+                    <i class="fas fa-qrcode me-1"></i>
+                    {{ "Scan QR" }}
+                </button>
+
+            </div>
+        </div>
+
+        <div class=":mt-8 bg-white dark:bg-gray-800 :overflow-hidden :shadow sm:rounded-lg">
+            <div class=":grid :grid-cols-1 md:grid-cols-1 ~large-grid-cols-2">
+                <div class=":p-6">
+
+                    <div class=":flex :items-center">
+                        <img src="{{ asset('img/icn-cam.png') }}" width="32" height="32">
+                        <div
+                            class=":ml-4 :text-lg :leading-7 :font-semibold border-bottom border-2 underline :text-gray-900">
+                            {{ "Scanner" }}
+                        </div>
+                    </div>
+
+                    <div class=":_ml-12 ms-2"> 
+                        <div class="mt-2 mb-1 pt-1 :border-t :border-gray-200 :text-gray-600 dark:text-gray-400 :text-sm">
+                            <i class="fas fa-info-circle me-1"></i>
+                            {{ "Select a camera then position your QR code towards the camera's view" }}
+                        </div> 
+                    </div>
+
+                    <div class="camera-control-ribbon d-flex ms-1 mb-2 py-1">
+
+                        <select class="camera-selector display:none">
+                            <option selected disabled>{{ 'Select Camera' }}</option>
+                        </select>
+
+                        <button class="btn flat-btn flat-btn-default btn-refresh-cam-list py-1 px-3 ms-2 me-auto disabled"
                             data-mdb-toggle="tooltip" title="Refresh camera list">
-                        <i class="fas fa-rotate"></i>
-                    </button>
+                            <i class="fas fa-rotate"></i>
+                        </button>
+
+                        <button class="btn py-1 px-2 mx-2 flat-btn flat-btn-warning d-none btn-open-cam">
+                            <i class="fas fa-circle-play me-1"></i>{{ "Open"}}
+                        </button>
+
+                        <button class="btn py-1 px-2 mx-2 flat-btn flat-btn-danger d-none btn-stop-cam">
+                            <i class="fa-solid fa-circle-stop me-1"></i>{{ "Stop"}}
+                        </button>
+
+                    </div>
+
+                    <!-- CAMERA PREVIEW SURFACE -->
+                    <div class="video-wrapper d-flex ps-1 pe-2 position-relative">
+                        <video class="w-100 h-100 rounded-4" autoplay id="camera-view"></video>
+                        <div
+                            class="webcam-overlay position-absolute start-0 end-0 top-0 bottom-0 w-100 h-100 px-4 center-flex">
+                            <div class="w-100 h-100 webcam-overlay-crosshair center-flex d-none">
+                                <img src="{{ asset('img/crosshair.svg') }}" width="200" height="200">
+                            </div>
+                            <div class="w-100 h-100 webcam-overlay-perms-warn center-flex">
+                                <div class="text-center">
+                                    <div class="font-accent mb-2">
+                                        <i class="fas fa-info-circle text-primary"></i>
+                                        <span class=":text-gray-800">
+                                            {{ "Please ensure that you have allowed your browser to access the camera before using." }}
+                                        </span>
+                                    </div>
+                                    <small class="text-center :text-gray-600">
+                                        {{ "If you're unsure how to do this, please check your browser settings." }}
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                    </div> 
                 </div>
 
-                <!-- CAMERA PREVIEW SURFACE -->
-                <div class="video-wrapper flex-1-1-auto px-2">
-                    <video class="w-100 h-100" autoplay id="camera-view"></video>
+                <div class=":p-6 :border-t :border-gray-200 dark:border-gray-700 md:border-t-0 md:border-l">
+                  
+                    <div class=":flex :items-center">
+                        <img src="{{ asset('img/icn-attendance.png') }}" width="32" height="32">
+                        <div class=":ml-4 :text-lg :leading-7 :font-semibold border-bottom border-2 underline :text-gray-900 me-auto">
+                            {{ "Attendance" }}
+                        </div>
+                        <div class="time-label d-flex align-items-center gap-3 text-base-primary-dark pt-1 rounded-5">
+                            <div class="bg-control date-label :text-gray-700">{{ date('l, M. d, Y') }}</div>
+                            <p class="time-label font-condensed-bold m-0">
+                                
+                                <i class="fas fa-clock me-1"></i>
+                                <span class="hour-minute-label">{{ date('g:i') }}</span>
+                                <span class="seconds-label :text-sm :text-gray-500">{{ date(':s') }}</span>
+                                <span class="day-night-label">{{ date('A') }}</span>
+                            </p>
+                        </div> 
+                    </div>
+                    <div class="d-flex flex-row justify-content-around align-items-center mt-2 mb-1 pt-1 :border-t :border-gray-200">
+                        <div class="d-flex align-items-center me-auto gap-2">
+                            <span class=":text-sm :text-gray-600 dark:text-gray-400">{{ "Total students" }}</span>
+                            <span class="badge badge-warning total-students">{{ $totalStudents }}</span>
+                        </div>
+                        <div class="d-flex align-items-center mx-auto gap-2">
+                            <span class=":text-sm :text-gray-600 dark:text-gray-400">{{ "Total records" }}</span>
+                            <span class="badge badge-warning total-records">{{ $totalRecords }}</span>
+                        </div>
+                        <div class="ms-auto">
+                            <a class="badge badge-warning" href="http://">
+                                <i class="fas fa-wrench me-1"></i>
+                                {{ "Manage" }}
+                            </a>
+                        </div>
+                    </div>
+                    <div class="attendance-scrollview-root"> 
+                        <div class=":text-gray-600 dark:text-gray-400 :text-sm overflow-hidden attendance-scrollview">
+                            <div data-simplebar class="attendance-table-wrapper overflow-y-auto">
+                                <table class="table table-sm table-striped align-middle attendance-table">
+                                    <thead style="z-index: 1000; position: sticky; top: 0;">
+                                        <tr>
+                                            <th style="max-width: 200px;">{{"Name"}}</th>
+                                            <th class="td-20">{{ "Time in"}}</th>
+                                            <th class="td-20">{{ "Time out"}}</th>
+                                            <th class="td-20">{{ "Duration" }}</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="attendance-sheet">
+
+                                        @if (!empty($attendanceData))
+                                            @foreach ($attendanceData as $data)
+
+                                            @php 
+                                                $timeInStyle = "";
+                                                $timeOutStyle = "";
+
+                                                // If there is a time in data, and no timeout yet,
+                                                // we assume that this data is Time In
+                                                if (!empty($data->time_in) && empty($data->time_out))
+                                                    $timeInStyle = "time-in";
+                                                
+                                                // If there is a time out data ...
+                                                if (!empty($data->time_out))
+                                                    $timeOutStyle = "time-out";
+
+                                            @endphp
+
+                                            <tr class="row-index-{{ $data->student_no }}" data-student-no="{{ $data->student_no }}">
+                                                <td class="td-name-details">
+                                                    <div class="d-flex align-items-center w-100">
+                                                        <img src="{{ $data->photo }}" alt=""
+                                                            style="width: 45px; height: 45px" class="rounded-circle" />
+                                                        <div class="ms-3 w-100 text-truncate">
+                                                            <p class="fw-bold mb-1 text-truncate">{{ $data->name }}</p>
+                                                            <p class="text-muted mb-0 text-truncate">{{ $data->student_no }}</p>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td class="td-20"> 
+                                                    <span class="attendance-time-label time-in-label {{ $timeInStyle }}">{{ $data->time_in }}</span>
+                                                </td>
+                                                <td class="td-20">
+                                                    <span class="attendance-time-label time-out-label {{ $timeOutStyle }}">{{ $data->time_out }}</span>
+                                                    <input type="hidden" class="timeout-val">
+                                                </td>
+                                                <td class="td-20"> 
+                                                    <span class="text-primary-color font-condensed-bold duration duration-label">
+                                                        @if (!empty($data->stay_duration))
+                                                            {{ $data->stay_duration }} 
+                                                        @endif
+                                                    </span>
+                                                </td>
+                                            </tr>
+
+                                            @endforeach
+                                        @endif 
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                
+
+            </div>
+        </div>
+
+        <div class=":flex :justify-center :mt-4 sm:items-center sm:justify-between">
+            <div class=":text-center :text-sm :text-gray-500 sm:text-left">
+                <div class=":flex :items-center">
+                   
+                    <a href="https://aldersgate.edu.ph/about/" class=":ml-1 :text-gray-500 url">
+                        &copy; {{ date('Y') . " Aldersgate College Incorporated" }}
+                    </a>
+                    
+                </div>
             </div>
 
+            <div class=":ml-4 :text-center :text-sm :text-gray-500 sm:text-right sm:ml-0">
+                {{-- Build v{{ Illuminate\Foundation\Application::VERSION }} --}}
+                <select class="myselx">
+                    <option value="v1">I1</option>
+                    <option value="v2">I2</option>
+                    <option value="v3">I3</option>
+                </select>
+            </div>
         </div>
-        {{-- END STACKABLE CONTENT -> CONTAINER FOR CAMERA SCANNER--}}
-
-        {{-- BEGIN STACKABLE CONTENT -> CONTAINER FOR ATTENDANCE SHEET--}}
-        <div class="d-flex bg-warning w-100 flex-column-reverse flex-fill">TEST</div>
-        {{-- END STACKABLE CONTENT -> CONTAINER FOR ATTENDANCE SHEET--}}
-
     </div>
-    {{-- END STACKABLE CONTENT WRAPPER --}}
-
 </div>
 
+<!-- MODALS -->
+@include('modals.error-dialog')
+@include('modals.warn-dialog')
+
 @push('scripts')
-<script src="{{ asset('js/lib/jquery-ui/jquery-ui.min.js') }}"></script>
-<script src="{{ asset('js/lib/instascan/instascan.min.js') }}"></script>
 <script>
-    var videoSurface = undefined;
-    var qrScanner = undefined; 
-    var attachedCameras = [];
-    let WAIT_SECS_SHOW_HIDE_CAMERA_BUTTONS = 3000;
-
-    $(document).ready(function () 
-    {
-        // Initialization Block
-        __onInitialize();
-
-        // Event Handlers Binding
-        __onHandleEvents();
-    });
-    //
-    // Initialize elements and references here
-    //
-    function __onInitialize()
-    {
-        // Get the <video> surface element for rendering the camera
-        videoSurface = $('#camera-view').get(0);
-         
-        // Initialize the camera selectmenu and disable it on load
-        $(".camera-selector").selectmenu({ disabled: true });
-
-        // Get the attached cameras on load
-        getAttachedCameras();
-    }
-    //
-    // Bind event handlers here
-    //
-    function __onHandleEvents()
-    {
-        // Refresh button on cameras list
-        $(".btn-refresh-cam-list").on('click', () => getAttachedCameras());
-
-        // "Open" c"am button
-        $(".btn-open-cam").on('click', () => openSelectedCamera());
-    }
-    //
-    // Summary: Detect all attached camera devices then list them on a select menu.
-    // Also, cache an object instance of them in memory
-    //
-    function getAttachedCameras()
-    {
-        // Disable the select list
-        showCameraSelectList(false);
-
-        Instascan.Camera.getCameras().then(function(cameras)
-        {
-            if (cameras.length > 0)
-            {
-                // Clear the list of cameras before adding
-                $(".camera-selector").empty();
-
-                // Clear the cameras array
-                attachedCameras = [];
-                
-                // Set default selected value to none
-                $(".camera-selector").append($('<option>', 
-                {
-                    text: '{{ "Select Camera" }}',
-                    selected: true
-                }));
-
-                // Add each camera to the list
-                $.each(cameras, function(index, camera)
-                {
-                    $(".camera-selector").append($('<option>', 
-                    {
-                        value: camera.id,
-                        text: camera.name
-                    }));
-
-                    // Cache the object reference into key value pair array
-                    addCamera(camera);
-                });
- 
-                // Rebuild the camera select menu
-                // refreshCameraSelectMenu(false);
-                $(".camera-selector").selectmenu({ 
-                    disabled: false,
-                    change: function(event, ui)
-                    {
-                        var value = $(".camera-selector option:selected").attr('value'); //event.target.value;
-
-                        // Only show the "Open" button when there is a valid camera selected
-                        if (value !== undefined)
-                            showOpenCamButton(true);
-                        else 
-                            showOpenCamButton(false);
-                    }
-                }).selectmenu('refresh');
-
-                // Enable the "Open Cam" button 
-                showStopCamButton(false); 
-            }
-            else
-            {
-                console.error('No cameras found on this device.');
-            }
-
-            // Enable the camera select list
-            showCameraSelectList(true);
-        })
-        .catch(function(e)
-        {
-            alert('Error accessing camera: ' + e);
-        });
-    }
-    //
-    // Rebuild the camera select menu with an option to disable it
-    //
-    function refreshCameraSelectMenu(disable) 
-    {
-        $(".camera-selector").selectmenu({ disabled: disable }).selectmenu('refresh');
-    }
-    //
-    // Keep an object instance of every camera (Store them in memory)
-    // because it wont work when serialized as json. We need the actual
-    // object from the memory
-    //
-    function addCamera(camera)
-    {
-        if (attachedCameras.hasOwnProperty(camera.id))
-            return;
-
-        attachedCameras[camera.id] = camera;
-    }
-    //
-    // Begin rendering the camera according to the camera id that was
-    // selected from the selectmenu
-    //
-    function openSelectedCamera()
-    {  
-        // Hide the "Open" button
-        showOpenCamButton(false);
-        
-        // Disable the camera select list
-        showCameraSelectList(false);
-
-        // Get the selected camera's Id from the selectmenu
-        var selectedCamId = $('.camera-selector option:selected').attr('value');
-
-        // Make sure that the camera object is cached before using
-        if (!attachedCameras.hasOwnProperty(selectedCamId))
-        {
-            alert("Can't start camera");
-
-            // Enable the camera select list
-            showCameraSelectList(true);
-            return;
-        }
-        
-        // Always destroy the instance of old scanner
-        createScanner();
-
-        // Get a reference of the camera object from the array
-        var camera = attachedCameras[selectedCamId];
-
-        // Start the camera
-        qrScanner.start(camera).then(result => 
-        { 
-            return delayPromise(WAIT_SECS_SHOW_HIDE_CAMERA_BUTTONS).then(() => 
-            {
-                // "Stop" cam button
-                $(".btn-stop-cam")
-                    .off('click')
-                    .on('click', () => stopScanner(qrScanner))
-                    .removeClass('d-none')
-                    .show();
-            });
-        })
-        .catch(err => 
-        {
-            alert(err.toString());
-        });
-    }
-    //
-    // Stop the scanner then close the camera device
-    //
-    function stopScanner(scanner)
-    {
-        if (scanner === undefined || scanner === null)
-            return;
-
-        showStopCamButton(false); 
- 
-        scanner.stop().then(result => 
-        {
-            // Stop streaming
-            closeCameraDevice();
-            
-            // Hide the "Stop" button, wait for 3secs then show the "Open" button again
-            return delayPromise(WAIT_SECS_SHOW_HIDE_CAMERA_BUTTONS)
-                .then(() => 
-                {
-                    showOpenCamButton(true);
-                    
-                    // Enable the camera select list
-                    showCameraSelectList(true);
-                });
-        })
-        .catch(err => 
-        {
-            alert(err.toString());
-        });
-    }
-    //
-    // Stop the camera device from streaming
-    //
-    function closeCameraDevice() 
-    {  
-        // https://stackoverflow.com/a/54514807
-        /*
-        var videoEl = document.getElementById('camera-view');
-        // now get the steam
-        stream = videoEl.srcObject;
-        // now get all tracks
-        tracks = stream.getTracks();
-        // now close each track by having forEach loop
-        tracks.forEach(function (track)
-        {
-        // stopping every track
-        track.stop();
-        });
-        // assign null to srcObject of video
-        videoEl.srcObject = null;
-        */
-        if(!videoSurface.srcObject)
-            return;
-
-        videoSurface.srcObject.getTracks().forEach(track => {
-            track.stop();
-        });
-        videoSurface.srcObject = null;
-    }
-    //
-    // Create a new instance of QR Scanner
-    //
-    function createScanner()
-    {
-        // If there is an active instance of scanner, force stop it from 
-        // scanning, unbind its events then destroy its object reference
-        if (qrScanner)
-        { 
-            qrScanner.stop().then(result => closeCameraDevice() );
-
-            if (qrScanner.listenerCount('scan') > 0)
-                qrScanner.removeAllListeners();
-
-            qrScanner = undefined;
-        }
-
-        // Create a new object of the scanner passing the <video> element in constructor
-        qrScanner = new Instascan.Scanner({
-            video: videoSurface
-        });
-
-        // Bind event listener that handles the logic after scan completes
-        qrScanner.addListener('scan', function(content)
-        {
-            alert(content);
-        }); 
-    }
-
-    function showOpenCamButton(show)
-    {
-        if (!show)
-        {
-            $(".btn-open-cam").hide();
-            return;
-        }
-
-        $(".btn-open-cam").toggleClass('d-none', false).show(); 
-    }
-
-    function showStopCamButton(show)
-    {
-        if (!show)
-        {
-            $(".btn-stop-cam").hide();
-            return;
-        }
-
-        $(".btn-stop-cam").show(); 
-    }
-
-    function showCameraSelectList(show)
-    {
-        if (!show)
-        {
-            refreshCameraSelectMenu(true);
-            $(".btn-refresh-cam-list").toggleClass('disabled', true);
-            return;
-        }
-
-        refreshCameraSelectMenu(false);
-        $(".btn-refresh-cam-list").toggleClass('disabled', false);
-    }
-
-    function delayPromise(millis)
-    {
-        return new Promise(resolve => setTimeout(resolve, millis));
-    }
+    const SCAN_POST_URL = "{{ route('qr-scan-result') }}";
 </script>
-@endpush 
+<script src="{{ asset('js/qr-scanner/index.js') }}"></script>
+<script src="{{ asset('js/controls/combobox.js') }}"></script>
+<script>
+    // let selectBox = new ComboBox('.mysel',(event, ui) => {
+    //     alert('changed with val: ' + $(this).val());
+    // });
+    // selectBox.AddItem('123', 'Option1');
+    // selectBox.Refresh();
+</script>
+@endpush
 @endsection

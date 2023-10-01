@@ -1,6 +1,6 @@
 #warnDialog .dialog-bg-color 
 {
-    background-color: var(--base-accent-color) !important;
+    background-color: var(--warning-color) !important;
 }
 
 #warnDialog .backdrop-image 

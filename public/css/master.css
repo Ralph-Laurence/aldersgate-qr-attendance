@@ -5,11 +5,14 @@
 :root {
     --base-bg-color: #F6F8FB;
     /* --base-bg-color: #F7FAFC; */
+    --base-text-color: #4F4F4F;
     --base-dark-color: #1a202c;
     --base-primary-color: #176D3B;
     --base-primary-lighter: #2FB344;
     --base-accent-color: #FFC107;
     --base-color-danger: #D63939;
+
+    --text-lighter-color: #A3A3A3;
     /* --base-accent-color: #F9D901; */
 
     --base-font: "Roboto";
@@ -117,8 +120,16 @@ h1, h2, h3, h4, h5, h6 {
     font-family: var(--base-font-condensed), Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif !important;
 }
 
+.font-condensed-bold {
+    font-family: var(--base-font-condensed-bold), Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif !important;
+}
+
 .font-accent {
     font-family: var(--accent-font), Arial, Helvetica, sans-serif !important;
+}
+
+.font-size-14 {
+    font-size: 14px !important;
 }
 
 /*
@@ -127,9 +138,20 @@ h1, h2, h3, h4, h5, h6 {
 ===========================================
 */
 .text-primary-color {
-    color: var(--base-primary-color);
+    color: var(--base-primary-color) !important;
 }
 
+.text-base-color {
+    color: var(--base-text-color) !important;
+}
+
+.text-lighter-color {
+    color: var(--text-lighter-color) !important;
+}
+
+.text-base-dark {
+    color: var(--base-dark-color) !important;
+}
 /*
 ===========================================
 ............BACKGROUND COLORS .............

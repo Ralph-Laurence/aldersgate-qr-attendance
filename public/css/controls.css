@@ -7,7 +7,7 @@
 {
     border-radius: 4px !important;
     color: #FCFDFE !important;
-    font-family: var(--base-font-condensed-bold), sans-serif !important; 
+    font-family: var(--base-font-condensed-bold), sans-serif !important;
     font-size: 12px !important;
     font-weight: 500 !important;
     vertical-align: middle !important;
@@ -22,35 +22,37 @@
 }
 
 .flat-btn-primary {
-    background-color: var(--flat-bg-primary) !important; 
+    background-color: var(--base-primary-color) !important; 
+}
+
+.flat-btn-primary:hover {
+    background-color: var(--base-primary-600) !important;
 }
 
 .flat-btn-danger {
-    background-color: var(--base-color-danger) !important; 
+    background-color: var(--danger-color) !important; 
+}
+
+.flat-btn-danger:hover {
+    background-color: var(--danger-color-200) !important;
 }
 
 .flat-btn-warning {
-    background-color: var(--base-accent-color) !important; 
+    background-color: var(--warning-color) !important;
+    color: var(--warning-text-color) !important;
 }
 
 .flat-btn-warning:hover {
-    background-color: #FFC959 !important; 
+    background-color: var(--warning-color-600) !important; 
 }
 
 .flat-btn-default 
 {
-    background-color: var(--control-default-color) !important; 
-    color: #212121 !important;
+    background-color: var(--control-color) !important; 
+    color: var(--control-text-color) !important;
 }
 
 .flat-btn-default:hover {
     background-color: #CCE2FD !important;
 }
 
-.flat-btn-danger:hover {
-    background-color: #EA4D4D !important;
-}
-
-.flat-btn-primary:hover {
-    background-color: var(--base-primary-lighter) !important;
-}

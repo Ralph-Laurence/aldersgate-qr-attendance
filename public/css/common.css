@@ -29,6 +29,16 @@
     display: none;
 }
 
+.overflow-lg-y-auto {
+    overflow-y: hidden; /* Default to hidden */
+}
+
+@media screen and (max-width: 1200px) {
+    .overflow-lg-y-auto {
+        overflow-y: auto !important; /* Apply auto when width <= 1200px */
+    }
+}
+
 .i-drop-down button.dropdown-toggle
 {
     background-color: #E2E2E2 !important;

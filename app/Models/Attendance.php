@@ -1,0 +1,144 @@
+<?php
+
+namespace App\Models;
+
+use App\Http\Extensions\Utils;
+use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB; 
+
+class Attendance extends Model
+{
+    use HasFactory;
+
+    const FIELD_STUDENT_FK = 'student_fk_id';
+    const FIELD_TIME_IN = 'time_in';
+    const FIELD_TIME_OUT = 'time_out';
+    const FIELD_STAY_DURATION = 'stay_duration';
+    const FIELD_WEEK_NO = 'week_no';
+    const FIELD_STATUS = 'status';
+    const FIELD_UPDATED_BY = 'updated_by';
+    const FIELD_ATTENDANCE_DATE = 'attendance_date';
+
+    const STATUS_VAL_TIMED_IN = 'in';
+    const STATUS_VAL_TIMED_OUT = 'out';
+
+    protected $table = 'attendance';
+
+    protected $guarded = [
+        self::FIELD_UPDATED_BY
+    ]; 
+
+    public function createAttendanceData(int $studentFkId)
+    {
+        $insert = Attendance::create([
+            self::FIELD_STUDENT_FK      => $studentFkId,
+            self::FIELD_WEEK_NO         => Carbon::now()->weekOfYear,
+            self::FIELD_TIME_IN         => Carbon::now()->toDateTimeString(),
+            self::FIELD_STATUS          => self::STATUS_VAL_TIMED_IN,
+            self::FIELD_ATTENDANCE_DATE => Utils::dateToday()
+        ]); 
+
+        return $insert;
+    }
+
+    public function getTimeDifference($timestamp1, $timestamp2) : string
+    {
+        $t1 = Carbon::parse($timestamp1);
+        $t2 = Carbon::parse($timestamp2);
+
+        $durationHrs = $t1->diffInHours($t2);
+        $durationMins = $t1->diffInMinutes($t2) % 60;
+
+        return $durationHrs . "h " . $durationMins ."m";
+    }
+
+    public function getStayDuration($timeIn, $timeOut) : string
+    {
+        $t1 = Carbon::parse($timeIn);
+        $t2 = Carbon::parse($timeOut);
+
+        $durationHrs = $t1->diffInHours($t2);
+        $durationMins = $t1->diffInMinutes($t2) % 60;
+
+        $duration = $durationHrs . "h " . $durationMins ."m";
+
+        if ($durationHrs <= 0 && $durationMins <= 0)
+            $duration =  $t1->diffInSeconds($t2) . ' secs';
+
+        return $duration;
+    }
+
+
+    public function checkAttendanceExists(int $studentForeignKey)
+    {
+        $attendanceData = DB::table('attendance as a') 
+            ->where('a.student_fk_id', $studentForeignKey)
+            ->where('a.attendance_date', Utils::dateToday())
+            ->select('a.time_in','a.time_out')
+            ->orderByDesc('a.created_at')
+            ->first();
+
+        return $attendanceData;
+    }
+
+    public function setTimedOut($studentForeignKey)
+    {    
+        $update = Attendance::where(self::FIELD_STUDENT_FK, $studentForeignKey)
+            ->where(self::FIELD_ATTENDANCE_DATE, Utils::dateToday())
+            ->where(self::FIELD_STATUS, self::STATUS_VAL_TIMED_IN)
+            ->update([
+                self::FIELD_STATUS   => self::STATUS_VAL_TIMED_OUT,
+                self::FIELD_TIME_OUT => Carbon::now()
+            ]); 
+ 
+        return $update; 
+    }
+
+    public function findAttendance(int $attendanceRecordId, int $studentForeignKey)
+    {
+        $attendanceData = $attendanceData = DB::table('attendance as a') 
+            ->leftJoin('students as s', 's.id', '=', 'a.student_fk_id')
+            ->leftJoin('courses as c',  'c.id', '=', 's.course_id')
+            ->select(
+                's.student_no',
+                's.year',
+                's.photo',
+                'c.course',
+                'a.time_in',
+                'a.time_out',
+                DB::raw("CONCAT(s.firstname, ' ', s.middlename, ' ', s.lastname) AS name")
+            )
+            ->where('a.student_fk_id', $studentForeignKey)
+            ->where('a.id', $attendanceRecordId)
+            ->first();
+
+        return $attendanceData;
+    }
+
+    public function getTodaysAttendance()
+    { 
+        // Prepare the query builder
+        $attendanceData = DB::table('attendance as a') 
+            ->whereDate('a.created_at', Carbon::today())
+            ->leftJoin('students as s', 's.id', '=', 'a.student_fk_id')
+            ->leftJoin('courses as c',  'c.id', '=', 's.course_id')
+            ->select(
+                's.student_no',
+                's.year',
+                's.photo',
+                'c.course',
+                'a.time_in',
+                'a.time_out',
+                DB::raw("CONCAT(s.firstname, ' ', s.middlename, ' ', s.lastname) AS name")
+            )
+            ->orderByDesc('a.created_at')
+            ->get();
+
+        if ($attendanceData->isEmpty())
+            return collect([]);
+
+        return $attendanceData;
+    }
+}
