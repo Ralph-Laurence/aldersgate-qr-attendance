@@ -1,0 +1,35 @@
+ function processAttendanceViewData(viewData) 
+ {
+    /* JSON
+    {
+  "msg": "success! The student id# is 00035",
+  "status": "timed_in",
+  "data": [
+    {
+      "firstname": "Bill",
+      "middlename": "Henry",
+      "lastname": "Gates",
+      "student_no": "00035",
+      "year": 2,
+      "photo": "bill.png",
+      "time_in": "2023-09-25 01:31:57"
+    }
+  ]
+}
+    */
+ }
+
+ function onSuccessfulTimeout(data)
+{
+    /* JSON
+    {
+    "message": "Time out recorded",
+    "status": "0x0",
+    "data": {
+        "time_in": "2023-09-26 10:11:20",
+        "time_out": "2023-09-26 00:00:00",
+        "student_no": "00002"
+        }
+    }
+    */
+}

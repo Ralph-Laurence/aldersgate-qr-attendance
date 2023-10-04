@@ -61,10 +61,10 @@
                         </div>
                     </div>
 
-                    <div class=":_ml-12 ms-2"> 
-                        <div class="mt-2 mb-1 pt-1 :border-t :border-gray-200 :text-gray-600 dark:text-gray-400 :text-sm">
+                    <div class="ms-1 text-start"> 
+                        <div class="mt-2 mb-1 pt-1 :border-t :border-gray-200 :text-gray-600 dark:text-gray-400 :text-sm scanner-tips">
                             <i class="fas fa-info-circle me-1"></i>
-                            {{ "Select a camera then position your QR code towards the camera's view" }}
+                            {{ "Please select a camera below. Click on \"" }}<i class="fas fa-rotate px-1"></i>{{ "\" to refresh if it's not detected." }}
                         </div> 
                     </div>
 
@@ -110,6 +110,10 @@
                                     </small>
                                 </div>
                             </div>
+                            <div class="w-100 h-100 webcam-overlay-spinner center-flex d-none">
+                                <img class="round-spinner" src="{{ asset('img/floater.svg') }}" width="32" height="32">
+                                <h6 class="mx-2 mb-0 :text-gray-600 z-100 prep-text">{{ "Preparing the scanner..."}}</h6>
+                            </div>
                         </div>
                     </div> 
                 </div>
@@ -135,16 +139,16 @@
                     <div class="d-flex flex-row justify-content-around align-items-center mt-2 mb-1 pt-1 :border-t :border-gray-200">
                         <div class="d-flex align-items-center me-auto gap-2">
                             <span class=":text-sm :text-gray-600 dark:text-gray-400">{{ "Total students" }}</span>
-                            <span class="badge badge-warning total-students">{{ $totalStudents }}</span>
+                            <span class="badge badge-success total-students">{{ $totalStudents }}</span>
                         </div>
                         <div class="d-flex align-items-center mx-auto gap-2">
                             <span class=":text-sm :text-gray-600 dark:text-gray-400">{{ "Total records" }}</span>
-                            <span class="badge badge-warning total-records">{{ $totalRecords }}</span>
+                            <span class="badge badge-success total-records">{{ $totalRecords }}</span>
                         </div>
                         <div class="ms-auto">
-                            <a class="badge badge-warning" href="http://">
+                            <a class="badge badge-warning btn-manage-attendance" target="_blank" rel="noopener noreferrer" href="{{ url('/') }}">
                                 <i class="fas fa-wrench me-1"></i>
-                                {{ "Manage" }}
+                                <span>{{ "Manage" }}</span>
                             </a>
                         </div>
                     </div>
@@ -154,10 +158,11 @@
                                 <table class="table table-sm table-striped align-middle attendance-table">
                                     <thead style="z-index: 1000; position: sticky; top: 0;">
                                         <tr>
-                                            <th style="max-width: 200px;">{{"Name"}}</th>
-                                            <th class="td-20">{{ "Time in"}}</th>
-                                            <th class="td-20">{{ "Time out"}}</th>
-                                            <th class="td-20">{{ "Duration" }}</th>
+                                            <th data-orderable="false" style="max-width: 200px;">{{"Name"}}</th>
+                                            <th data-orderable="false" class="td-20">{{ "Time in"}}</th>
+                                            <th data-orderable="false" class="td-20">{{ "Time out"}}</th>
+                                            <th data-orderable="false" class="td-20">{{ "Duration" }}</th>
+                                            <th class="d-none"></th>{{-- This will hold row timestamps; useful for sorting--}}
                                         </tr>
                                     </thead>
                                     <tbody class="attendance-sheet">
@@ -180,7 +185,19 @@
 
                                             @endphp
 
-                                            <tr class="row-index-{{ $data->student_no }}" data-student-no="{{ $data->student_no }}">
+                                            @if (!empty($data->time_out))
+                                                {{--We expect this row as TimedOut, so we no longer need to highlight this and/or
+                                                    do some procesing like moving on topmost table --}}
+                                                <tr>
+                                            @else
+                                                {{--All rows with no TimeOut values yet, must have these classes and attributes.
+                                                    These rows will be given a class called 'timed-in-rows' which will be used
+                                                    to identify the rows that needs to be mapped. The entries of the row Map
+                                                    will be supplied onload at document.ready() where the script looks for all
+                                                    rows with class 'timed-in-rows'.
+                                                 --}}
+                                                <tr class="row-index-{{ $data->student_no }} timed-in-rows" data-student-no="{{ $data->student_no }}" data-row-idx="{{ $loop->index }}">
+                                            @endif
                                                 <td class="td-name-details">
                                                     <div class="d-flex align-items-center w-100">
                                                         <img src="{{ $data->photo }}" alt=""
@@ -205,6 +222,7 @@
                                                         @endif
                                                     </span>
                                                 </td>
+                                                <td class="d-none row-timestamp">{{ $data->row_stamp }}</td>
                                             </tr>
 
                                             @endforeach
@@ -231,12 +249,7 @@
             </div>
 
             <div class=":ml-4 :text-center :text-sm :text-gray-500 sm:text-right sm:ml-0">
-                {{-- Build v{{ Illuminate\Foundation\Application::VERSION }} --}}
-                <select class="myselx">
-                    <option value="v1">I1</option>
-                    <option value="v2">I2</option>
-                    <option value="v3">I3</option>
-                </select>
+                Build v{{ Illuminate\Foundation\Application::VERSION }}
             </div>
         </div>
     </div>
@@ -250,14 +263,8 @@
 <script>
     const SCAN_POST_URL = "{{ route('qr-scan-result') }}";
 </script>
-<script src="{{ asset('js/qr-scanner/index.js') }}"></script>
 <script src="{{ asset('js/controls/combobox.js') }}"></script>
-<script>
-    // let selectBox = new ComboBox('.mysel',(event, ui) => {
-    //     alert('changed with val: ' + $(this).val());
-    // });
-    // selectBox.AddItem('123', 'Option1');
-    // selectBox.Refresh();
-</script>
+<script src="{{ asset('js/controls/qrcodescanner.js') }}"></script>
+<script src="{{ asset('js/qr-scanner/index.js') }}"></script>
 @endpush
 @endsection

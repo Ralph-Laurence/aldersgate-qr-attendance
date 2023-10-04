@@ -3,12 +3,14 @@
     --base-color: #116530;
     --base-dark-color: #1a202c;
 
+    --base-primary-100: #D6F0E0;
     --base-primary-color: #00B050;
     --base-primary-600: #2FB344;
-    --base-primary-dark: #008A5B;
+    --base-primary-dark: #008A5B; 
 
     --control-color: #E2E2E2;
     --control-text-color: #212121;
+    --control-color-700: #4a5568;
 
     --danger-color: #D63939;
     --danger-color-200: #EE3B3F;
@@ -92,4 +94,8 @@ html, body {
 
 .text-base-primary-dark {
     color: var(--base-primary-dark);
+}
+
+.z-100 {
+    z-index: 100;
 }

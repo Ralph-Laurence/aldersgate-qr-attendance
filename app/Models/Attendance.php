@@ -20,6 +20,7 @@ class Attendance extends Model
     const FIELD_STATUS = 'status';
     const FIELD_UPDATED_BY = 'updated_by';
     const FIELD_ATTENDANCE_DATE = 'attendance_date';
+    const FIELD_CREATED_AT = 'created_at';
 
     const STATUS_VAL_TIMED_IN = 'in';
     const STATUS_VAL_TIMED_OUT = 'out';
@@ -89,8 +90,9 @@ class Attendance extends Model
             ->where(self::FIELD_ATTENDANCE_DATE, Utils::dateToday())
             ->where(self::FIELD_STATUS, self::STATUS_VAL_TIMED_IN)
             ->update([
-                self::FIELD_STATUS   => self::STATUS_VAL_TIMED_OUT,
-                self::FIELD_TIME_OUT => Carbon::now()
+                self::FIELD_STATUS      => self::STATUS_VAL_TIMED_OUT,
+                self::FIELD_TIME_OUT    => Carbon::now(),
+                self::FIELD_CREATED_AT  => Carbon::now()
             ]); 
  
         return $update; 
@@ -131,6 +133,7 @@ class Attendance extends Model
                 'c.course',
                 'a.time_in',
                 'a.time_out',
+                'a.created_at as row_stamp',
                 DB::raw("CONCAT(s.firstname, ' ', s.middlename, ' ', s.lastname) AS name")
             )
             ->orderByDesc('a.created_at')

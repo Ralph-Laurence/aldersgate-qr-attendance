@@ -1,37 +1,39 @@
 //////////////////////////////////////////////////////////
 // THIS SCRIPT MUST BE INCLUDED IN index.blade.php
 //          OF QR CODE SCANNER PAGE.
-//
-// THE NAMING CONVENTION OF SCRIPTS WILL SCTRICTLY 
-// FOLLOW LARAVEL's CONTROLLER NAMING CONVENTIONS
 //-------------------------------------------------------
 // CREATED: SEPTEMBER 29, 2023
 //-------------------------------------------------------
-//
-/////////////////////////////////////////////////////////
 //
 // ------------------------------------------------------
 /* #region BASE CODE */
 // ------------------------------------------------------
 //
-var videoSurface = undefined;
-var qrScanner = undefined;
-var attachedCameras = [];
-var studentIdsDistinct = undefined;
+var studentIdSet = undefined;
+var dtRowClonesMap = undefined;
+var lastAddedRow = null;
 var dataTable = undefined;
 
-var cameraSelect = ".camera-selector";
-var openCameraBtn = ".btn-open-cam";
-var stopCameraBtn = ".btn-stop-cam";
-var refreshCamListButton = ".btn-refresh-cam-list";
-var attendanceScrollView = '.attendance-scrollview';
-var attendanceScrollViewRoot = '.attendance-scrollview-root';
-var attendanceTable = ".attendance-table";
+var cameraSelectMenu = null;
+var qrcScanner = null;
 
-var FLAG_IS_CAM_OPEN = false;
+const cameraSelectClass = ".camera-selector";
+const qrcSurfaceId = '#camera-view';
 
+const openCameraBtn = ".btn-open-cam";
+const stopCameraBtn = ".btn-stop-cam";
+const refreshCamListButton = ".btn-refresh-cam-list";
+const attendanceScrollView = '.attendance-scrollview';
+const attendanceScrollViewRoot = '.attendance-scrollview-root';
+const attendanceTable = ".attendance-table";
+ 
 const UPDATE_TICK = 1000; // 1second -> 1000millisec
 const ON_START_STOP_STREAM_DELAY = 3000;
+
+const DEFAULT_SCANNER_TIPS = `Please select a camera below. Click on \"<i class="fas fa-rotate px-1"></i>\" to refresh if it\'s not detected.`;
+const AJAX_GENERAL_ERROR = "A fatal error has occurred. If this message continues to appear, please contact the system administrator.";
+
+var FLAG_IS_CAM_OPEN = false;
 
 $(document).ready(function ()
 {
@@ -47,44 +49,106 @@ function __onAwake()
 {
     // We will use this to count all students from the attendance sheet
     // using their Ids but we need to only count similar Ids as one (distinct)
-    studentIdsDistinct = new Set();
+    studentIdSet = new Set();
 
-    // Get the <video> surface element for rendering the camera
-    videoSurface = $('#camera-view').get(0);
-
+    // All newly added rows must set an entry (clone) here 
+    // so that they can be identified later during Check/TimeOut
+    dtRowClonesMap = new Map();
+  
     // Initialize the camera selectmenu and disable it on load
-    $(cameraSelect).selectmenu({ disabled: true });
+    cameraSelectMenu = new ComboBox(cameraSelectClass, true);
 
     // Create an instance of QR Scanner
-    qrScanner = new Instascan.Scanner({ video: videoSurface });
- 
+    qrcScanner = new QRCodeScanner(qrcSurfaceId);
+
     // Get the attached cameras on load
     getAttachedCameras();
  
-    dataTable = new DataTable(attendanceTable, {
-        "lengthChange": false,
-        "searching": false,
-        "autoWidth": false,
-        stripeClasses: [] // disable all DataTables default styling
+    // Use this to set maximum displayed pagination numbers
+    jQuery.fn.dataTableExt.pager.numbers_length = 5;
+
+    dataTable = new DataTable(attendanceTable, 
+    {
+        "pagingType"    : "full_numbers",    // Show the First, Previousm Next and Last pagination buttons
+        "lengthChange"  : false,
+        "searching"     : false,
+        "autoWidth"     : false,
+        "order"         : [[4, 'desc']],    // The 5th <th> is the row-timestamp, required for sorting on prepend
     }); 
     
+    countDistinctStudents();
+    cloneTimedInRows();
 }
 
 // Handle events here
 function __bindEvents() 
 {
-    $(refreshCamListButton).click(() => 
-    {
-        enableCamRefreshButton(false);
-        getAttachedCameras();
-        showOpenCamButton(false);
-    });
+    $(refreshCamListButton).on('click', () => getAttachedCameras());
 
     $(openCameraBtn).on('click', () => openSelectedCamera());
-    $(stopCameraBtn).on('click', () => stopScanner(qrScanner));
+    $(stopCameraBtn).on('click', () => stopScanner());
 
-    // Handle scan results
-    qrScanner.addListener('scan', (content) => onScanResult(content));
+    qrcScanner.OnCameraStartFailed((err) => showErrorDialog(err));
+    qrcScanner.OnCameraStopFailed( (err) => showErrorDialog(err));
+
+    qrcScanner.OnCameraStarting( () => 
+    {
+        showOpenCamButton(false);                                   // Hide the "Open" camera button
+        showCameraPermsWarn(false);                                 // Hide the camera permissions warning
+        showCameraSelectMenu(false);                                // Disable the camera selectmenu
+        showCameraPrepLoader(true, "Preparing the scanner...");     // Show the loading spinner
+    });
+
+    qrcScanner.OnCameraStarted( () => 
+    {
+        FLAG_IS_CAM_OPEN = true;
+
+        showCameraPrepLoader(false);                                    // Hide the loading spinner
+        $(attendanceScrollView).toggleClass('pe-none', true);           // Lock the attendance sheet from interactions then
+        showCrosshairs(true);                                           // Show crosshairs
+
+        setTimeout(() => {
+            
+            showStopCamButton(true);
+
+        }, 3000); 
+    });
+
+    qrcScanner.OnCameraStopping(() => 
+    {
+        showStopCamButton(false);                               // Hide the stop button
+        showCrosshairs(false);                                  // Hide crosshairs 
+        showCameraPrepLoader(true, "Stopping the scanner...");  // Show the loading spinner
+    });
+
+    qrcScanner.OnCameraStopped( () => 
+    {
+        setTimeout(() => 
+        {
+            FLAG_IS_CAM_OPEN = false;
+
+            // Allow the attendance sheet from recieving interactions
+            $(attendanceScrollView).toggleClass('pe-none', false);
+
+            showOpenCamButton(true);
+            showCameraSelectMenu(true);
+            showCameraPrepLoader(false);        // Hide the loading spinner
+            showCameraPermsWarn(true);          // then show camera permissions warn
+        }, 3000);
+    });
+
+    qrcScanner.OnScanResult( (content) => 
+    {
+        var metaCSRF = $('meta[name="csrf-token"]').attr('content');
+
+        $.ajaxSetup({
+            headers: { 'X-CSRF-TOKEN': metaCSRF },
+            error: (xhr) => showErrorDialog(AJAX_GENERAL_ERROR)
+        });
+
+        // (url, data, success) <-- auto pass success 'response' param
+        $.post(SCAN_POST_URL, { studentNo: content }, processAttendanceViewData);
+    });
 
     // Check user clicks onto the attendance table
     $(attendanceScrollViewRoot).click(() => {
@@ -107,13 +171,6 @@ function __fixedUpdate()
     // Loop this function infinitely
     setTimeout(__fixedUpdate, UPDATE_TICK);
 }
-//
-// Sleep async function (Promise) then execute action
-//
-function delayPromise(millis)
-{
-    return new Promise(resolve => setTimeout(resolve, millis));
-}
 // ------------------------------------------------------
 /* #endregion BASE CODE */
 // ------------------------------------------------------
@@ -123,14 +180,10 @@ function delayPromise(millis)
 // ------------------------------------------------------
 
 function updateTimeLabel()
-{
-    var hourMinute = moment().format("h:mm");
-    var seconds = moment().format(":ss");
-    var meridiem = moment().format("A");
-
-    $(".hour-minute-label").text(hourMinute);
-    $(".seconds-label").text(seconds);
-    $(".day-night-label").text(meridiem);
+{ 
+    $(".hour-minute-label") .text( moment().format("h:mm") );   // hour:minute
+    $(".seconds-label")     .text( moment().format(":ss") );    // seconds with leading 0
+    $(".day-night-label")   .text( moment().format("A") );      // AM / PM
 }
 //
 // Get the name of day from Monday ~ Sunday including the 
@@ -153,92 +206,47 @@ function updateCalendarLabel()
 //
 function getAttachedCameras()
 {
+    enableCamRefreshButton(false);
+    showOpenCamButton(false);
+
     // Disable the select menu then clear its items
-    rebuildSelectMenu(true);
-    $(cameraSelect).empty();
-    attachedCameras = [];
+    cameraSelectMenu.ClearItems();
+    cameraSelectMenu.Disable();
 
     // Set the default option to "Select Camera"
-    addSelectOption('', 'Select Camera', true, true);
+    cameraSelectMenu.AddItem('', 'Select Camera', true, true);
 
-    Instascan.Camera.getCameras().then(function (cameras)
-    {
-        if (cameras.length > 0)
-        {
-            // List all cameras onto the dropdown list
-            $.each(cameras, (index, camera) => addCamera(camera));
+    qrcScanner.GetCamerasAsync( 
+        // On Success
+        (cameraDetails) =>
+        {   
+            // List all cameras onto the selectmenu dropdown list
+            $.each(cameraDetails, (index, camera) => {
+                cameraSelectMenu.AddItem(camera.deviceId, camera.deviceName);
+            });
 
             // Rebuild the camera selectmenu then add an event handler
             // when a camera was selected from the menu
-            rebuildSelectMenu(false, function (event, ui) 
-            {
-                var value = $(`${cameraSelect} option:selected`).attr('value');
-
+            cameraSelectMenu.OnSelect(function(event, ui){
+ 
                 // Only show the "Open" button when there is a valid camera selected
-                if (value !== undefined)
+                if (cameraSelectMenu.GetSelectedItem())
                     showOpenCamButton(true);
+
                 else
                     showOpenCamButton(false);
-            },
-            () => enableCamRefreshButton());
-        }
-        else
+            });
+
+            cameraSelectMenu.Enable();
+            cameraSelectMenu.Refresh();
+            enableCamRefreshButton();
+        },
+
+        // On Failed
+        (err) =>
         {
-            // console.error('No cameras found.');
-            showWarnDialog("No cameras were detected. Please connect a compatible camera and refresh the page.");
-        }
-    })
-    .catch(function (e)
-    {
-        showErrorDialog("An error has occurred while attempting to get connected cameras. Please contact the administrator.");
-        // console.error(e);
-    });
-}
-//
-// Append the camera to the select menu
-//
-function addCamera(camera)
-{
-    // Add camera to the select menu
-    addSelectOption(camera.id, camera.name);
-
-    // Cache the object reference of the camera
-    if (attachedCameras.hasOwnProperty(camera.id))
-        return;
-
-    attachedCameras[camera.id] = camera;
-}
-//
-// Add an <option> to a selectmenu
-//
-function addSelectOption(value, text, selected = false, disabled = false)
-{
-    $(cameraSelect).append($('<option>', {
-        value: value,
-        text: text,
-        selected: selected,
-        disabled: disabled
-    }));
-}
-//
-// Recreate the selectmenu. An optional callback function will
-// execute after the selectmenu was successfully rebuilt
-//
-function rebuildSelectMenu(disabled = false, onSelectItem = null, callback = null)
-{
-    $(cameraSelect).selectmenu({
-        disabled: disabled,
-        change: function (event, ui)
-        {
-            if (onSelectItem !== null)
-            {
-                onSelectItem(event, ui);
-            }
-        }
-    }).selectmenu('refresh');
-
-    if (callback !== null)
-        callback();
+            showWarnDialog(err);
+        }); 
 }
 //
 //
@@ -247,12 +255,12 @@ function showCameraSelectMenu(show)
 {
     if (!show)
     {
-        rebuildSelectMenu(true);
+        cameraSelectMenu.Disable();
         enableCamRefreshButton(false);
         return;
     }
 
-    rebuildSelectMenu(false);
+    cameraSelectMenu.Enable();
     enableCamRefreshButton();
 }
 //.......................................................
@@ -284,6 +292,16 @@ function showOpenCamButton(show)
 //
 //
 //
+function showScannerTips(tips)
+{
+    if (tips === undefined || tips === '')
+        return;
+
+    $(".scanner-tips").html(`<i class="fas fa-info-circle me-1"></i>${tips}`);
+}
+//
+//
+//
 function showStopCamButton(show)
 {
     if (!show)
@@ -305,117 +323,19 @@ function showStopCamButton(show)
 //.......................................................
 //
 //
-// Validate the selected camera to make sure that its object
-// instance exists in the memory.
-// 
-// Returns -1 on fail. Otherwise, returns the selected Id
-//
-function validateSelectedCamera()
-{
-    // Get the selected camera's Id from the selectmenu
-    var selectedCamId = $(`${cameraSelect} option:selected`).attr('value');
-
-    // Make sure that the camera object is cached before using
-    if (!attachedCameras.hasOwnProperty(selectedCamId))
-    {
-        return -1;
-    }
-
-    return selectedCamId;
-}
-//
 // Begin rendering the camera according to the camera id that was
 // selected from the selectmenu
 //
 function openSelectedCamera()
 {
-    showOpenCamButton(false);               // Hide the "Open" button
-    showCameraPermsWarn(false);             // Hide the permissions warning
-    showCameraSelectMenu(false);            // Disable the camera select menu
-
-    var validatedCamId = validateSelectedCamera();
-
-    if (validatedCamId == -1)
-    {
-        showWarnDialog("Can't start camera with unknown device id. Please select a different camera then try again.");
-
-        // Enable the camera select menu
-        showCameraSelectMenu(true);
-        return;
-    }
-
-    // Get a reference of the camera object from the array
-    var camera = attachedCameras[validatedCamId];
-
-    // Start the camera
-    qrScanner.start(camera).then(async result => 
-    { 
-        FLAG_IS_CAM_OPEN = true;
-
-        // Lock the attendance sheet from interactions
-        $(attendanceScrollView).toggleClass('pe-none', true);
-
-        // Show crosshairs
-        showCrosshairs(true);
-
-        // Wait x Seconds then show the "Stop" button
-        return delayPromise(ON_START_STOP_STREAM_DELAY).then(() => 
-        {
-            showStopCamButton(true);
-        });
-    })
-    .catch(err => 
-    {
-        showErrorDialog("Can't start the selected camera because of an error. Please contact the administrator.");
-        //alert(err.toString());
-    });
-}
-//
-// Stop the camera device from streaming
-//
-function closeCameraDevice() 
-{
-    if (!videoSurface.srcObject)
-        return;
-
-    videoSurface.srcObject.getTracks().forEach(track => track.stop());
-    videoSurface.srcObject = null;
-}
+    qrcScanner.Open(cameraSelectMenu.GetSelectedItem());
+} 
 //
 // Stop the scanner then close the camera device
 //
 function stopScanner()
 {
-    if (qrScanner === undefined || qrScanner === null)
-        return;
-
-    showStopCamButton(false);       // Hide the stop button
-    showCrosshairs(false);          // Hide crosshairs 
-    showCameraPermsWarn(true);      // then show camera permissions warn
-
-    qrScanner.stop().then(async result => 
-    { 
-        // Stop streaming
-        closeCameraDevice();
-
-        // Wait for 3secs then do action
-        return delayPromise(ON_START_STOP_STREAM_DELAY)
-            .then(() => 
-            {
-                FLAG_IS_CAM_OPEN = false;
-
-                // Unlock the attendance sheet from interactions
-                $(attendanceScrollView).toggleClass('pe-none', false);
-
-                showOpenCamButton(true);
-                showCameraSelectMenu(true); // Enable the camera select menu
-            });
-    })
-    .catch(err => 
-    {
-        showErrorDialog("Failed to stop the camera because of an error. Please contact the administrator.");
-        // alert(err.toString());
-    });
+    qrcScanner.Close();
 }
 //
 //
@@ -432,6 +352,14 @@ function showCameraPermsWarn(show)
     $(".webcam-overlay-perms-warn").toggleClass('d-none', !show);
 }
 //
+//
+//
+function showCameraPrepLoader(show, prepText)
+{
+    $('.webcam-overlay-spinner .prep-text').text( (prepText !== undefined || prepText !== '') ? prepText : '');
+    $('.webcam-overlay-spinner').toggleClass('d-none', !show);
+}
+//
 //.......................................................
 // END CAMERA STREAMING
 //.......................................................
@@ -445,52 +373,8 @@ function showCameraPermsWarn(show)
 /* #region ASYNCHRONOUS OPERATIONS  */
 // ------------------------------------------------------
 
-function onScanResult(content) 
-{ 
-    // Submit the scanned data to server
-    $.ajaxSetup({
-        headers: {
-            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-        },
-        error: function(xhr) 
-        {
-            showErrorDialog("A fatal error has occurred. If this message continues to appear, please contact the system administrator.");
-            console.log('Request Status: ' + xhr.status + ' Status Text: ' + xhr.statusText + ' ' + xhr.responseText);
-        }
-    });
-
-    $.ajax({
-        url: SCAN_POST_URL,
-        type: 'POST',
-        data: {
-            studentNo: content            
-        },
-        success: function (response) {  
-            // console.log(response);
-            processAttendanceViewData(response);
-        }
-    })
-}
-
 function processAttendanceViewData(viewData)
 {
-    /*
-    {
-  "msg": "success! The student id# is 00035",
-  "status": "timed_in",
-  "data": [
-    {
-      "firstname": "Bill",
-      "middlename": "Henry",
-      "lastname": "Gates",
-      "student_no": "00035",
-      "year": 2,
-      "photo": "bill.png",
-      "time_in": "2023-09-25 01:31:57"
-    }
-  ]
-}
-    */
     console.log(viewData);
 
     if (viewData)
@@ -530,19 +414,21 @@ function onSuccessfulTimein(data)
         return;
     }
 
-    timeIn = moment(timeIn).format('hh:mm A');      // Format the TimeIn string
+    timeIn = moment(timeIn).format('h:mm A');      // Format the TimeIn string
 
-    var rowData = 
-    `<tr class="row-index-${data.student_no}" data-student-no="${ data.student_no }">
-        <td class="td-name-details">
-            <div class="d-flex align-items-center w-100">
-                <img src="${data.photo}" alt=""
-                    style="width: 45px; height: 45px" class="rounded-circle" />
-                <div class="ms-3 w-100 text-truncate">
-                    <p class="fw-bold mb-1 text-truncate">${data.name}</p>
-                    <p class="text-muted mb-0 text-truncate">${data.student_no}</p>
-                </div>
+    var tr = $('<tr>')
+        .addClass(`row-index-${data.student_no}`)
+        .attr('data-student-no', data.student_no)
+        .attr('data-order', 0)
+        .append(`<td class="td-name-details">
+        <div class="d-flex align-items-center w-100">
+            <img src="${data.photo}" alt=""
+                style="width: 45px; height: 45px" class="rounded-circle" />
+            <div class="ms-3 w-100 text-truncate">
+                <p class="fw-bold mb-1 text-truncate">${data.name}</p>
+                <p class="text-muted mb-0 text-truncate">${data.student_no}</p>
             </div>
+        </div>
         </td>
         <td class="td-20">
             <span class="attendance-time-label time-in-label time-in">${timeIn}</span>
@@ -554,45 +440,35 @@ function onSuccessfulTimein(data)
         <td class="td-20"> 
             <span class="text-primary-color font-condensed-bold attendance-time-label duration duration-label"></span>
         </td>
-    </tr>`;
-
-    $('.attendance-sheet').prepend(rowData); 
-
-    // $('.total-records').text($('.attendance-sheet tr').length());
-    var lblTotalRecords = $('.total-records').text();
-
-    if (lblTotalRecords !== '' || lblTotalRecords !== undefined)
+        <td class="d-none row-timestamp">${moment().format("YYYY-MM-DD HH:mm:ss")}</td>`);
+ 
+    if (lastAddedRow) 
     {
-        var total = parseInt(lblTotalRecords);
-        total++;
-
-        $('.total-records').text(total);
+        console.log('removing from last row');
+        $(lastAddedRow).removeClass('highlight-row-timein').removeClass('highlight-row-timeout');
     }
 
-    $('.attendance-sheet tr').each(function(){
-        var studentNo = $(this).data('studentNo');
-        studentIdsDistinct.add(studentNo);
-    });
+    tr.addClass('highlight-row-timein');
 
-    $('.total-students').text(studentIdsDistinct.size);
+    // Chaining -> add the new row, render it then get a <tr> reference to it
+    var rowNode = dataTable.row.add(tr).draw().node();
+ 
+    // Make an entry of the new row node into the map with its key as student No
+    // and value as the new row node. We will use this to match /jump to this 
+    // row later whenever we perform an update (TimeOut)
+    dtRowClonesMap.set(data.student_no, rowNode);
+
+    // Keep track of the last added row
+    lastAddedRow = rowNode;
+
+    countTotalAttendance();
+    pushDistinctStudentId(data.student_no);
 }
 //
 //
 //
 function onSuccessfulTimeout(data)
 {
-    /*
-    {
-    "message": "Time out recorded",
-    "status": "0x0",
-    "data": {
-        "time_in": "2023-09-26 10:11:20",
-        "time_out": "2023-09-26 00:00:00",
-        "student_no": "00002"
-        }
-    }
-    */
-
     var timeIn = data.time_in;
     var timeOut = data.time_out;
     var studentNo = data.student_no;
@@ -620,33 +496,120 @@ function onSuccessfulTimeout(data)
 
     var duration = `${durationHrs}h ${durationMin}m`;
 
+    // If duration is less than a minute, we put Seconds instead
     if (durationHrs <= 0 && durationMin <= 0)
         duration = `${_duration.seconds()} secs`;
 
-    $(`.attendance-sheet .row-index-${studentNo}`).find('input.timeout-val');
+    // Find the cloneed row from the Map
+    var rowNode = dtRowClonesMap.get(studentNo);
 
-    var inputs = $(`.attendance-sheet tr.row-index-${studentNo} td`)
-        .find('input:hidden.timeout-val')
-        .filter(function ()
-        {
-            return this.value === "";
-        });
+    if (!rowNode)
+        return;
 
-    if (inputs.length != 0)
+    //console.log(`lastrow has class: ${ $(lastAddedRow.node()).hasClass('highlight-row-timeout') }`)
+ 
+    // Set the timeout text
+    $(rowNode).find('.time-out-label')
+        .text(moment(data.time_out).format('h:mm A'))
+        .addClass('time-out');
+
+    // Remove hilight color of time in label
+    $(rowNode).find('.time-in')
+        .addClass('\:text-gray-600')
+        .removeClass('time-in');
+    
+    // Calculate the duration
+    $(rowNode).find('.duration-label').text(duration);
+
+    // Update the timestamp to current timestamp in the cloned row
+    // so that this stays at the very top of datable, given that 
+    // default sorting is 'descending timestamp'
+    $(rowNode).find('.row-timestamp').text(moment().format('YYYY-MM-DD HH:mm:ss'));
+
+    // Remove the highlights of the previous rows
+    //$(lastAddedRow, rowNode).removeClass('highlight-row-timein highlight-row-timeout');
+    if (lastAddedRow) 
     {
-        // Create timeout label
-        $(`.attendance-sheet .row-index-${studentNo} .time-out-label`)
-            .text(moment(data.time_out).format('h:mm A'))
-            .addClass('time-out');
-
-        // Remove hilight color of time in label
-        $(`.attendance-sheet .row-index-${studentNo} .time-in`)
-            .addClass('\:text-gray-600')
-            .removeClass('time-in');
-
-        // Calculate the duration
-        $(`.attendance-sheet .row-index-${studentNo} .duration-label`).text(duration);
+        $(lastAddedRow).removeClass('highlight-row-timein highlight-row-timeout');
     }
+
+    // Remove the old row from the DataTable
+    // (the old clone is exactly the same as what is the currently displayed in table)
+    dataTable.row(dtRowClonesMap.get(studentNo)).remove();//.draw();
+    
+    // Then a highlight to the new row
+    $(rowNode).addClass('highlight-row-timeout');
+
+    // Add the updated row to the DataTable
+    var newRow = dataTable.row.add(rowNode).draw();
+
+    // Keep track of last added row
+    lastAddedRow = $(rowNode).get(0);
+
+    // Finally, Remove the old row from the map
+    dtRowClonesMap.delete(studentNo);
+}
+//
+//
+//
+function countTotalAttendance()
+{
+    $('.total-records').text(dataTable.rows().count());
+}
+//
+//
+//
+function countDistinctStudents()
+{
+    // Clear the student id set
+    if (studentIdSet.size > 0)
+        studentIdSet.clear();
+
+    // Loop through the datatable rows
+    dataTable.rows().every(function() 
+    {
+        var row = $(this.node());                   // get current <tr> row
+        var studentNo = row.data('student-no');     // find the student no. attribute
+        
+        if (!studentIdSet.has(studentNo))           // add the student no onto the set
+            studentIdSet.add(studentNo);
+    });
+
+    $('.total-students').text(studentIdSet.size);   // display total distinct students
+}
+//
+//
+//
+function pushDistinctStudentId(studentNo)
+{
+    if (studentIdSet.has(studentNo))               // add the student no onto the set
+        return;
+
+    studentIdSet.add(studentNo);
+
+    $('.total-students').text(studentIdSet.size);   // display total distinct students
+}
+//
+// We expect this function to be called only once on page load.
+// This function clones the TimedIn rows and adds an entry of
+// each of them in the Map
+//
+function cloneTimedInRows()
+{
+    dtRowClonesMap.clear();                         // Always clear the map
+ 
+    dataTable.rows().every(function() 
+    {
+        var row = $(this.node());                   // Get the current row DOM element
+
+        if (row.hasClass('timed-in-rows')) 
+        {   
+            const key = row.data('student-no');     // The student number will be the map's key
+
+            if (key)                                // Add an entry to the map if there is really a key
+                dtRowClonesMap.set(key, row);  
+        }
+    });
 }
 // ------------------------------------------------------
 /* #endregion ASYNCHRONOUS OPERATIONS */
