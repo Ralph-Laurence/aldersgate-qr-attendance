@@ -2,7 +2,7 @@
 use \App\Http\Extensions\RouteNames as route; 
  
 //
-// These are sidebar route marlers having routenames as keys. The values are initially
+// These are sidebar route markers having routenames as keys. The values are initially
 // empty and we will set atleast one of them as "Active" when each of the keys matched 
 // the current route. Thus, a link item will be active
 //
