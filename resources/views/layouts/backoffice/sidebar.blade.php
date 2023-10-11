@@ -26,6 +26,16 @@ foreach ($routeMarkers as $key => $value)
         $routeMarkers[$key] = 'active';
 }
 
+// Use this closure (anonymous function) in blade view
+// to allow this closure to access the $routeMarkers
+// variable which is outside its scope
+$setHref = function ($routeName) use (&$routeMarkers)
+{
+    if ($routeMarkers[$routeName] !== 'active')
+        return route($routeName);
+
+    return "javascript:;";
+}
 @endphp
 <div class="sidebar ms-3 pb-3 -border-radius-xl">
 
@@ -43,24 +53,24 @@ foreach ($routeMarkers as $key => $value)
     <div class="sidebar-links no-native-scroll" data-simplebar>
 
         <ul class="navbar-nav">
-            <li class="nav-item">
-                <a href="{{ route(route::DASHBOARD) }}" class="nav-link {{ $routeMarkers[route::DASHBOARD] }}">
+            <li class="nav-item {{ $routeMarkers[route::DASHBOARD] }}">
+                <a href="{{ $setHref(route::DASHBOARD) }}" class="nav-link">
                     <div class="icon me-2 shadow center-flex">
                         <i class="fa-solid fa-square-poll-vertical"></i>
                     </div>
                     <span class="nav-link-text ms-1">{{ "Dashboard" }}</span>
                 </a>
             </li>
-            <li class="nav-item">
-                <a href="{{ route(route::ATTENDANCE) }}" class="nav-link {{ $routeMarkers[route::ATTENDANCE] }}">
+            <li class="nav-item {{ $routeMarkers[route::ATTENDANCE] }}">
+                <a href="{{ $setHref(route::ATTENDANCE) }}" class="nav-link">
                     <div class="icon me-2 shadow center-flex">
                         <i class="fa-solid fa-calendar-check"></i>
                     </div>
                     <span class="nav-link-text ms-1">{{ "Attendance" }}</span>
                 </a>
             </li>
-            <li class="nav-item">
-                <a href="{{ route(route::STUDENTS) }}" class="nav-link {{ $routeMarkers[route::STUDENTS] }}">
+            <li class="nav-item {{ $routeMarkers[route::STUDENTS] }}">
+                <a href="{{ $setHref(route::STUDENTS) }}" class="nav-link">
                     <div class="icon me-2 shadow center-flex">
                         <i class="fa-solid fa-user-graduate"></i>
                     </div>

@@ -63,6 +63,7 @@ hr {
     box-shadow: rgba(0, 0, 0, 0.05) 0px 20px 27px 0px;
     display: flex;
     flex-flow: column;
+    user-select: none;
 }
 
 .sidebar .separator {
@@ -122,26 +123,30 @@ hr {
     color: #3A416F;
 }
 
-.sidebar-links .navbar-nav .nav-item .nav-link.active .icon {
+.sidebar-links .navbar-nav .nav-item.active .nav-link .icon {
     /* background-image: linear-gradient(310deg, var(--base-primary-color), var(--base-primary-dark)); */
     /* background-image: linear-gradient(310deg, var(--base-primary-dark), var(--base-primary-dark)); */
     background-image: linear-gradient(310deg, #24B574 , #24B574 );
     color: white;
 }
 
-.sidebar-links .navbar-nav .nav-item .nav-link.active .nav-link-text {
+.sidebar-links .navbar-nav .nav-item.active .nav-link .nav-link-text {
     font-weight: 600;
     color: var(--text-color-800);
 }
 
 /* BACKGROUND FADE */
-.sidebar-links .navbar-nav .nav-item:hover { 
+.sidebar-links .navbar-nav .nav-item:not(.active):hover { 
     background-image: linear-gradient(90deg, transparent, #DAEEE1, transparent); 
 }
 
+.sidebar-links .navbar-nav .nav-item:hover .icon {
+    background-image: linear-gradient(310deg, white , white );
+}
+
 /* INSET BORDER FADE */
-.sidebar-links .navbar-nav .nav-item:hover::before,
-.sidebar-links .navbar-nav .nav-item:hover::after
+.sidebar-links .navbar-nav .nav-item:not(.active):hover::before,
+.sidebar-links .navbar-nav .nav-item:not(.active):hover::after
 {
     content: "";
     position: absolute;
@@ -187,6 +192,10 @@ hr {
     border-radius: 1rem;
 }
 
+/* .main-content .card.table-card {
+    height: 480px;
+} */
+
 .main-content .card .card-header {
     padding: 1.5rem;
     border-bottom: none !important;
@@ -202,7 +211,20 @@ hr {
     padding: .75rem 1.5rem;
     text-transform: capitalize;
     letter-spacing: 0;
-    border-bottom: 1px solid #e9ecef;
     font-weight: 600 !important; 
-    color: var(--text-color-400) !important;
+    color: var(--text-color-400) !important; 
+} 
+
+.main-content .card .card-body .table th, 
+.main-content .card .card-body .table td {
+    border-bottom: 1px solid #e9ecef !important;
+    border-top: none !important;
+}
+
+.main-content .card .card-body .table .fixed-long-column {
+    width: 300px;
+}
+
+.footer {
+    color: var(--text-color-800);
 }

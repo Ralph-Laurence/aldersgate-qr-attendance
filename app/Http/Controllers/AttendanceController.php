@@ -16,10 +16,9 @@ class AttendanceController extends Controller
      */
     public function index() 
     {  
-        $from = Carbon::now()->startOfMonth();
-        $upto = Carbon::now()->endOfMonth();
-
-        return view('backoffice.attendance.index')->with('dataset', $this->getMonthly($from, $upto));
+        return view('backoffice.attendance.index')
+            ->with('monthlyAttendance', $this->getMonthly())
+            ->with('dailyAttendance', $this->getToday());
     }
     /**
      * Base query builder for getting attendance data without condition
@@ -38,22 +37,41 @@ class AttendanceController extends Controller
         return $queryBuilder;
     }
     
-    private function getMonthly($from, $to)
+    private function getToday()
     {
         $dataset = $this->getAttendanceBase()
-            ->whereBetween('a.created_at', [$from, $to] )
+            ->whereDate('a.created_at', Carbon::today())
             ->get();
 
-        for ($i = 0; $i < count($dataset); $i++)
+        $this->fixPhotoPath($dataset);
+
+        return $dataset;
+    }
+
+    private function getMonthly()
+    {
+        $from = Carbon::now()->startOfMonth();
+        $upto = Carbon::now()->endOfMonth();
+
+        $dataset = $this->getAttendanceBase()
+            ->whereBetween('a.created_at', [$from, $upto] )
+            ->get();
+
+        $this->fixPhotoPath($dataset);
+
+        return $dataset;
+    }
+
+    private function fixPhotoPath($dataset) : void
+    {
+        for ($i = 0; $i < count($dataset); $i++) 
         {
             $row = $dataset[$i];
 
             if ($row->photo)
                 $row->photo = Utils::getPhotoPath($row->photo);
-            
+
             $dataset[$i] = $row;
         }
-
-        return $dataset;
     }
 }
