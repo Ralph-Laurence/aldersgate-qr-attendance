@@ -25,7 +25,7 @@ class Utils
         self::STATUS_CODE_ACTION_FAILED                 => "Failed",
         self::STATUS_CODE_INVALID_QR_CONTENT            => "Invalid QR Code content",
         self::STATUS_CODE_CREATE_ATTENDANCE_FAILED      => "Failed to create attendance record",
-        self::STATUS_CODE_UNRECOGNIZED_STUDENT_NO       => "Unrecognized Student Number",
+        self::STATUS_CODE_UNRECOGNIZED_STUDENT_NO       => "The QR code isn't recognized. Please check your QR code or contact the system administrator.",
         self::STATUS_CODE_TIMED_OUT_FAILED              => "Failed to record Time Out",
         self::STATUS_CODE_TIMED_IN_FAILED               => "Failed to record Time In",
     ];

@@ -56,6 +56,18 @@
     background-color: #CCE2FD !important;
 }
 
+.i-drop-down button.dropdown-toggle
+{
+    background-color: #E2E2E2 !important;
+}
+
+.i-drop-down .dropdown-menu li:hover a,
+.i-drop-down .dropdown-menu li:hover button,
+.i-drop-down-no-bg .dropdown-menu li:hover a
+{
+    color: var(--base-primary-color) !important;
+}
+
 @keyframes round-spinner-rotate {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }

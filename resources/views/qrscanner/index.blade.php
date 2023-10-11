@@ -188,7 +188,7 @@
                                             @if (!empty($data->time_out))
                                                 {{--We expect this row as TimedOut, so we no longer need to highlight this and/or
                                                     do some procesing like moving on topmost table --}}
-                                                <tr>
+                                                <tr data-student-no="{{ $data->student_no }}">
                                             @else
                                                 {{--All rows with no TimeOut values yet, must have these classes and attributes.
                                                     These rows will be given a class called 'timed-in-rows' which will be used

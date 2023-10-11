@@ -1,0 +1,208 @@
+:root 
+{
+    --text-color-800: rgb(52, 71, 103); /* #344767 */
+    --text-color-700: rgb(52, 71, 103, 0.9);
+    --text-color-500: #67748E;
+    --text-color-400: #8392ab;
+}
+
+@font-face {
+    font-family: 'Base Font';
+    src: url('fonts/backoffice/OpenSans.ttf');
+} 
+
+@font-face {
+    font-family: 'Accent Font';
+    src: url('fonts/backoffice/Inter.ttf');
+}
+
+body {
+    /* background-color: #EDF1F5; */
+    background-color: #F8F9FA;
+    font-family: 'Base Font';
+    color: var(--text-color-800);
+}
+
+.\-border-radius-xl {
+    border-radius: 1rem;
+}
+
+hr {
+    height: 1px;
+    min-height: 1px;
+    border-top: none !important;
+    margin: 1rem 0px;
+}
+
+.no-native-scroll::-webkit-scrollbar {
+    width: 0px;
+    background: transparent;
+    /* make scrollbar transparent */
+}
+
+.content-wrapper 
+{
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    height: 100%;
+} 
+/*
+=======================
+   SIDEBAR CONTAINER
+=======================
+*/
+.sidebar 
+{
+    width: 250px;
+    height: 100%;
+    max-width: 250px;
+    min-width: 250px;
+    overflow: hidden;
+    background-color: white; 
+    box-shadow: rgba(0, 0, 0, 0.05) 0px 20px 27px 0px;
+    display: flex;
+    flex-flow: column;
+}
+
+.sidebar .separator {
+    background-image: linear-gradient(90deg, transparent, rgba(0, 0, 0, 0.4), transparent);
+}
+/*
+==== SIDEBAR HEADER ====
+*/
+.sidebar-header 
+{
+    height: 4.875rem;
+    flex: 0 1 auto;
+}
+
+.sidebar-brand {
+    padding: 1.5rem 2rem;
+}
+
+.sidebar-brand .brand-text 
+{
+    font-size: 14px;
+    font-weight: 600 !important;
+    color: var(--text-color-700);
+}
+/*
+==== SIDEBAR LINKS ====
+*/
+.sidebar-links 
+{ 
+    overflow-x: hidden;
+    overflow-y: auto;
+    height: 100%;
+}
+ 
+.sidebar-links .navbar-nav .nav-item .nav-link 
+{ 
+    display: flex;
+    align-items: center;
+    white-space-collapse: collapse;
+    text-wrap: nowrap;
+    padding-top: 0.675rem;
+    padding-bottom: 0.675rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    margin: 0px 1rem;
+    font-weight: 400;
+    color: var(--text-color-500);
+    font-size: 0.875rem;
+}
+
+.sidebar-links .navbar-nav .nav-item .nav-link .icon {
+    background-image: linear-gradient(310deg, rgb(233, 236, 239), rgb(233, 236, 239));
+    width: 32px;
+    height: 32px;
+    padding: 10px;
+    border-radius: 0.5rem;
+    color: #3A416F;
+}
+
+.sidebar-links .navbar-nav .nav-item .nav-link.active .icon {
+    /* background-image: linear-gradient(310deg, var(--base-primary-color), var(--base-primary-dark)); */
+    /* background-image: linear-gradient(310deg, var(--base-primary-dark), var(--base-primary-dark)); */
+    background-image: linear-gradient(310deg, #24B574 , #24B574 );
+    color: white;
+}
+
+.sidebar-links .navbar-nav .nav-item .nav-link.active .nav-link-text {
+    font-weight: 600;
+    color: var(--text-color-800);
+}
+
+/* BACKGROUND FADE */
+.sidebar-links .navbar-nav .nav-item:hover { 
+    background-image: linear-gradient(90deg, transparent, #DAEEE1, transparent); 
+}
+
+/* INSET BORDER FADE */
+.sidebar-links .navbar-nav .nav-item:hover::before,
+.sidebar-links .navbar-nav .nav-item:hover::after
+{
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background-image: linear-gradient(90deg, transparent, #CCEAD2, transparent);
+}
+
+.sidebar-links .navbar-nav .nav-item {
+    margin-top: 0.125rem;
+}
+
+.nav-link-text {
+    letter-spacing: -0.025rem;
+}
+/*
+=======================
+     MAIN CONTENT
+=======================
+*/
+.main-content
+{ 
+    height: 100%;
+    flex: 1 1 auto;
+    max-height: 100vh !important; 
+    overflow-x: hidden;
+}
+
+.main-content .navbar .breadcrumb .breadcrumb-item {
+    font-size: 14px;
+    color: var(--text-color-800) !important;
+    letter-spacing: -0.025rem;
+}
+
+.main-content .navbar .page-title-segment {
+    font-weight: 700 !important;
+    line-height: 1.625;
+}
+
+.main-content .card {
+    box-shadow: 0 20px 27px 0 rgba(0,0,0,.05) !important;
+    border-radius: 1rem;
+}
+
+.main-content .card .card-header {
+    padding: 1.5rem;
+    border-bottom: none !important;
+}
+
+.main-content .card .card-header .card-title {
+    font-weight: 600;
+    font-size: 1rem;
+    line-height: 1.625;
+}
+  
+.main-content .card .card-body .table thead th {
+    padding: .75rem 1.5rem;
+    text-transform: capitalize;
+    letter-spacing: 0;
+    border-bottom: 1px solid #e9ecef;
+    font-weight: 600 !important; 
+    color: var(--text-color-400) !important;
+}

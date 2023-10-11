@@ -74,7 +74,7 @@ class QRCodeScanner
         } 
         catch (error) 
         {
-            onFail("An error has occurred while attempting to get connected cameras. Please contact the administrator.");
+            onFail("An error has occurred while attempting to detect connected cameras. Please ensure that you have allowed your browser to access the camera.<br><br>If you need assistance, please contact the administrator.");
         }
     }
 

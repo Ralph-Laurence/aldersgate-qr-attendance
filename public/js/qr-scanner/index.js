@@ -32,8 +32,12 @@ const ON_START_STOP_STREAM_DELAY = 3000;
 
 const DEFAULT_SCANNER_TIPS = `Please select a camera below. Click on \"<i class="fas fa-rotate px-1"></i>\" to refresh if it\'s not detected.`;
 const AJAX_GENERAL_ERROR = "A fatal error has occurred. If this message continues to appear, please contact the system administrator.";
+const SCANNER_TIP_CLICK_OPEN = "Click on \"Open\" to start the scanner.";
+const SCANNER_TIP_PRESENT_QR = "Present your QR Code towards the scanner.";
+const WARN_INTERACT_TABLE = "Please stop the camera to interact with this table.";
 
 var FLAG_IS_CAM_OPEN = false;
+var FLAG_PAUSE_SCAN = false;
 
 $(document).ready(function ()
 {
@@ -83,7 +87,11 @@ function __onAwake()
 // Handle events here
 function __bindEvents() 
 {
-    $(refreshCamListButton).on('click', () => getAttachedCameras());
+    $(refreshCamListButton).on('click', () => 
+    {    
+        showScannerTips(DEFAULT_SCANNER_TIPS);
+        getAttachedCameras();
+    });
 
     $(openCameraBtn).on('click', () => openSelectedCamera());
     $(stopCameraBtn).on('click', () => stopScanner());
@@ -103,9 +111,10 @@ function __bindEvents()
     {
         FLAG_IS_CAM_OPEN = true;
 
-        showCameraPrepLoader(false);                                    // Hide the loading spinner
-        $(attendanceScrollView).toggleClass('pe-none', true);           // Lock the attendance sheet from interactions then
-        showCrosshairs(true);                                           // Show crosshairs
+        showCameraPrepLoader(false);                                // Hide the loading spinner
+        $(attendanceScrollView).toggleClass('pe-none', true);       // Lock the attendance sheet from interactions then
+        showCrosshairs(true);                                       // Show crosshairs
+        showScannerTips(SCANNER_TIP_PRESENT_QR);                    // Show some tip / guides
 
         setTimeout(() => {
             
@@ -134,11 +143,16 @@ function __bindEvents()
             showCameraSelectMenu(true);
             showCameraPrepLoader(false);        // Hide the loading spinner
             showCameraPermsWarn(true);          // then show camera permissions warn
+            showScannerTips(SCANNER_TIP_CLICK_OPEN);
+
         }, 3000);
     });
 
     qrcScanner.OnScanResult( (content) => 
     {
+        if (FLAG_PAUSE_SCAN)
+            return;
+
         var metaCSRF = $('meta[name="csrf-token"]').attr('content');
 
         $.ajaxSetup({
@@ -154,7 +168,7 @@ function __bindEvents()
     $(attendanceScrollViewRoot).click(() => {
 
         if (FLAG_IS_CAM_OPEN !== false)
-            showWarnDialog("Please stop the camera to interact with this table.");
+            showWarnDialog(WARN_INTERACT_TABLE);
     });
 }
 //
@@ -227,15 +241,7 @@ function getAttachedCameras()
 
             // Rebuild the camera selectmenu then add an event handler
             // when a camera was selected from the menu
-            cameraSelectMenu.OnSelect(function(event, ui){
- 
-                // Only show the "Open" button when there is a valid camera selected
-                if (cameraSelectMenu.GetSelectedItem())
-                    showOpenCamButton(true);
-
-                else
-                    showOpenCamButton(false);
-            });
+            cameraSelectMenu.OnSelect(OnCameraItemSelected);
 
             cameraSelectMenu.Enable();
             cameraSelectMenu.Refresh();
@@ -263,6 +269,22 @@ function showCameraSelectMenu(show)
     cameraSelectMenu.Enable();
     enableCamRefreshButton();
 }
+//
+//
+//
+function OnCameraItemSelected(event, ui)
+{
+    // Only show the "Open" button when there is a valid camera selected
+    if (cameraSelectMenu.GetSelectedItem())
+    {
+        showScannerTips(SCANNER_TIP_CLICK_OPEN);
+        showOpenCamButton(true);
+        return;
+    }
+
+    showScannerTips(DEFAULT_SCANNER_TIPS);
+    showOpenCamButton(false);
+} 
 //.......................................................
 // END: CAMERA SELECTION
 //.......................................................
@@ -374,14 +396,13 @@ function showCameraPrepLoader(show, prepText)
 // ------------------------------------------------------
 
 function processAttendanceViewData(viewData)
-{
-    console.log(viewData);
-
+{ 
     if (viewData)
     {
         var response = JSON.parse(viewData);
         var responseSuccessfulTimeIn = '0x5';
         var responseSuccessfulTimeOut = '0x6';
+        const responseUnrecognizedSN = '0x4';
 
         switch (response.status)
         {
@@ -397,6 +418,15 @@ function processAttendanceViewData(viewData)
                 if (response.data)
                     onSuccessfulTimeout(response.data);
 
+                break;
+            
+            case responseUnrecognizedSN:
+                
+                FLAG_PAUSE_SCAN = true;
+                showWarnDialog(response.message, 'Warning', 'OK', undefined, () => {
+                    FLAG_PAUSE_SCAN = false;
+                });
+                //showWarnDialog(message, title, okButton, cancelButton, onOK, onCancel) 
                 break;
         }
     }
@@ -505,8 +535,6 @@ function onSuccessfulTimeout(data)
 
     if (!rowNode)
         return;
-
-    //console.log(`lastrow has class: ${ $(lastAddedRow.node()).hasClass('highlight-row-timeout') }`)
  
     // Set the timeout text
     $(rowNode).find('.time-out-label')
@@ -527,7 +555,6 @@ function onSuccessfulTimeout(data)
     $(rowNode).find('.row-timestamp').text(moment().format('YYYY-MM-DD HH:mm:ss'));
 
     // Remove the highlights of the previous rows
-    //$(lastAddedRow, rowNode).removeClass('highlight-row-timein highlight-row-timeout');
     if (lastAddedRow) 
     {
         $(lastAddedRow).removeClass('highlight-row-timein highlight-row-timeout');
@@ -541,7 +568,7 @@ function onSuccessfulTimeout(data)
     $(rowNode).addClass('highlight-row-timeout');
 
     // Add the updated row to the DataTable
-    var newRow = dataTable.row.add(rowNode).draw();
+    dataTable.row.add(rowNode).draw();
 
     // Keep track of last added row
     lastAddedRow = $(rowNode).get(0);

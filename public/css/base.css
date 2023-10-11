@@ -22,7 +22,7 @@
     --warning-color-200: #FFDB90;
     --warning-color-600: #FEB72B;
     --warning-text-color: #382809;
-
+  
     --base-font: "Nunito";
     --base-font-condensed: "Roboto Condensed";
     --base-font-condensed-bold: "Roboto Condensed Bold";
@@ -34,16 +34,21 @@
     color: var(--selection-text-color);
 }
  
+*,
+:after,
+:before { 
+    box-sizing: border-box;
+}
+
 html, body {
     background-color: var(--base-bg-color);
     color: var(--base-dark-color);
-    font-family: var(--base-font), sans-serif;
+    font-family: var(--base-font), system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial, Noto Sans, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji;
     width: 100%;
     height: 100%;
     margin: 0;
     overflow: hidden;
 }
-
 
 @font-face {
     font-family: "Nunito";
@@ -92,10 +97,32 @@ html, body {
     background-color: var(--control-color) !important;
 }
 
+.bg-mat-orange-300 {
+    background-color: var(--mat-orange-300);
+}
+
+.bg-mat-green-300 {
+    background-color: var(--mat-green-300);
+}
+
 .text-base-primary-dark {
     color: var(--base-primary-dark);
 }
 
+.text-base-primary {
+    color: var(--base-primary-color);
+}
+
 .z-100 {
     z-index: 100;
+}
+
+.text-sm 
+{
+    line-height: 1.5 !important;
+    font-size: .875rem !important;
+}
+
+.text-xs {
+    font-size: .75rem !important;
 }
