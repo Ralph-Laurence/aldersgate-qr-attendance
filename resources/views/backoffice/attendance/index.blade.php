@@ -5,7 +5,7 @@
 @endsection
 
 @section('content')
-    <div class="content-wrapper p-3">
+    <div class="content-wrapper py-3">
  
         @include('layouts.backoffice.sidebar')
 
@@ -28,10 +28,10 @@
                 </div>
             </div> --}}
 
-            <div class="container-fluid py-4">
+            <div class="container-fluid p-4">
                 <div class="row">
-                    <div class="col ps-3 pe-2">
-                        <div class="card ms-2 mb-4">
+                    <div class="col">
+                        <div class="card mb-4">
                             <div class="card-header pb-0">
                                 <h6 class="card-title">{{ "Daily Attendance" }}</h6>
                             </div>

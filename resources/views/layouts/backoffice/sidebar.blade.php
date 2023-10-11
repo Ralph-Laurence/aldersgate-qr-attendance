@@ -27,7 +27,7 @@ foreach ($routeMarkers as $key => $value)
 }
 
 @endphp
-<div class="sidebar pb-3 -border-radius-xl">
+<div class="sidebar ms-3 pb-3 -border-radius-xl">
 
     {{-- SIDEBAR BRAND HEADER --}}
     <div class="sidebar-header">
