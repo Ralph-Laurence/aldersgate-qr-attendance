@@ -27,6 +27,9 @@
     --base-font-condensed: "Roboto Condensed";
     --base-font-condensed-bold: "Roboto Condensed Bold";
     --brand-font: "Scandia";
+
+    --small-text: 0.875rem;
+    --xsmall-text: 0.75rem;
 }
 
 ::selection {
@@ -120,9 +123,13 @@ html, body {
 .text-sm 
 {
     line-height: 1.5 !important;
-    font-size: .875rem !important;
+    font-size: var(--small-text) !important;
 }
 
 .text-xs {
-    font-size: .75rem !important;
+    font-size: var(--xsmall-text) !important;
+}
+
+.fw-600 {
+    font-weight: 600 !important;
 }

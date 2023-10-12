@@ -1,5 +1,7 @@
 @php
     use App\Http\Extensions\Utils;
+
+    $totalMonthlyRecords = (!empty($totalMonthly)) ? $totalMonthly : 0;
 @endphp
 
 @extends('layouts.backoffice.master')
@@ -20,53 +22,315 @@
             <div class="container-fluid p-4">
                
                 <div class="row">
+                    <div class="col-xl-3 mb-4">
+                        <div class="card attendance-indicators">
+                            <div class="card-body p-3">
+                                <div class="row">
+                                    <div class="col-8">
+                                        <div class="numbers">
+                                            <p class="text-sm mb-0 text-capitalize fw-600 opacity-75">{{ "Daily Attendance" }}</p>
+                                            <h5 class="font-weight-bolder mb-0">
+                                                {{ $indicatorData['totalRecordsDaily'] }}
+                                                <span class="text-success text-sm font-weight-bolder">{{--+55%--}} {{ "-/-" }}</span>
+                                            </h5>
+                                        </div>
+                                    </div>
+                                    <div class="col-4 text-end">
+                                        <div class="icon icon-shape shadow">
+                                            <i class="fas fa-calendar-days text-lg" aria-hidden="true"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-3 mb-4">
+                        <div class="card attendance-indicators">
+                            <div class="card-body p-3">
+                                <div class="row">
+                                    <div class="col-8">
+                                        <div class="numbers">
+                                            <p class="text-sm mb-0 text-capitalize fw-600 opacity-75">{{ "Today's Students" }}</p>
+                                            <h5 class="font-weight-bolder mb-0">
+                                                {{ $indicatorData['totalStudentsDaily'] }}
+                                                <span class="text-success text-sm font-weight-bolder">{{ "-/-" }}</span>
+                                            </h5>
+                                        </div>
+                                    </div>
+                                    <div class="col-4 text-end">
+                                        <div class="icon icon-shape shadow">
+                                            <i class="fas fa-solid fa-user-graduate text-lg" aria-hidden="true"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-3 mb-4">
+                        <div class="card attendance-indicators">
+                            <div class="card-body p-3">
+                                <div class="row">
+                                    <div class="col-8">
+                                        <div class="numbers">
+                                            <p class="text-sm mb-0 text-capitalize fw-600 opacity-75">{{ "Currently Timed In" }}</p>
+                                            <h5 class="font-weight-bolder mb-0">
+                                                {{ $indicatorData['totalTimedInToday'] }}
+                                                <span class="text-success text-sm font-weight-bolder">{{ "-/-" }}</span>
+                                            </h5>
+                                        </div>
+                                    </div>
+                                    <div class="col-4 text-end">
+                                        <div class="icon icon-shape shadow">
+                                            <i class="fa-solid fa-clock text-lg" aria-hidden="true"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-3 mb-4">
+                        <div class="card attendance-indicators">
+                            <div class="card-body p-3">
+                                <div class="row">
+                                    <div class="col-8">
+                                        <div class="numbers">
+                                            <p class="text-sm mb-0 text-capitalize fw-600 opacity-75">{{ "Frequent Course" }}</p>
+                                            <h5 class="font-weight-bolder mb-0 course-indicator">
+
+                                                @if (!$indicatorData['frequentCourses']->isEmpty())
+                                                    {{ $indicatorData['frequentCourses']->keys()->first() }}
+                                                    <span class="text-success text-sm font-weight-bolder">{{ $indicatorData['frequentCourses']->values()->first() }}</span>
+                                                @else
+                                                    {{ "None" }}
+                                                    <span class="text-success text-sm font-weight-bolder">{{ '0' }}</span>
+                                                @endif 
+
+                                            </h5>
+                                        </div>
+                                    </div>
+                                    <div class="col-4 text-end">
+                                        <div class="icon icon-shape shadow">
+                                            <i class="fas fa-graduation-cap text-lg" aria-hidden="true"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mb-5">
                     <div class="col">
                         <div class="card mb-4 table-card">
                             <div class="card-header pb-0">
                                 <h6 class="card-title">{{ "Daily Attendance" }}</h6>
                             </div>
                             <div class="card-body px-0 pt-0 pb-2">
-                                <table class="table table-sm table-fixed table-striped align-middle bg-white daily-attendance">
+                                <table class="table table-sm table-fixed table-striped table-hover align-middle bg-white daily-attendance">
                                     <thead>
                                         <tr>
-                                            <th data-orderable="false" class="text-xs text-uppercase fixed-long-column">{{ "Student" }}</th>
-                                            <th data-orderable="false" class="text-xs text-uppercase text-center">{{ "Course" }}</th>
-                                            <th data-orderable="false" class="text-xs text-uppercase text-center">{{ "Time In" }}</th>
-                                            <th data-orderable="false" class="text-xs text-uppercase text-center">{{ "Time Out" }}</th>
-                                            <th data-orderable="false" class="text-xs text-uppercase text-center">{{ "Status" }}</th>
-                                            <th data-orderable="false" class="text-xs text-uppercase text-center">{{ "Action" }}</th>
+                                            <th data-orderable="false" class="fixed-long-column">{{ "Student" }}</th>
+                                            <th data-orderable="false" class="text-center">{{ "Course" }}</th>
+                                            <th data-orderable="false" class="text-center">{{ "Time In" }}</th>
+                                            <th data-orderable="false" class="text-center">{{ "Time Out" }}</th>
+                                            <th data-orderable="false" class="text-center">{{ "Status" }}</th>
+                                            <th data-orderable="false" class="text-center">{{ "Action" }}</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @if (!empty($dailyAttendance))
+                                        @if (!empty($monthlyAttendance))
                                              
-                                            @foreach ($dailyAttendance as $row)
+                                            @foreach ($monthlyAttendance as $row)
 
-                                                @php
-                                                     
-                                                    $names = [ $row->lastname . ",", $row->firstname, $row->middlename];
-                                                    $name = implode(" ", $names);
-                                                    $timeFormat = 'g:i A';
-                                                    $timeIn = Utils::formatTimestamp($row->time_in, $timeFormat);
-                                                    $timeOut = !empty($row->time_out) ? Utils::formatTimestamp($row->time_out, $timeFormat) : '';
+                                                @php 
+                                                    if ($row->attendance_date != Utils::dateToday())
+                                                        continue;
                                                 @endphp
                                                 <tr>
-                                                    <td class="fixed-long-column ps-4">
-                                                        <div class="d-flex px-2 py-1">
+                                                    <td class="fixed-long-column ps-2">
+                                                        <div class="d-flex align-items-center px-2 py-1">
                                                             <div class="avatar-profile me-3 rounded-3 overflow-hidden">
                                                                 <img src="{{ $row->photo }}" width="36" height="36">
                                                             </div>
                                                             <div class="d-flex flex-column justify-content-center">
-                                                                <h6 class="mb-0 text-sm">{{ $name }}</h6>
+                                                                <h6 class="mb-0 text-sm">{{ $row->name }}</h6>
                                                                 <p class="mb-0 text-secondary text-xs">{{ $row->student_no }}</p>
                                                             </div>
                                                         </div> 
                                                     </td>
-                                                    <td class="text-center">{{ $row->course }}</td>
-                                                    <td class="text-center">{{ $timeIn }}</td>
-                                                    <td class="text-center">{{ $timeOut }}</td>
-                                                    <td class="text-center">{{ '' }}</td>
-                                                    <td class="text-center">{{ '' }}</td>
+                                                    <td class="text-center opacity-75">{{ $row->course }}</td>
+                                                    <td class="text-center opacity-75">{{ $row->time_in }}</td>
+                                                    <td class="text-center opacity-75">{{ $row->time_out }}</td>
+                                                    <td class="text-center">
+                                                        <span class="badge time-status {{ $row->statusBadge }}">{{ $row->status }}</span>
+                                                    </td>
+                                                    <td class="text-center">
+                                                        <div class="center-flex gap-2 record-actions">
+                                                            <button class="btn btn-sm px-2 btn-details">
+                                                                <i class="fa-solid fa-circle-info"></i>
+                                                            </button>
+                                                            <button class="btn btn-sm px-2 btn-edit">
+                                                                <i class="fa-solid fa-pen"></i>
+                                                            </button>
+                                                            <button class="btn btn-sm px-2 btn-delete">
+                                                                <i class="fa-solid fa-trash"></i>
+                                                            </button>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            @endforeach
+
+                                        @endif
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-xl-3 mb-4">
+                        <div class="card attendance-indicators">
+                            <div class="card-body p-3">
+                                <div class="row">
+                                    <div class="col-8">
+                                        <div class="numbers">
+                                            <p class="text-sm mb-0 text-capitalize fw-600 opacity-75">{{ "This Month" }}</p>
+                                            <h5 class="font-weight-bolder mb-0">
+                                                {{ $indicatorData['totalRecordsMonthly'] }}
+                                                <span class="text-success text-sm font-weight-bolder">+55%</span>
+                                            </h5>
+                                        </div>
+                                    </div>
+                                    <div class="col-4 text-end">
+                                        <div class="icon icon-shape shadow bg-gradient-warning">
+                                            <i class="fas fa-calendar text-lg" aria-hidden="true"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-3 mb-4">
+                        <div class="card attendance-indicators">
+                            <div class="card-body p-3">
+                                <div class="row">
+                                    <div class="col-8">
+                                        <div class="numbers">
+                                            <p class="text-sm mb-0 text-capitalize fw-600 opacity-75">{{ "Total Students" }}</p>
+                                            <h5 class="font-weight-bolder mb-0">
+                                                {{ $indicatorData['totalStudentsMonthly'] }}
+                                                <span class="text-success text-sm font-weight-bolder">+55%</span>
+                                            </h5>
+                                        </div>
+                                    </div>
+                                    <div class="col-4 text-end">
+                                        <div class="icon icon-shape shadow bg-gradient-warning">
+                                            <i class="fas fa-solid fa-user-graduate text-lg" aria-hidden="true"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div> 
+                    <div class="col-xl-3 mb-4">
+                        <div class="card attendance-indicators">
+                            <div class="card-body p-3">
+                                <div class="row">
+                                    <div class="col-8">
+                                        <div class="numbers">
+                                            <p class="text-sm mb-0 text-capitalize fw-600 opacity-75">{{ "Frequent Course" }}</p>
+                                            <h5 class="font-weight-bolder mb-0">
+                                                BSIT
+                                                <span class="text-success text-sm font-weight-bolder">+55%</span>
+                                            </h5>
+                                        </div>
+                                    </div>
+                                    <div class="col-4 text-end">
+                                        <div class="icon icon-shape shadow bg-gradient-warning">
+                                            <i class="fa-solid fa-person-arrow-up-from-line text-lg" aria-hidden="true"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-3 mb-4">
+                        <div class="card attendance-indicators">
+                            <div class="card-body p-3">
+                                <div class="row">
+                                    <div class="col-8">
+                                        <div class="numbers">
+                                            <p class="text-sm mb-0 text-capitalize fw-600 opacity-75">{{ "Least Course" }}</p>
+                                            <h5 class="font-weight-bolder mb-0">
+                                                BSIT
+                                                <span class="text-success text-sm font-weight-bolder">+55%</span>
+                                            </h5>
+                                        </div>
+                                    </div>
+                                    <div class="col-4 text-end">
+                                        <div class="icon icon-shape shadow bg-gradient-warning">
+                                            <i class="fa-solid fa-person-arrow-down-to-line text-lg" aria-hidden="true"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col">
+                        <div class="card mb-4 table-card">
+                            <div class="card-header pb-0">
+                                <h6 class="card-title">{{ "Monthly Attendance" }}</h6>
+                            </div>
+                            <div class="card-body px-0 pt-0 pb-2">
+                                <table class="table table-sm table-fixed table-striped table-hover align-middle bg-white daily-attendance">
+                                    <thead>
+                                        <tr>
+                                            <th data-orderable="false" class="fixed-long-column">{{ "Student" }}</th>
+                                            <th data-orderable="false" class="text-center">{{ "Course" }}</th>
+                                            <th data-orderable="false" class="text-center">{{ "Time In" }}</th>
+                                            <th data-orderable="false" class="text-center">{{ "Time Out" }}</th>
+                                            <th data-orderable="false" class="text-center">{{ "Date" }}</th>
+                                            <th data-orderable="false" class="text-center">{{ "Action" }}</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @if (!empty($monthlyAttendance))
+                                             
+                                            @foreach ($monthlyAttendance as $row)
+ 
+                                                <tr>
+                                                    <td class="fixed-long-column ps-2">
+                                                        <div class="d-flex align-items-center px-2 py-1">
+                                                            <div class="avatar-profile me-3 rounded-3 overflow-hidden">
+                                                                <img src="{{ $row->photo }}" width="36" height="36">
+                                                            </div>
+                                                            <div class="d-flex flex-column justify-content-center">
+                                                                <h6 class="mb-0 text-sm">{{ $row->name }}</h6>
+                                                                <p class="mb-0 text-secondary text-xs">{{ $row->student_no }}</p>
+                                                            </div>
+                                                        </div> 
+                                                    </td>
+                                                    <td class="text-center opacity-75">{{ $row->course }}</td>
+                                                    <td class="text-center opacity-75">{{ $row->time_in }}</td>
+                                                    <td class="text-center opacity-75">{{ $row->time_out }}</td>
+                                                    <td class="text-center opacity-75">{{ Utils::dateToString($row->attendance_date, 'M. d, Y') }}</td>
+                                                    <td class="text-center">
+                                                        <div class="center-flex gap-2 record-actions">
+                                                            <button class="btn btn-sm px-2 btn-details">
+                                                                <i class="fa-solid fa-circle-info"></i>
+                                                            </button>
+                                                            <button class="btn btn-sm px-2 btn-edit">
+                                                                <i class="fa-solid fa-pen"></i>
+                                                            </button>
+                                                            <button class="btn btn-sm px-2 btn-delete">
+                                                                <i class="fa-solid fa-trash"></i>
+                                                            </button>
+                                                        </div>
+                                                    </td>
                                                 </tr>
                                             @endforeach
 

@@ -4,6 +4,10 @@
     --text-color-700: rgb(52, 71, 103, 0.9);
     --text-color-500: #67748E;
     --text-color-400: #8392ab;
+
+    --gradient-primary: linear-gradient(310deg, #215AFF, #21CBFD);
+    --gradient-warning: linear-gradient(310deg,#f53939,#fbcf33);
+    --gradient-danger:  linear-gradient(310deg,#ea0606,#ff667c);
 }
 
 @font-face {
@@ -126,7 +130,7 @@ hr {
 .sidebar-links .navbar-nav .nav-item.active .nav-link .icon {
     /* background-image: linear-gradient(310deg, var(--base-primary-color), var(--base-primary-dark)); */
     /* background-image: linear-gradient(310deg, var(--base-primary-dark), var(--base-primary-dark)); */
-    background-image: linear-gradient(310deg, #24B574 , #24B574 );
+    background-image: linear-gradient(310deg, #24B574 , var(--base-primary-color) );
     color: white;
 }
 
@@ -192,33 +196,36 @@ hr {
     border-radius: 1rem;
 }
 
-/* .main-content .card.table-card {
-    height: 480px;
-} */
-
 .main-content .card .card-header {
     padding: 1.5rem;
     border-bottom: none !important;
 }
 
-.main-content .card .card-header .card-title {
+.main-content .card .card-header .card-title 
+{
     font-weight: 600;
     font-size: 1rem;
     line-height: 1.625;
 }
   
-.main-content .card .card-body .table thead th {
+.main-content .card .card-body .table thead th 
+{
     padding: .75rem 1.5rem;
-    text-transform: capitalize;
+    text-transform: uppercase;
     letter-spacing: 0;
     font-weight: 600 !important; 
     color: var(--text-color-400) !important; 
+    user-select: none;
+    font-size: var(--xsmall-text) !important;
 } 
 
 .main-content .card .card-body .table th, 
-.main-content .card .card-body .table td {
+.main-content .card .card-body .table td 
+{
     border-bottom: 1px solid #e9ecef !important;
     border-top: none !important;
+    color: var(--text-color-800);
+    font-size: 14px;
 }
 
 .main-content .card .card-body .table .fixed-long-column {
@@ -227,4 +234,82 @@ hr {
 
 .footer {
     color: var(--text-color-800);
+}
+
+/*
+============================
+    ATTENDANCE TABLE
+============================
+*/
+
+.avatar-profile img {
+    height: 36px;
+    width: 36px;
+    max-height: 36px;
+    max-width: 36px;
+}
+
+.time-status 
+{
+    width: 35px;
+    user-select: none;
+}
+
+.status-in {
+    background-image: linear-gradient(310deg,#17ad37,#98ec2d);
+}
+
+.status-out {
+    background-image: linear-gradient(310deg,#627594,#a8b8d8);
+}
+
+.record-actions button 
+{
+    box-shadow: none !important;
+    background-color: #E9ECEF;
+    color: var(--text-color-500);
+}
+
+.record-actions button:hover {
+    color: white;
+}
+
+.record-actions button.btn-details:hover {
+    background-image: var(--gradient-primary);
+}
+
+.record-actions button.btn-edit:hover {
+    background-image: var(--gradient-warning);
+}
+
+.record-actions button.btn-delete:hover {
+    background-image: var(--gradient-danger);
+}
+
+.bg-gradient-warning {
+    background-image: var(--gradient-warning) !important;
+}
+
+.attendance-indicators .icon 
+{
+    width: 48px;
+    height: 48px;
+    background-position: 50%;
+    border-radius: .5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-image: linear-gradient(310deg, var(--base-primary-dark), var(--base-primary-color));
+    color: white;
+}
+
+.attendance-indicators h5 
+{
+    font-weight: 600 !important;
+    font-size: 1.25rem;
+    line-height: 1.375;
+}
+
+.attendance-indicators .course-indicator { 
+    font-size: 16px !important;
 }

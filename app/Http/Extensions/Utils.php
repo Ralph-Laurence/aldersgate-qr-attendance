@@ -90,4 +90,15 @@ class Utils
     {
         return date($format);
     }
+
+    /**
+     * Formats a date into a user-specific format
+     */
+    public static function dateToString($date, $format = 'Y-m-d') : string
+    {
+        if (empty($date))
+            return '';
+
+        return date($format, strtotime($date));
+    }
 }
