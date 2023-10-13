@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 class Student extends Model
 {
@@ -19,4 +20,39 @@ class Student extends Model
     const FIELD_COURSE_ID = 'course_id';
     const FIELD_YEAR = 'year';
     const FIELD_PHOTO = 'photo'; 
+  
+
+    /**
+     * Base query builder for selecting students in database
+     */
+    public function getStudentsBase()
+    {
+        $table   = $this->getTable();
+        $courses = Courses::getTableName();
+
+        $dataset = DB::table("$table as s")
+            ->leftJoin("$courses as c", 'c.id', '=', 's.course_id')
+            ->select(
+                's.student_no', 's.firstname', 's.middlename', 's.lastname', 's.contact',
+                's.email', 's.birthday', 's.year', 's.photo', 'c.course'
+            )
+            ->orderBy('s.lastname')
+            ->get();
+
+        if (!is_null($dataset))
+        {
+            for ($i = 0; $i < count($dataset); $i++) 
+            {
+                $row = $dataset[$i];
+    
+                // Exclude empty rows
+                if (empty((array)$row))
+                    continue;
+
+                
+            }
+        }
+
+        return $dataset;
+    }
 }

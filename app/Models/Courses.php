@@ -8,4 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 class Courses extends Model
 {
     use HasFactory;
+
+    public static function getTableName()
+    {
+        return (new self)->getTable();
+    }
 }

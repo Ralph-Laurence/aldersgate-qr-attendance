@@ -94,8 +94,7 @@ class AttendanceController extends Controller
             }
              
             // Format the timein field
-            if ($row->time_in)  
-                $row->time_in = Utils::formatTimestamp($row->time_in, 'g:i A');
+            $row->time_in = Utils::formatTimestamp($row->time_in, 'g:i A');
 
             // Process daily attendance
             if ($row->attendance_date == Utils::dateToday())

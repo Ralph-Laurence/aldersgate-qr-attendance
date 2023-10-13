@@ -204,7 +204,7 @@ class StudentsSeeder extends Seeder
                 Student::FIELD_STUDENT_NUM  => '00017',
                 Student::FIELD_FNAME        => 'Brendan',
                 Student::FIELD_MNAME        => 'Eich',
-                Student::FIELD_LNAME        => 'Javascript',
+                Student::FIELD_LNAME        => 'Ecma',
                 Student::FIELD_COURSE_ID    => rand(1, 15),
                 Student::FIELD_YEAR         => rand(1, 4),
                 Student::FIELD_EMAIL        => 'brendan@js.com',

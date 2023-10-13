@@ -101,4 +101,24 @@ class Utils
 
         return date($format, strtotime($date));
     }
+
+    /**
+     * Converts a number into its ordinal form.
+     * This ordinal function takes a number as input and returns 
+     * a string that represents the ordinal form of the number. 
+     * It works by appending the appropriate suffix 
+     * (‘st’, ‘nd’, ‘rd’, or ‘th’) to the number.
+     * 
+     * When onlyOrdinal is set to TRUE, only the suffix is returned
+     */
+    public static function toOrdinal($number, $onlyOrdinal = false) : string 
+    {
+        $ends = ['th','st','nd','rd','th','th','th','th','th','th'];
+    
+        if ((($number % 100) >= 11) && (($number%100) <= 13))
+            return $onlyOrdinal ? 'th' : $number. 'th';
+        else
+            return $onlyOrdinal ? $ends[$number % 10] : $number. $ends[$number % 10];
+    }
+    
 }

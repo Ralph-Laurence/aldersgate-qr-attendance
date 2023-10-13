@@ -15,7 +15,7 @@
  
         @include('layouts.backoffice.sidebar')
 
-        <main class="main-content overflow-y-auto ps-2" data-simplebar>
+        <main class="main-content overflow-y-auto ps-2 no-native-scroll" data-simplebar>
             
             @include('layouts.backoffice.header')
 
@@ -123,13 +123,54 @@
                     <div class="col">
                         <div class="card mb-4 table-card">
                             <div class="card-header pb-0">
-                                <h6 class="card-title">{{ "Daily Attendance" }}</h6>
+                                <div class="d-flex flex-row align-items-center gap-2 mb-3">
+                                    <h6 class="card-title mb-0">{{ "Daily Attendance" }}</h6>
+                                    <div class="attendance-calendar text-sm px-3 me-auto">
+                                        <i class="fas fa-calendar-days me-2"></i> {{ date('l, F d, Y') }}
+                                    </div>
+                                    <div class="d-inline-flex align-items-center gap-2">
+                                        <div class="search-bar px-2">
+                                            <button class="search-button">
+                                                <i class="fas fa-search"></i>
+                                            </button>
+                                            <input type="text" name="q" id="search-input" placeholder="Search" autocomplete="off" value="">
+                                        </div>
+                                        <div class="dropdown">
+                                            <div class="search-filter justify-content-center px-3 ripple outlined-on-hover" id="filtersDropdown"
+                                            data-mdb-toggle="dropdown" data-mdb-ripple-color="#67748E">
+                                                <i class="fas fa-filter text-sm me-2"></i> {{ "Filters" }}
+                                            </div>
+                                            <ul class="dropdown-menu" aria-labelledby="filtersDropdown">
+                                                <li><a class="dropdown-item" href="#">Action</a></li>
+                                                <li><a class="dropdown-item" href="#">Another action</a></li>
+                                                <li><a class="dropdown-item" href="#">Something else here</a></li>
+                                              </ul>
+                                        </div> 
+                                        <div class="dropdown">
+                                            <div class="search-filter justify-content-center px-3 ripple outlined-on-hover" id="filtersDropdown"
+                                            data-mdb-toggle="dropdown" data-mdb-ripple-color="#67748E">
+                                                <i class="fa-solid fa-arrow-down-a-z me-2"></i> {{ "Sort" }}
+                                            </div>
+                                            <ul class="dropdown-menu" aria-labelledby="filtersDropdown">
+                                                <li><a class="dropdown-item" href="#">Action</a></li>
+                                                <li><a class="dropdown-item" href="#">Another action</a></li>
+                                                <li><a class="dropdown-item" href="#">Something else here</a></li>
+                                              </ul>
+                                        </div> 
+                                        <div class="dropdown">
+                                            <button class="btn shadow-0 btn-sm btn-sort outlined-on-hover"
+                                            data-mdb-toggle="dropdown" data-mdb-ripple-color="#67748E">
+                                                <i class="fa-solid fa-ellipsis-vertical"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                             <div class="card-body px-0 pt-0 pb-2">
                                 <table class="table table-sm table-fixed table-striped table-hover align-middle bg-white daily-attendance">
                                     <thead>
                                         <tr>
-                                            <th data-orderable="false" class="fixed-long-column">{{ "Student" }}</th>
+                                            <th data-orderable="false" class="fixed-long-column-300">{{ "Student" }}</th>
                                             <th data-orderable="false" class="text-center">{{ "Course" }}</th>
                                             <th data-orderable="false" class="text-center">{{ "Time In" }}</th>
                                             <th data-orderable="false" class="text-center">{{ "Time Out" }}</th>
@@ -147,7 +188,7 @@
                                                         continue;
                                                 @endphp
                                                 <tr>
-                                                    <td class="fixed-long-column ps-2">
+                                                    <td class="fixed-long-column-300 ps-2">
                                                         <div class="d-flex align-items-center px-2 py-1">
                                                             <div class="avatar-profile me-3 rounded-3 overflow-hidden">
                                                                 <img src="{{ $row->photo }}" width="36" height="36">
@@ -283,13 +324,55 @@
                     <div class="col">
                         <div class="card mb-4 table-card">
                             <div class="card-header pb-0">
-                                <h6 class="card-title">{{ "Monthly Attendance" }}</h6>
+                                {{-- <h6 class="card-title">{{ "Monthly Attendance" }}</h6> --}}
+                                <div class="d-flex flex-row align-items-center gap-2 mb-3">
+                                    <h6 class="card-title mb-0">{{ "Monthly Attendance" }}</h6>
+                                    <div class="attendance-calendar text-sm px-3 me-auto outlined-on-hover">
+                                        <i class="fas fa-calendar-week me-2"></i> {{ date('F Y') }}
+                                    </div>
+                                    <div class="d-inline-flex align-items-center gap-2">
+                                        <div class="search-bar px-2">
+                                            <button class="search-button">
+                                                <i class="fas fa-search"></i>
+                                            </button>
+                                            <input type="text" name="q" id="search-input" placeholder="Search" autocomplete="off" value="">
+                                        </div>
+                                        <div class="dropdown">
+                                            <div class="search-filter justify-content-center px-3 ripple outlined-on-hover" id="filtersDropdown"
+                                            data-mdb-toggle="dropdown" data-mdb-ripple-color="#67748E">
+                                                <i class="fas fa-filter text-sm me-2"></i> {{ "Filters" }}
+                                            </div>
+                                            <ul class="dropdown-menu" aria-labelledby="filtersDropdown">
+                                                <li><a class="dropdown-item" href="#">Action</a></li>
+                                                <li><a class="dropdown-item" href="#">Another action</a></li>
+                                                <li><a class="dropdown-item" href="#">Something else here</a></li>
+                                              </ul>
+                                        </div> 
+                                        <div class="dropdown">
+                                            <div class="search-filter justify-content-center px-3 ripple outlined-on-hover" id="filtersDropdown"
+                                            data-mdb-toggle="dropdown" data-mdb-ripple-color="#67748E">
+                                                <i class="fa-solid fa-arrow-down-a-z me-2"></i> {{ "Sort" }}
+                                            </div>
+                                            <ul class="dropdown-menu" aria-labelledby="filtersDropdown">
+                                                <li><a class="dropdown-item" href="#">Action</a></li>
+                                                <li><a class="dropdown-item" href="#">Another action</a></li>
+                                                <li><a class="dropdown-item" href="#">Something else here</a></li>
+                                              </ul>
+                                        </div> 
+                                        <div class="dropdown">
+                                            <button class="btn shadow-0 btn-sm btn-sort outlined-on-hover"
+                                            data-mdb-toggle="dropdown" data-mdb-ripple-color="#67748E">
+                                                <i class="fa-solid fa-ellipsis-vertical"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                             <div class="card-body px-0 pt-0 pb-2">
                                 <table class="table table-sm table-fixed table-striped table-hover align-middle bg-white daily-attendance">
                                     <thead>
                                         <tr>
-                                            <th data-orderable="false" class="fixed-long-column">{{ "Student" }}</th>
+                                            <th data-orderable="false" class="fixed-long-column-300">{{ "Student" }}</th>
                                             <th data-orderable="false" class="text-center">{{ "Course" }}</th>
                                             <th data-orderable="false" class="text-center">{{ "Time In" }}</th>
                                             <th data-orderable="false" class="text-center">{{ "Time Out" }}</th>
@@ -303,7 +386,7 @@
                                             @foreach ($monthlyAttendance as $row)
  
                                                 <tr>
-                                                    <td class="fixed-long-column ps-2">
+                                                    <td class="fixed-long-column-300 ps-2">
                                                         <div class="d-flex align-items-center px-2 py-1">
                                                             <div class="avatar-profile me-3 rounded-3 overflow-hidden">
                                                                 <img src="{{ $row->photo }}" width="36" height="36">
