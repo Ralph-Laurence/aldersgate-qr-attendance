@@ -1,0 +1,13 @@
+/* DEFAULT STYLES */
+.simplebar-content {
+    scroll-behavior: smooth;
+}
+
+.simplebar-scrollbar:before {
+    background: linear-gradient(to bottom, #2FB344, #00B050, #008A5B);
+    width: 8px;
+}
+
+.main-content .simplebar-scrollbar.simplebar-visible::before {
+    opacity: 1;
+}

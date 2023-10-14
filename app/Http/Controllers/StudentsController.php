@@ -17,8 +17,11 @@ class StudentsController extends Controller
 
     public function index() 
     {  
+        $dataset = $this->getStudents();
+
         return view('backoffice.students.index')
-            ->with('studentsDataset', $this->getStudents());
+            ->with('studentsDataset', $dataset)
+            ->with('totalRecords', $dataset->count());
     }
 
     private function getStudents()

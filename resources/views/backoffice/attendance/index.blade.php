@@ -10,6 +10,10 @@
     {{ "Attendance" }}
 @endsection
  
+@push('styles')
+<link rel="stylesheet" href="{{ asset('css/backoffice/overrides/datatables.css') }}">
+@endpush
+
 @section('content')
     <div class="content-wrapper py-3">
  
@@ -133,7 +137,7 @@
                                             <button class="search-button">
                                                 <i class="fas fa-search"></i>
                                             </button>
-                                            <input type="text" name="q" id="search-input" placeholder="Search" autocomplete="off" value="">
+                                            <input type="text" name="q" id="search-input" placeholder="Search" autocomplete="off" value="" maxlength="32">
                                         </div>
                                         <div class="dropdown">
                                             <div class="search-filter justify-content-center px-3 ripple outlined-on-hover" id="filtersDropdown"
@@ -335,7 +339,7 @@
                                             <button class="search-button">
                                                 <i class="fas fa-search"></i>
                                             </button>
-                                            <input type="text" name="q" id="search-input" placeholder="Search" autocomplete="off" value="">
+                                            <input type="text" name="q" id="search-input" placeholder="Search" autocomplete="off" value="" maxlength="32">
                                         </div>
                                         <div class="dropdown">
                                             <div class="search-filter justify-content-center px-3 ripple outlined-on-hover" id="filtersDropdown"

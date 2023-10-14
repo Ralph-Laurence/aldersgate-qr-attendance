@@ -4,6 +4,10 @@
     {{ "Dashboard" }}
 @endsection
 
+@push('styles')
+<link rel="stylesheet" href="{{ asset('css/backoffice/overrides/datatables.css') }}">
+@endpush
+
 @section('content')
     <div class="content-wrapper p-3">
 

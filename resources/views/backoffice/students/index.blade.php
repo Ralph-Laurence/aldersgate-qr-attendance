@@ -7,6 +7,10 @@
 @section('title')
     {{ "Students" }}
 @endsection
+
+@push('styles')
+<link rel="stylesheet" href="{{ asset('css/backoffice/overrides/datatables.css') }}">
+@endpush
  
 @section('content')
     <div class="content-wrapper py-3">
@@ -20,13 +24,76 @@
             <div class="container-fluid p-4">
                
                 <div class="row">
+                    <div class="col mb-4 align-items-center d-flex">
+                        <div class="pagination-length-control d-inline-flex gap-2 bg-white rounded-8 px-3 py-2 text-sm">
+                            {{ "Show" }}
+                                <div class="dropdown z-100">
+                                    <button class="btn btn-page-length" data-mdb-toggle="dropdown" id="pageLengthMenuButton"></button>
+                                    <ul class="dropdown-menu" aria-labelledby="pageLengthMenuButton">
+                                        {{-- Append items here --}}
+                                    </ul>
+                                </div>
+                            {{ "entries" }}
+                        </div>
+                    </div>
+                    <div class="col mb-4 align-items-center d-flex justify-content-end px-3">
+                        <button class="btn btn-gradient-primary btn-add-student">
+                            <i class="fas fa-user-graduate me-2"></i>
+                            {{ "Add" }}
+                        </button>
+                    </div>
+                </div>
+
+                <div class="row">
                     <div class="col">
                         <div class="card mb-4 table-card">
                             <div class="card-header pb-0">
-                                <h6 class="card-title">{{ "All Students" }}</h6>
+                                {{-- <h6 class="card-title">{{ "All Students" }}</h6> --}}
+                                <div class="d-flex flex-row align-items-center gap-2 mb-3">
+                                    <h6 class="card-title mb-0">{{ "All Students" }}</h6>
+                                    <div class="attendance-calendar text-sm px-3 me-auto">
+                                        <i class="fas fa-user-graduate me-2"></i> {{ "$totalRecords Total Records" }}
+                                    </div>
+                                    <div class="d-inline-flex align-items-center gap-2">
+                                        <div class="search-bar px-2">
+                                            <button class="search-button">
+                                                <i class="fas fa-search"></i>
+                                            </button>
+                                            <input type="text" name="q" id="search-input" placeholder="Search" autocomplete="off" value="" maxlength="32">
+                                        </div>
+                                        <div class="dropdown">
+                                            <div class="search-filter justify-content-center px-3 ripple outlined-on-hover" id="filtersDropdown"
+                                            data-mdb-toggle="dropdown" data-mdb-ripple-color="#67748E">
+                                                <i class="fas fa-filter text-sm me-2"></i> {{ "Filters" }}
+                                            </div>
+                                            <ul class="dropdown-menu" aria-labelledby="filtersDropdown">
+                                                <li><a class="dropdown-item" href="#">Action</a></li>
+                                                <li><a class="dropdown-item" href="#">Another action</a></li>
+                                                <li><a class="dropdown-item" href="#">Something else here</a></li>
+                                              </ul>
+                                        </div> 
+                                        <div class="dropdown">
+                                            <div class="search-filter justify-content-center px-3 ripple outlined-on-hover" id="filtersDropdown"
+                                            data-mdb-toggle="dropdown" data-mdb-ripple-color="#67748E">
+                                                <i class="fa-solid fa-arrow-down-a-z me-2"></i> {{ "Sort" }}
+                                            </div>
+                                            <ul class="dropdown-menu" aria-labelledby="filtersDropdown">
+                                                <li><a class="dropdown-item" href="#">Action</a></li>
+                                                <li><a class="dropdown-item" href="#">Another action</a></li>
+                                                <li><a class="dropdown-item" href="#">Something else here</a></li>
+                                              </ul>
+                                        </div> 
+                                        <div class="dropdown">
+                                            <button class="btn shadow-0 btn-sm btn-sort outlined-on-hover"
+                                            data-mdb-toggle="dropdown" data-mdb-ripple-color="#67748E">
+                                                <i class="fa-solid fa-ellipsis-vertical"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                             <div class="card-body px-0 pt-0 pb-2">
-                                <table class="table table-sm table-fixed table-striped align-middle bg-white students-table">
+                                <table class="table table-sm table-fixed table-striped table-hover align-middle bg-white students-table">
                                     <thead>
                                         <tr>
                                             <th data-orderable="false" class="text-xs text-uppercase fixed-long-column-300">{{ "Student" }}</th>
@@ -105,5 +172,6 @@
 
 @push('scripts')
     <script src="{{ asset('extensions/datatables/datatables.min.js') }}"></script>
+    <script src="{{ asset('js/backoffice/common.js') }}"></script>
     <script src="{{ asset('js/backoffice/students.js') }}"></script>
 @endpush
