@@ -51,6 +51,7 @@ msgBox.showInfo('test information', {
     useNegativeButton: true,
     negativeButtonClick: () => {
         alert('cancel clicked');
-    }
+    },
+    onClosed: () => console.log('modal was closed')
 });
 */

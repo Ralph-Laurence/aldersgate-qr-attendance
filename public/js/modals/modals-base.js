@@ -8,13 +8,12 @@ export class ModalsBase
         this.domElement         = modalElement.get(0);
         this.modalInstance      = new mdb.Modal(this.domElement);
 
-        this.PROP_KEY_MODAL_TITLE = 'title';
+        this.PROP_KEY_MODAL_CLOSED          = 'onClosed';
+        this.PROP_KEY_MODAL_TITLE           = 'title';
 
-        this.PROP_KEY_POSITIVE_BUTTON = 'positiveButtonText';
-        this.PROP_KEY_NEGATIVEBUTTON = 'negativeButtonText';
-
-        this.PROP_KEY_USE_NEGATIVE_BUTTON = 'useNegativeButton';
-
+        this.PROP_KEY_POSITIVE_BUTTON       = 'positiveButtonText';
+        this.PROP_KEY_USE_NEGATIVE_BUTTON   = 'useNegativeButton';
+        this.PROP_KEY_NEGATIVE_BUTTON       = 'negativeButtonText';
         this.PROP_KEY_NEGATIVE_BUTTON_CLICK = 'negativeButtonClick';
         this.PROP_KEY_POSITIVE_BUTTON_CLICK = 'positiveButtonClick';
  
@@ -68,6 +67,9 @@ export class ModalsBase
             
             this.ev_negativeBtnClick = null;
             this.ev_positiveBtnClick = null;
+
+            if (this.ev_modalClosed)
+                this.ev_modalClosed();
         });
     }
 
@@ -112,6 +114,12 @@ export class ModalsBase
             else 
                 $(this.negativeButton).toggleClass('d-none', true);
         }
+
+        //
+        // Modal closed event
+        //
+        if (options.hasOwnProperty(this.PROP_KEY_MODAL_CLOSED))
+            this.ev_modalClosed = options[this.PROP_KEY_MODAL_CLOSED];
     } 
 
     checkElementsExists()
