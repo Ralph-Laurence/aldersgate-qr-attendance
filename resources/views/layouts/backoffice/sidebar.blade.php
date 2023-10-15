@@ -111,4 +111,63 @@ $setHref = function ($routeName) use (&$routeMarkers)
             </li>
         </ul>
     </div>
+
+    {{-- COLLAPSE CONTROL --}}
+    <div class="sidebar-collapse px-3">
+        <button class="btn btn-dark btn-collapse-sidebar">
+            <i class="fa-solid fa-arrow-right-to-bracket"></i>
+        </button>
+    </div>
 </div>
+
+{{-- FLOATING SIDEBAR SHOW BUTTON --}}
+<div class="floating-sidebar-show">
+    <button class="btn btn-show-sidebar">
+        <i class="fas fa-bars"></i>
+    </button>
+</div>
+
+@push('scripts')
+    <script>
+        $(function() 
+        {
+            var hideButton = $('.btn-collapse-sidebar');
+            var showButton = $('.floating-sidebar-show');
+
+            $(document).on('click', '.btn-collapse-sidebar', function()
+            {
+                hideSidebar(hideButton, showButton);
+            })
+            .on('click', '.btn-show-sidebar', function()
+            {
+                showSidebar(hideButton, showButton);
+            });
+        });
+
+        function hideSidebar(hideButton, showButton) 
+        {
+            hideButton.hide();
+
+            $('.sidebar').animate({
+                minWidth: '0px', 
+                width: '0px', 
+                left: '-250px' 
+            }, 100, function() { 
+                showButton.fadeIn('fast');
+            });
+        }
+
+        function showSidebar(hideButton, showButton) 
+        {
+            showButton.hide();
+
+            $('.sidebar').animate({
+                minWidth: '250px', 
+                width: '250px', 
+                left: '0px' 
+            }, 100, function() {
+                hideButton.fadeIn('fast');
+            });
+        }
+    </script>
+@endpush

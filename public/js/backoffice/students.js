@@ -28,12 +28,18 @@ function restylePaginationLength(control)
     // Find the pagination length options, iterate thru each of them, 
     // then copy their values and append them onto the dropdowns
     var options = $(pageLengthDT).find('select > option');
+    var select = $(pageLengthDT).find('select');
 
     $.each(options, function () 
     {
         const val = $(this).val();
 
-        $(target).find('ul.dropdown-menu').append(`<li><a class="dropdown-item page-length-item" onclick="changePageLength(this, ${val})">${val}</a></li>`);
+        var initallySelected = '';
+
+        if (val == $(select).val())
+            initallySelected = 'selected';
+
+        $(target).find('ul.dropdown-menu').append(`<li><a class="dropdown-item page-length-item ${initallySelected}" onclick="changePageLength(this, ${val})">${val}</a></li>`);
     });
 
     // Set default select text

@@ -13,6 +13,9 @@
 @endpush
  
 @section('content')
+
+    @include('modals.message-box')
+
     <div class="content-wrapper py-3">
  
         @include('layouts.backoffice.sidebar')
@@ -37,7 +40,7 @@
                         </div>
                     </div>
                     <div class="col mb-4 align-items-center d-flex justify-content-end px-3">
-                        <button class="btn btn-gradient-primary btn-add-student">
+                        <button class="btn btn-gradient-primary btn-add-student" data-mdb-toggle="modal" data-mdb-target="#messagebox">
                             <i class="fas fa-user-graduate me-2"></i>
                             {{ "Add" }}
                         </button>
@@ -153,17 +156,7 @@
                     </div>
                 </div>
 
-                <footer class="footer pt-3">
-                    <div class="container-fluid">
-                        <div class="row align-items-center justify-content-lg-between">
-                            <div class="col-lg-6 mb-lg-0 mb-4">
-                                <div class="copyright text-sm text-center text-lg-start opacity-75">
-                                    {!! "&copy;" !!} {{ date('Y') . ", crafted with "}} <i class="fas fa-heart"></i>  {{"for a smarter library management." }}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </footer>
+                @include('layouts.backoffice.footer')
 
             </div>
         </main>

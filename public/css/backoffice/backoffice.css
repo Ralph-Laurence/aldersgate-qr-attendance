@@ -185,7 +185,8 @@ hr {
     width: 120px;
 }
 
-.footer {
+.footer, 
+.footer .nav-footer a {
     color: var(--text-color-800);
 }
 
