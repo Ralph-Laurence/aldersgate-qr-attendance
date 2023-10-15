@@ -115,7 +115,7 @@ $setHref = function ($routeName) use (&$routeMarkers)
     {{-- COLLAPSE CONTROL --}}
     <div class="sidebar-collapse px-3">
         <button class="btn btn-dark btn-collapse-sidebar">
-            <i class="fa-solid fa-arrow-right-to-bracket"></i>
+            <i class="fa-solid fa-outdent"></i>
         </button>
     </div>
 </div>
@@ -123,7 +123,7 @@ $setHref = function ($routeName) use (&$routeMarkers)
 {{-- FLOATING SIDEBAR SHOW BUTTON --}}
 <div class="floating-sidebar-show">
     <button class="btn btn-show-sidebar">
-        <i class="fas fa-bars"></i>
+        <i class="fas fa-indent"></i>
     </button>
 </div>
 

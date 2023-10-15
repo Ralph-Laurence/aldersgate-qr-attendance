@@ -17,16 +17,16 @@ class CreateStudentsTable extends Migration
         Schema::create('students', function (Blueprint $table) 
         {
             $table->bigIncrements('id');
-            $table->string(Student::FIELD_STUDENT_NUM)->unique();
-            $table->string(Student::FIELD_FNAME);
-            $table->string(Student::FIELD_MNAME);
-            $table->string(Student::FIELD_LNAME);
-            $table->string(Student::FIELD_CONTACT);
-            $table->string(Student::FIELD_EMAIL);
-            $table->date(Student::FIELD_BIRTHDAY);
-            $table->integer(Student::FIELD_COURSE_ID);
-            $table->integer(Student::FIELD_YEAR);
-            $table->string(Student::FIELD_PHOTO)->nullable();
+            $table->string(Student::FIELD_STUDENT_NUM,  64)->unique();
+            $table->string(Student::FIELD_FNAME,        32);
+            $table->string(Student::FIELD_MNAME,        32);
+            $table->string(Student::FIELD_LNAME,        32);
+            $table->string(Student::FIELD_CONTACT,      16)->nullable();
+            $table->string(Student::FIELD_EMAIL,        64)->unique();
+            $table->date(Student::FIELD_BIRTHDAY,       24)->nullable();
+            $table->integer(Student::FIELD_COURSE_ID,   10);
+            $table->integer(Student::FIELD_YEAR,        10);
+            $table->string(Student::FIELD_PHOTO,        64)->nullable();
             $table->timestamps();
         });
     }

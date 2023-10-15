@@ -8,15 +8,15 @@
 			<div class="modal-header border-0">
 				<h6 class="modal-title user-select-none" id="messageboxModalLabel">
 					<i class="fas p-2 rounded-circle messagebox-icon me-2"></i>
-					<span class="messagebox-title">{{ "Title" }}</span>
+					<span class="modal-title-text messagebox-title">{{ "Title" }}</span>
 				</h6>
 				<button type="button" class="messagebox-close" data-mdb-dismiss="modal" aria-label="Close">
 					<i class="fas fa-xmark"></i>
 				</button>
 			</div>
-			<div class="modal-body messagebox-content">{{ "Content" }}</div>
-			<div class="modal-footer messagebox-buttons">
-				<button type="button" class="btn btn-negative shadow-0" data-mdb-dismiss="modal">{{ "Cancel" }}</button>
+			<div class="modal-body messagebox-content border-0">{{ "Content" }}</div>
+			<div class="modal-footer border-0 messagebox-buttons">
+				<button type="button" class="btn btn-negative shadow-0 d-none" data-mdb-dismiss="modal">{{ "Cancel" }}</button>
 				<button type="button" class="btn btn-positive shadow-0" data-mdb-dismiss="modal">{{ "OK" }}</button>
 			</div>
 		</div>
@@ -24,16 +24,12 @@
 </div>
 
 @push('scripts')
-<script src="{{ asset('js/modals/messagebox.js') }}"></script>
-<script>
-	var isDOMReady = false;
-	var msgBox = null;
+<script type="module">
+  
+  	import { MessageBox } from "{{ asset('js/modals/messagebox.js') }}";
 
-	$(function()
-	{
-	    isDOMReady = true;
-
-		msgBox = new MessageBox($('#messagebox'));
+	$(function() {
+		window.msgBox = new MessageBox($('#messagebox'));
 	});
 </script>
 @endpush

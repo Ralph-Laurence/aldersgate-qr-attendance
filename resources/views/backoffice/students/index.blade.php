@@ -15,6 +15,7 @@
 @section('content')
 
     @include('modals.message-box')
+    @include('modals.forms-lightbox')
 
     <div class="content-wrapper py-3">
  
@@ -40,7 +41,7 @@
                         </div>
                     </div>
                     <div class="col mb-4 align-items-center d-flex justify-content-end px-3">
-                        <button class="btn btn-gradient-primary btn-add-student" data-mdb-toggle="modal" data-mdb-target="#messagebox">
+                        <button class="btn btn-gradient-primary btn-add-student" data-mdb-toggle="modal" data-mdb-target="#forms-lightbox">
                             <i class="fas fa-user-graduate me-2"></i>
                             {{ "Add" }}
                         </button>
