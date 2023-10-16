@@ -15,7 +15,7 @@
 @section('content')
 
     @include('modals.message-box')
-    @include('modals.forms-lightbox')
+    @include('modals.backoffice.add-edit-student')
 
     <div class="content-wrapper py-3">
  
@@ -33,7 +33,7 @@
                             {{ "Show" }}
                                 <div class="dropdown z-100">
                                     <button class="btn btn-page-length" data-mdb-toggle="dropdown" id="pageLengthMenuButton"></button>
-                                    <ul class="dropdown-menu" aria-labelledby="pageLengthMenuButton">
+                                    <ul class="dropdown-menu user-select-none" aria-labelledby="pageLengthMenuButton">
                                         {{-- Append items here --}}
                                     </ul>
                                 </div>
@@ -170,5 +170,5 @@
 @push('scripts')
     <script src="{{ asset('extensions/datatables/datatables.min.js') }}"></script>
     <script src="{{ asset('js/backoffice/common.js') }}"></script>
-    <script src="{{ asset('js/backoffice/students.js') }}"></script>
+    <script src="{{ asset('js/backoffice/students.js') }}" type="module"></script>
 @endpush

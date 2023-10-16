@@ -183,4 +183,9 @@ export class ModalsBase
         //this.validateInstance();
         $(this.modalTitle).text(title);
     }
+
+    setId(id)
+    {
+        $(this).domElement.attr('id', id);
+    }
 }

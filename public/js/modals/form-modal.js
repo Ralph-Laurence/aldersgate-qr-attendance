@@ -1,6 +1,6 @@
 import { ModalsBase } from "./modals-base.js";
 
-export class FormsLightBox extends ModalsBase
+export class FormModal extends ModalsBase
 {
     appendContent(content)
     {
