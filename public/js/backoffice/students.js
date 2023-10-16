@@ -17,6 +17,8 @@ $(function ()
     pageLengthDT = '.dataTables_length#DataTables_Table_0_length';
 
     restylePaginationLength(pageLengthDT);
+
+    bindEvents();
 });
 
 function restylePaginationLength(control)
@@ -53,5 +55,14 @@ function changePageLength(anchor, length)
 
     $(anchor).closest('ul').find('li > a').removeClass('selected');
     $(anchor).addClass('selected');
+}
 
+function bindEvents()
+{
+    // $(".btn-add-student").on('click', function() 
+    // {
+    //     var content = $('.lightbox-content-add-student');
+    //     formsLightBox.appendContent(content);
+    //     formsLightBox.show();
+    // });
 }

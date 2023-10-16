@@ -41,7 +41,7 @@
                         </div>
                     </div>
                     <div class="col mb-4 align-items-center d-flex justify-content-end px-3">
-                        <button class="btn btn-gradient-primary btn-add-student" data-mdb-toggle="modal" data-mdb-target="#forms-lightbox">
+                        <button class="btn btn-gradient-primary btn-add-student">
                             <i class="fas fa-user-graduate me-2"></i>
                             {{ "Add" }}
                         </button>
@@ -161,6 +161,9 @@
 
             </div>
         </main>
+    </div>
+    <div class="lightbox-content-add-student">
+        APPEND THIS
     </div>
 @endsection
 

@@ -25,7 +25,7 @@
 
 @push('scripts')
 <script type="module">
-  
+	
   	import { MessageBox } from "{{ asset('js/modals/messagebox.js') }}";
 
 	$(function() {
