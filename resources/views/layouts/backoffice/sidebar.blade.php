@@ -42,7 +42,7 @@ $setHref = function ($routeName) use (&$routeMarkers)
     {{-- SIDEBAR BRAND HEADER --}}
     <div class="sidebar-header">
         <div class="sidebar-brand">
-            <img src="{{ asset('img/aldersgate.svg') }}" alt="logo" width="32" height="32">
+            <img src="{{ asset('img/sidebar_logo.png') }}" alt="logo" width="32" height="32" loading="lazy">
             <span class="ms-1 brand-text">{{ "Library Attendance" }}</span>
         </div>
     </div>

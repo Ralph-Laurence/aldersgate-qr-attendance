@@ -36,6 +36,7 @@ Route::controller(DashboardController::class)->group(function()
 Route::controller(StudentsController::class)->group(function()
 {
     Route::get('/backoffice/students', 'index')->name( RouteNames::STUDENTS );
+    Route::post('/backoffice/students/add', 'store')->name( RouteNames::ADD_STUDENT );
 });
 
 Route::controller(AttendanceController::class)->group(function()

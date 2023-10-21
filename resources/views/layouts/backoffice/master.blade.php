@@ -10,10 +10,7 @@
     <link rel="stylesheet" href="{{ asset('css/lib/mdb/mdb.min.css') }}">
     <link rel="stylesheet" href="{{ asset('css/lib/fontawesome/css/fontawesome.css') }}">
     <link rel="stylesheet" href="{{ asset('css/lib/fontawesome/css/solid.min.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/lib/fontawesome/css/brands.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/lib/jquery-ui/jquery-ui.min.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/lib/jquery-ui/jquery-ui.structure.min.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/lib/jquery-ui/jquery-ui.theme.min.css') }}">
+    {{-- <link rel="stylesheet" href="{{ asset('css/lib/fontawesome/css/brands.css') }}"> --}}
     <link rel="stylesheet" href="{{ asset('css/lib/simplebar/simplebar.6.2.5.min.css') }}">
     <link rel="stylesheet" href="{{ asset('css/base.css') }}">
     <link rel="stylesheet" href="{{ asset('css/backoffice/backoffice.css') }}">
@@ -25,12 +22,11 @@
 
 </head>
 <body class=":antialiased">
-
+ 
     @yield('content')
 
     {{-- FRAMEWORK SPECIFIC SCRIPTS --}}
     <script src="{{ asset('js/lib/jquery/jquery-3.7.1.min.js') }}"></script>
-    <script src="{{ asset('js/lib/jquery-ui/jquery-ui.min.js') }}"></script>
     <script src="{{ asset('js/lib/momentjs/moment-with-locales.js') }}"></script>
     <script src="{{ asset('js/lib/simplebar/simplebar6.2.5.min.js') }}"></script>
     <script src="{{ asset('js/lib/mdb/mdb.min.js') }}"></script>

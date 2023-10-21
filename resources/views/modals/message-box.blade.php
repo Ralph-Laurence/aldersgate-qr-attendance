@@ -1,5 +1,5 @@
 @push('styles')
-<link rel="stylesheet" href="{{ asset('css/modals/messagebox.css') }}">
+	<link rel="stylesheet" href="{{ asset('css/modals/messagebox.css') }}">
 @endpush
 <div class="modal fade messagebox" id="messagebox" tabindex="-1" aria-labelledby="messageboxModalLabel"
 	aria-hidden="true" data-mdb-backdrop="static" data-mdb-keyboard="false">
@@ -10,7 +10,7 @@
 					<i class="fas p-2 rounded-circle messagebox-icon me-2"></i>
 					<span class="modal-title-text messagebox-title">{{ "Title" }}</span>
 				</h6>
-				<button type="button" class="messagebox-close" data-mdb-dismiss="modal" aria-label="Close">
+				<button type="button" class="messagebox-close modal-close" data-mdb-dismiss="modal" aria-label="Close">
 					<i class="fas fa-xmark"></i>
 				</button>
 			</div>

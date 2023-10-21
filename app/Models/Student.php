@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Http\Extensions\Utils;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
@@ -20,7 +21,6 @@ class Student extends Model
     const FIELD_COURSE_ID = 'course_id';
     const FIELD_YEAR = 'year';
     const FIELD_PHOTO = 'photo'; 
-  
 
     /**
      * Base query builder for selecting students in database
@@ -48,9 +48,32 @@ class Student extends Model
                 // Exclude empty rows
                 if (empty((array)$row))
                     continue;
-
-                
             }
+        }
+
+        return $dataset;
+    }
+
+    public function getStudents()
+    {
+        $dataset = $this->getStudentsBase();
+
+        for ($i = 0; $i < $dataset->count(); $i++)
+        {
+            $row = $dataset[$i];
+
+            // Fix photo path
+            if ($row->photo)
+                $row->photo = Utils::getPhotoPath($row->photo);
+
+            // Convert the year levels to their ordinal equivalent
+            $row->year_ordinal = Utils::toOrdinal($row->year, true);
+
+                // Fix the name as one fullname
+            $row->name = implode(" ", [ $row->lastname . ",", $row->firstname, $row->middlename ]);
+
+            // Update the current row
+            $dataset[$i] = $row;
         }
 
         return $dataset;

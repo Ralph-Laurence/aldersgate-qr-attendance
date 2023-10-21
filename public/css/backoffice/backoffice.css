@@ -12,6 +12,8 @@
     --gradient-danger: linear-gradient(310deg, #ea0606, #ff667c);
 
     --fas-font: 'Font Awesome 6 Free';
+
+    --flat-control-bg: #E9ECEF;
 }
 
 ::selection {
@@ -115,7 +117,7 @@ hr {
 
 .main-content .card .card-body .table th,
 .main-content .card .card-body .table td {
-    border-bottom: 1px solid #e9ecef !important;
+    border-bottom: 1px solid var(--flat-control-bg) !important;
     border-top: none !important;
     color: var(--text-color-800);
     font-size: 14px;
@@ -218,7 +220,7 @@ hr {
 
 .record-actions button {
     box-shadow: none !important;
-    background-color: #E9ECEF;
+    background-color: var(--flat-control-bg);
     color: var(--text-color-500);
 }
 
@@ -289,7 +291,7 @@ hr {
 }
 
 .btn-page-length {
-    background-color: #E9ECEF;
+    background-color: var(--flat-control-bg);
     padding: 2px 8px;
     border-radius: 2rem !important;
     font-weight: 600;

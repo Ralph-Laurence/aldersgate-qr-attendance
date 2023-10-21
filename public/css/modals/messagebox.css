@@ -1,50 +1,11 @@
-/*
-==============================================
-            MESSAGEBOX BASE STYLES
-==============================================
-*/
-
-.messagebox-icon {
-    font-family: var(--fas-font);
-    width: 32px;
-    height: 32px;
-    text-align: center;
+.messagebox .modal-content {
+    height: fit-content !important;
+    min-height: fit-content !important;
 }
-
-.messagebox-close 
-{
-    background: white;
-    color: var(--text-color-500);
-    padding: 4px;
-    width: 34px;
-    height: 34px;
-    border: none;
-    outline: none !important;
-    font-size: 16px;
-}
-
-.messagebox-close:hover {
-    color: var(--text-color-800);
-} 
-
-.messagebox-content {
-    color: var(--text-color-500);
-    font-size: 14px;
-}
-
-.messagebox-buttons button {
-    border-radius: 2rem;
-    color: var(--text-color-500);
-}
-/*
-==============================================
-           MESSAGEBOX OVERRIDE STYLES
-==============================================
-*/
 
 /* INFO MESSAGEBOX */
 .messagebox-info .messagebox-icon {
-    background-color: #DBEAE6;
+    background-color: #D5EFE3;
     color: var(--base-primary-dark);
 }
 
@@ -67,7 +28,7 @@
 
 /* WARNING MESSAGEBOX */
 .messagebox-warn .messagebox-icon {
-    background-color: #F3F1F1;
+    background-color: #FEEDD0;
     color: #FFAC34;
 }
 

@@ -1,67 +1,24 @@
-.form-modal-icon {
-    background-color: #F4F5FB;
-    color: var(--text-color-700);
-    font-family: var(--fas-font);
-    width: 32px;
-    height: 32px;
-    text-align: center;
-}
 
-.form-modal-close {
-    background: white;
-    color: var(--text-color-500);
-    padding: 4px;
-    width: 34px;
-    height: 34px;
-    border: none;
-    outline: none !important;
-    font-size: 16px;
-}
 
-.form-modal-close:hover {
-    color: var(--text-color-800);
-}
-
-.form-modal-content {
-    color: var(--text-color-500);
-    font-size: 14px;
-}
-
-.form-modal-buttons button {
-    border-radius: 2rem;
-    color: var(--text-color-500);
-}
-
-.form-modal-buttons .btn-positive {
-    background-color: var(--text-color-700);
-    color: white !important;
-}
-
-.form-modal-buttons .btn-positive:hover {
-    background-color: var(--text-color-800);
-}
-
-.form-modal-buttons .btn-negative {
-    background-color: #F4F5FB;
-}
 
 .carousel-mini-map {
     overflow: hidden;
 }
 
-.carousel-mini-map::before 
-{
+.carousel-mini-map::before {
     content: "";
     position: absolute;
     top: 28%;
     left: 20px;
     right: 20px;
     width: auto;
-    height: 0.02rem;
+    height: 1px;
+    max-height: 1px;
     background-color: var(--text-color-400);
     opacity: .25;
-    transform: translateY(-50%);
+    transform: translateY(-28%);
     z-index: 1;
+    display: inline-block;
 }
 
 .carousel-mini-map button {
@@ -94,29 +51,29 @@
     color: var(--text-color-700);
 }
 
-.carousel-mini-map .mini-map-pin i::before
-{
+.carousel-mini-map .mini-map-pin i::before {
     font-family: var(--fas-font);
     content: '\f111';
 }
-.carousel-mini-map .mini-map-pin.active i::before
-{
+
+.carousel-mini-map .mini-map-pin.active i::before {
     font-family: var(--fas-font);
     content: '\f192';
     color: var(--base-primary-dark);
 }
 
 .carousel-mini-map button.mini-map-slider:hover::after,
-.carousel-mini-map .mini-map-pin::after{
+.carousel-mini-map .mini-map-pin::after {
     content: attr(data-label);
     position: absolute;
     top: 32px;
     font-size: 12px;
     height: fit-content;
     width: fit-content;
-    min-width: 64px;
+    min-width: 100px;
 }
 
 .carousel-mini-map .mini-map-pin.active::after {
     color: var(--base-primary-dark);
 }
+

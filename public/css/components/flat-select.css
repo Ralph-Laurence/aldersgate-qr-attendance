@@ -1,0 +1,39 @@
+.flat-select-button {
+    background-color: var(--flat-control-bg) !important;
+    padding: 0 16px 1px;
+    border-radius: 2rem !important;
+    font-weight: 600;
+    color: var(--text-color-500) !important;
+    box-shadow: none !important;
+    font-size: 0.8125rem;
+    text-align: center;
+    line-height: normal;
+    height: 36px;
+}
+
+.flat-select-button::after {
+    border: none;
+    font-family: var(--fas-font);
+    content: '\f078';
+    padding-left: 6px;
+    position: relative;
+    bottom: -0.186rem;
+}
+
+.flat-select-button:hover,
+.flat-select-button:active,
+.flat-select-button:focus {
+    background-color: #DBDBDE !important;
+    color: var(--text-color-800) !important;
+}
+
+.flat-select .dropdown .dropdown-menu .dropdown-item.active {
+    background-color: var(--base-primary-dark);
+    color: white;
+}
+.flat-select .dropdown .dropdown-menu .dropdown-item.active::after {
+    font-family: var(--fas-font);
+    content: '\f00c';
+    float: right;
+    position: relative;
+}

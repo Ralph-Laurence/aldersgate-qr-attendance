@@ -17,7 +17,7 @@ class CreateStudentsTable extends Migration
         Schema::create('students', function (Blueprint $table) 
         {
             $table->bigIncrements('id');
-            $table->string(Student::FIELD_STUDENT_NUM,  64)->unique();
+            $table->string(Student::FIELD_STUDENT_NUM,  32)->unique();
             $table->string(Student::FIELD_FNAME,        32);
             $table->string(Student::FIELD_MNAME,        32);
             $table->string(Student::FIELD_LNAME,        32);

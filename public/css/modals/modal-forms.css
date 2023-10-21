@@ -8,6 +8,13 @@
     align-items: center;
 }
 
+.modal-forms .input-text.has-error 
+{
+    background-color: #FBD3D4;
+    box-shadow: 0 0 0 1px #FA8E96;
+    color: #FF283D;
+}
+
 .modal-forms .input-text input 
 {
     color: var(--text-color-800);
@@ -18,10 +25,10 @@
 }
 
 .modal-forms .input-text:focus-within {
-    box-shadow: 0 0 0 1px #E9ECEF;
+    box-shadow: 0 0 0 1px var(--flat-control-bg);
     background-color: #FBFBFD;
 }
 
-.modal-forms .input-trailing-icon {
+/* .modal-forms .input-trailing-icon {
     display: none;
-}
+} */

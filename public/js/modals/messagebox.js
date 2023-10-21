@@ -36,6 +36,20 @@ export class MessageBox extends ModalsBase
     
         this.show();
     }
+
+    showDanger(message, options)
+    {
+        this.validateInstance();
+        this.bindOptions(options);
+
+        if (!options || !options.hasOwnProperty(this.PROP_KEY_MODAL_TITLE))
+            this.setTitle('Alert');
+    
+        this.setContent(message);
+        this.updateClass(this.CLASS_MSG_DANGER);
+    
+        this.show();
+    }
 }
 
 /**

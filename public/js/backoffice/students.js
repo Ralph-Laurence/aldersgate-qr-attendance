@@ -1,10 +1,13 @@
-import { FormModal } from "../modals/form-modal.js";
-
 var studentsDT = undefined;
 var pageLengthDT = undefined;
 
-var addEditStudentModal = undefined;
+var studentFormModal = undefined;
 var formCarousel = undefined;
+var formCarouselFrameIndex = 0;
+var formCarouselFrameCount = 0;
+
+var courseSelect = null;
+var yearSelect = null;
 
 $(function () 
 {
@@ -17,17 +20,45 @@ $(function ()
         //lengthChange    : false,
         searching       : false,
         autoWidth       : false,
+        'order'         : [] 
     });
 
     pageLengthDT = '.dataTables_length#DataTables_Table_0_length';
 
     restylePaginationLength(pageLengthDT);
+   
+    courseSelect = new FlatSelect('#input-course');
+    yearSelect = new FlatSelect('#input-year-level');
+
+    studentFormModal = new FormModal($('#addEditStudentModal'));
   
-    addEditStudentModal = new FormModal($('#addEditStudentModal'));
-    formCarousel = new mdb.Carousel($('#carousel-student-forms'));
-    window.frmCsl = formCarousel;
+    if ($(".has-error").length > 0)
+        showAddStudentForm();
+
+    materialDatePicker('#input-birthday');
+
     bindEvents();
 });
+
+function bindEvents()
+{
+    $(".dropdown-item.page-length-item").on('click', function()
+    {
+        var length = $(this).data('page-length');
+
+        changePageLength($(this), length);
+    });
+
+    $(".btn-add-student").on('click', () => showAddStudentForm());
+
+    studentFormModal.onNegativeClicked(() => {
+        resetStudentForm();
+    });
+
+    studentFormModal.onCanceled(() => {
+        resetStudentForm();
+    });
+}
 
 function restylePaginationLength(control)
 {
@@ -49,7 +80,7 @@ function restylePaginationLength(control)
         if (val == $(select).val())
             initallySelected = 'selected';
 
-        $(target).find('ul.dropdown-menu').append(`<li><a class="dropdown-item page-length-item ${initallySelected}" onclick="changePageLength(this, ${val})">${val}</a></li>`);
+        $(target).find('ul.dropdown-menu').append(`<li><a class="dropdown-item page-length-item ${initallySelected}" data-page-length="${val}">${val}</a></li>`);
     });
 
     // Set default select text
@@ -65,52 +96,16 @@ function changePageLength(anchor, length)
     $(anchor).addClass('selected');
 }
 
-function bindEvents()
+function showAddStudentForm() 
 {
-    // var content = $('.lightbox-content-add-student');
-    // window.formsLightBox.appendContent(content);
-
-    // $(".btn-add-student").on('click', function() 
-    // {
-    //     window.formsLightBox.setTitle('Add new student');
-    //     window.formsLightBox.show();
-    // });
-    $(".btn-add-student").on('click', function() 
-    {
-        addEditStudentModal.show();
+    studentFormModal.present({
+        title: 'Add new student'
     });
+}
 
-    $('.carousel-mini-map .mini-map-left').on('click', function() 
-    {
-        formCarousel.prev();
-    });
-
-    $('.carousel-mini-map .mini-map-right').on('click', function() 
-    {
-        formCarousel.next();
-    });
-
-    $('#carousel-student-forms').on('slid.bs.carousel', (props) => 
-    {
-        // Get the frame index we scrolled to
-        var scrolledFrame = props.to;
-
-        // Clear the active minimaps then mark the scrolled minimap
-        $.each($('.carousel-mini-map button'), function(i, btn) 
-        {
-            $(btn).removeClass('active'); 
-        });
-
-        // Find the button with data attribute 'frame-order' and add class 'active'
-        $('.carousel-mini-map button').filter(function ()
-        {
-            return $(this).data('frame-order') == scrolledFrame;
-        }).addClass('active');
-    });
-
-    // Jump carousel to specific frame
-    $('.carousel-mini-map button.mini-map-pin').on('click', function()
-    {
-        formCarousel.to($(this).data('frame-order'))
-    });
+function resetStudentForm()
+{
+    studentFormModal.resetForm();
+    courseSelect.reset();
+    yearSelect.reset();
 }

@@ -5,10 +5,11 @@ export class ModalsBase
         if (!modalElement.get(0))
             throw new Error('Modal element is null');
  
-        this.domElement         = modalElement.get(0);
-        this.modalInstance      = new mdb.Modal(this.domElement);
+        this.domElement                     = modalElement.get(0);
+        this.modalInstance                  = new mdb.Modal(this.domElement);
 
         this.PROP_KEY_MODAL_CLOSED          = 'onClosed';
+        this.PROP_KEY_MODAL_CANCELED        = 'onCanceled';
         this.PROP_KEY_MODAL_TITLE           = 'title';
 
         this.PROP_KEY_POSITIVE_BUTTON       = 'positiveButtonText';
@@ -19,6 +20,7 @@ export class ModalsBase
  
         this.initElements();
         this.bindEvents();
+
     }
 
     //
@@ -30,6 +32,7 @@ export class ModalsBase
         var el_content      = $(this.domElement).find('.modal-body');
         var el_posBtn       = $(this.domElement).find('.btn-positive');
         var el_negBtn       = $(this.domElement).find('.btn-negative');
+        var el_close        = $(this.domElement).find('.modal-close');
 
         if (!el_title)
             throw new Error('Missing title element for modal.');
@@ -43,24 +46,44 @@ export class ModalsBase
         if (!el_negBtn)
             throw new Error('Missing negative button for modal.');
 
+        if (!el_close)
+            throw new Error('Missing close button for modal.');
+
         this.modalTitle     = el_title;
         this.modalBody      = el_content;
         this.positiveButton = el_posBtn;
         this.negativeButton = el_negBtn;
+        this.closeButton    = el_close;
     }
 
     bindEvents()
-    {
+    { 
         $(this.positiveButton).on('click', () => {
             
+            // From options
             if (this.ev_positiveBtnClick)
                 this.ev_positiveBtnClick();
+
+            // Instance accessed
+            if (this.ev_onPositiveClick)
+                this.ev_onPositiveClick();
         });
 
         $(this.negativeButton).on('click', () => {
           
+            // From options
             if (this.ev_negativeBtnClick)
                 this.ev_negativeBtnClick();
+
+            // Instance accessed
+            if (this.ev_onNegativeClick)
+                this.ev_onNegativeClick();
+        });
+
+        $(this.closeButton).on('click', () => {
+
+            if (this.ev_modalCanceled)
+                this.ev_modalCanceled();
         });
 
         $(this.domElement)[0].addEventListener('hidden.bs.modal',(e) => {
@@ -101,6 +124,9 @@ export class ModalsBase
 
         if (options.hasOwnProperty(this.PROP_KEY_NEGATIVE_BUTTON_CLICK))
             this.ev_negativeBtnClick = options[this.PROP_KEY_NEGATIVE_BUTTON_CLICK];
+
+        if (options.hasOwnProperty(this.PROP_KEY_MODAL_CANCELED))
+            this.ev_modalCanceled = options[this.PROP_KEY_MODAL_CANCELED];
 
         //
         // Should we use negative button or not
@@ -160,6 +186,23 @@ export class ModalsBase
     //
     // CONSUMER END LOGICS
     //
+
+    onClosed(handler) {
+        this.ev_modalClosed = handler;
+    }
+
+    onCanceled(handler) {
+        this.ev_modalCanceled = handler;
+    }
+
+    onPositiveClicked(handler) {
+        this.ev_onPositiveClick = handler;
+    }
+
+    onNegativeClicked(handler) {
+        this.ev_onNegativeClick = handler;
+    }
+
     show() 
     { 
         //this.validateInstance();

@@ -120,5 +120,16 @@ class Utils
         else
             return $onlyOrdinal ? $ends[$number % 10] : $number. $ends[$number % 10];
     }
+
+    public static function toIndefiniteArticle($word)
+    {
+        $vowels = ['a', 'e', 'i', 'o', 'u'];
+        $firstLetter = strtolower($word[0]);
+
+        if (in_array($firstLetter, $vowels))
+            return "an";
+
+        return "a";
+    }
     
 }
