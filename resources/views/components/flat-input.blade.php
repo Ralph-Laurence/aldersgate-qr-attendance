@@ -10,9 +10,13 @@
     @push('styles')
         <link rel="stylesheet" href="{{ asset('css/components/flat-input.css') }}">
     @endpush
+
+    @push('scripts')
+        <script src="{{ asset('js/components/flat-input.js') }}"></script>
+    @endpush
 @endonce
 
-<div {{ $attributes->merge(['class' => 'flat-input']) }}>
+<div {{ $attributes->merge(['class' => 'flat-controls flat-input']) }} data-alias="text">
 
     {{-- OPTIONAL LABEL --}}
     @if ($attributes->has('with-caption'))
@@ -27,13 +31,14 @@
         <input  type="text" 
                 name="{{ $inputName }}" 
                 id="{{ $inputName }}" 
+                class="main-control"
                 maxlength="{{ $maxLength }}"
                 value="{{ old($inputName) }}" 
                 aria-autocomplete="none" 
                 placeholder="{{ $inputHint }}"
                 {{ $attributes }} />
 
-        <i class="fa-solid fa-circle-xmark ms-2 input-trailing-icon {{ $errors->has($inputName) ? '' : 'd-none' }}"></i>
+        <i class="fa-solid fa-circle-xmark ms-2 input-trailing-icon"></i>
 
     </div>
 

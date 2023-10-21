@@ -9,7 +9,7 @@ export class FlatSelect
         this.valueField = $(this.dropdownRoot).find(`${mdbDropdownDom}-value`).get(0);
         this.toggleButton = $(this.dropdownRoot).find('.flat-select-button');
         
-        this.toggleButtonDefaultText = $(this.toggleButton).text();
+        this.toggleButtonDefaultText = 'Select'; //$(this.toggleButton).text();
 
         this.bindEvents();
     } 
@@ -31,13 +31,18 @@ export class FlatSelect
             if (this.ev_onItemClick && (typeof this.ev_onItemClick === 'function'))
                 this.ev_onItemClick(itemVal);
   
-            $(this.valueField).val(itemVal).change();
+            $(this.valueField).val(itemVal).trigger('input');
         });
 
-        $(this.valueField).on('change', (event) => 
+        $(this.valueField).on('input', (event) => 
         { 
-            var itemVal = $(event.currentTarget).val();
+            var $control = $(event.currentTarget);
+
+            var itemVal = $control.val();
             var itemText = $(this.domElement).parent().find('.dropdown-menu .dropdown-item.active').text();
+
+            if (itemVal)
+                $control.closest('.flat-select').find('.error-label').text('');
 
             if (this.ev_onValueChanged && (typeof this.ev_onValueChanged === 'function'))
                 this.ev_onValueChanged( itemVal );

@@ -14,8 +14,14 @@
     box-shadow: 0 0 0 1px #FA8E96;
  }
 
- .flat-input .input-text.has-error .input-trailing-icon {
-    color: #FF283D;  
+ .flat-input .input-text.has-error .input-trailing-icon 
+ {
+   display: inline;
+   color: #FF283D;  
+ }
+
+ .flat-input .input-text:not(.has-error) .input-trailing-icon {
+   display: none;
  }
 
  .flat-input .input-text input::placeholder {
@@ -23,7 +29,7 @@
  }
 
  .flat-input .input-text.has-error input::placeholder {
-    color: #FA8E96;
+    color: #FA6883;
  }
 
  .flat-input .input-text.has-error input:focus::placeholder {

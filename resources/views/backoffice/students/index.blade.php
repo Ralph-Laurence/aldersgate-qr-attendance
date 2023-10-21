@@ -39,10 +39,11 @@
                     <x-flat-input  as="{{ 'input-email' }}"     fill="{{ 'Email' }}"  required with-caption  />
                     
                     <x-flat-input  as="{{ 'input-contact' }}"   fill="{{ 'Contact No.' }}"  with-caption />
-                    <x-flat-input  as="{{ 'input-birthday' }}"  fill="{{ 'Birthday' }}"     with-caption />
+                    <x-flat-input  as="{{ 'input-birthday' }}"  fill="{{ 'Birthday' }}"     with-caption readonly/>
                 </div>
             </div>
         </div>
+        <input type="hidden" name="last-action" class="last-action" value="{{ old('last-action') }}">
     </x-slot>
 </x-modal-form-md>
 

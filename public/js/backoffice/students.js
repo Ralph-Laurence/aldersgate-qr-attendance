@@ -2,9 +2,8 @@ var studentsDT = undefined;
 var pageLengthDT = undefined;
 
 var studentFormModal = undefined;
-var formCarousel = undefined;
-var formCarouselFrameIndex = 0;
-var formCarouselFrameCount = 0;
+
+var needsHardReset = false;
 
 var courseSelect = null;
 var yearSelect = null;
@@ -28,12 +27,19 @@ $(function ()
     restylePaginationLength(pageLengthDT);
    
     courseSelect = new FlatSelect('#input-course');
-    yearSelect = new FlatSelect('#input-year-level');
-
-    studentFormModal = new FormModal($('#addEditStudentModal'));
+    yearSelect   = new FlatSelect('#input-year-level');
   
-    if ($(".has-error").length > 0)
-        showAddStudentForm();
+    studentFormModal = new FormModal($('#addEditStudentModal'));
+    studentFormModal.closeOnPositive(false);
+    
+    //studentFormModal.closeOnNegative(false); // --> default behaviour closes the modal
+  
+    if (studentFormModal.hasErrors())
+    {
+        needsHardReset = true;
+        studentFormModal.setDirty();
+        showStudentForm();
+    }
 
     materialDatePicker('#input-birthday');
 
@@ -49,14 +55,25 @@ function bindEvents()
         changePageLength($(this), length);
     });
 
-    $(".btn-add-student").on('click', () => showAddStudentForm());
+    $(".btn-add-student").on('click', () => showStudentForm());
 
-    studentFormModal.onNegativeClicked(() => {
-        resetStudentForm();
+    studentFormModal.onPositiveClicked(() => 
+    {
+        if (!validateEntries())
+            return;
+
+        studentFormModal.submitForm();
     });
 
-    studentFormModal.onCanceled(() => {
-        resetStudentForm();
+    studentFormModal.onClosed(() => 
+    {
+        if (studentFormModal.isDirty())
+            handleDirtyFormClose();
+        else
+        {
+            if (studentFormModal.hasErrors())
+                resetStudentForm();
+        }
     });
 }
 
@@ -96,7 +113,7 @@ function changePageLength(anchor, length)
     $(anchor).addClass('selected');
 }
 
-function showAddStudentForm() 
+function showStudentForm() 
 {
     studentFormModal.present({
         title: 'Add new student'
@@ -105,7 +122,64 @@ function showAddStudentForm()
 
 function resetStudentForm()
 {
-    studentFormModal.resetForm();
+    studentFormModal.resetForm(needsHardReset);
     courseSelect.reset();
     yearSelect.reset();
+    studentFormModal.clearDirty();
+
+    if (needsHardReset)
+        needsHardReset = false;
+}
+
+function validateEntries() 
+{
+    var requiredFields  = studentFormModal.getForm().find('input[required]');
+    var errorCount      = 0;
+
+    $.each(requiredFields, (i, f) => 
+    { 
+        var $root   = $(f).closest('.flat-controls');
+        var $label  = $root.find('.error-label');
+        var $text   = $root.find('.input-text');
+        var $alias  = $root.data('alias');
+
+        if ( $(f).val() )
+        {
+            $text.removeClass('has-error');
+            $label.text('');
+            return true;        // continue next iteration
+        }
+
+        switch ($alias)
+        {
+            case 'text':
+                var $placeholder = $text.find('.main-control').attr('placeholder');
+                $text.addClass('has-error');
+                $label.text((!$placeholder) ? 'Please fill out this field' : `${$placeholder} must be filled out`);
+                break;
+
+            case 'select':
+                $label.text('Please choose an option');
+                break;
+            
+            default:
+                $label.text('');
+                break;
+        } 
+
+        errorCount++;
+    });
+
+    return (errorCount < 1);
+}
+
+function handleDirtyFormClose()
+{
+    msgBox.showWarning("You have unsaved changes. Are you sure you want to close?", 
+    {
+        positiveButtonClick: () => resetStudentForm(),
+        negativeButtonClick: () => showStudentForm(),
+        onCanceled:          () => showStudentForm(),
+        useNegativeButton:   true,
+    });
 }

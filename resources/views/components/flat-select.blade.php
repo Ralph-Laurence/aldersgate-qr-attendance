@@ -1,3 +1,16 @@
+@php
+    $oldValue = old($as . "-value");
+    $oldLabel = $text;
+
+    if (!empty($oldValue))
+    {
+        $itemLabel = array_search($oldValue, $items);
+
+        if ($itemLabel !== false)
+            $oldLabel = $itemLabel;
+    }
+@endphp
+
 @once
     @push('styles')
         <link rel="stylesheet" href="{{ asset('css/components/flat-select.css') }}">
@@ -11,7 +24,7 @@
     @endpush
 @endonce
 
-<div {{ $attributes->merge(['class' => 'flat-select' ]) }}>
+<div {{ $attributes->merge(['class' => 'flat-controls flat-select' ]) }} data-alias="select">
 
     @if ($withCaption)
         <div class="my-1 px-1">
@@ -21,20 +34,26 @@
     <div class="dropdown">
         <button class="btn dropdown-toggle flat-select-button" type="button" id="{{ $as }}" 
             data-mdb-toggle="dropdown" aria-expanded="false">
-                {{ $text }}
+                {{ $oldLabel }}
         </button>
         <ul class="dropdown-menu overflow-hidden user-select-none" aria-labelledby="{{ $as }}">
             <div class="h-100 w-100" style="max-height: 192px; overflow-y: auto;" data-simplebar>
                 @foreach ($items as $item => $value)
-                <li>
-                    <a class="dropdown-item" data-item-value="{{ $value }}">
-                        {{ $item }}
-                    </a>
+                <li> 
+                    @if ( !empty($oldValue) && $oldValue == $value )
+                        <a class="dropdown-item active" data-item-value="{{ $value }}">
+                            {{ $item }}
+                        </a>
+                    @else
+                        <a class="dropdown-item" data-item-value="{{ $value }}">
+                            {{ $item }}
+                        </a>
+                    @endif
                 </li>                
                 @endforeach
             </div>
         </ul>
-        <input type="text" name="{{ $as . "-value" }}" id="{{ $as . "-value" }}" value="{{ old($as . "-value") }}" class="flat-select-value d-none">
+        <input type="text" name="{{ $as . "-value" }}" id="{{ $as . "-value" }}" value="{{ $oldValue }}" class="main-control flat-select-value d-none" {{ $attributes->has('required') ? 'required' : '' }}>
     </div>
 
     {{-- ERROR LABEL --}}
