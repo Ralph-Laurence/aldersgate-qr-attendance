@@ -35,12 +35,13 @@ class Utils
      */
     public static function getPhotoPath($photo) : string
     {
+        $fallback = 'storage/profiles/common.png';
         $photoPath = 'profiles/' . $photo;
 
-        if (Storage::disk('public')->exists($photoPath))
-            return asset('storage/' . $photoPath);
-        else 
-            return asset('storage/profiles/common.jpg');
+        if (empty($photo) || !Storage::disk('public')->exists($photoPath))
+            return asset($fallback);
+
+        return asset('storage/' . $photoPath);
     }
 
     /**

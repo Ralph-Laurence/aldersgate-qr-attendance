@@ -2,9 +2,15 @@ import { ModalsBase } from "./modals-base.js";
 
 export class MessageBox extends ModalsBase
 {
-    CLASS_MSG_INFO      = 'messagebox-info';
+    CLASS_MSG_PRIMARY   = 'messagebox-primary';
     CLASS_MSG_WARN      = 'messagebox-warn';
     CLASS_MSG_DANGER    = 'messagebox-danger';
+
+
+    // constructor(modalElement)
+    // {
+    //     super(modalElement);
+    // }
 
     //
     // MODAL USAGE
@@ -18,7 +24,7 @@ export class MessageBox extends ModalsBase
             this.setTitle('Information');
 
         this.setContent(message);
-        this.updateClass(this.CLASS_MSG_INFO);
+        this.updateClass(this.CLASS_MSG_PRIMARY);
 
         this.show();
     }
@@ -49,6 +55,18 @@ export class MessageBox extends ModalsBase
         this.updateClass(this.CLASS_MSG_DANGER);
     
         this.show();
+    }
+
+    updateClass(newClass)
+    {
+        var classes = [this.CLASS_MSG_PRIMARY, this.CLASS_MSG_WARN, this.CLASS_MSG_DANGER];
+        var $modalRoot = $(this.domElement);
+
+        $.each(classes, function(index, selectorClass){
+            $modalRoot.removeClass(selectorClass);
+        });
+
+        $modalRoot.addClass(newClass);
     }
 }
 

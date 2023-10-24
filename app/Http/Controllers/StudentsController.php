@@ -2,61 +2,75 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Extensions\InputTypes;
 use App\Http\Extensions\RegexPatterns;
 use App\Http\Extensions\RouteNames;
-use App\Http\Extensions\Utils;
 use App\Http\Extensions\ValidationMessages;
 use App\Models\Courses;
 use App\Models\Student;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
 
+// index, show, create, store, edit, update and delete
+// https://packagist.org/packages/hashids/hashids
 class StudentsController extends Controller
 {     
     private $studentModel = null;
     private $courseModel  = null;
-
+    
     function __construct()
     {
         $this->studentModel = new Student();
         $this->courseModel  = new Courses();
     }
 
-    public function index() 
+    public function index($sort = null) 
     {  
-        $dataset = $this->studentModel->getStudents();
+        $dataset = $this->studentModel->getStudents([
+            'sort' => $sort
+        ]);
+
         $courses = $this->courseModel->getAllAssoc();
-
-        for ($i = 1; $i <= 5; $i++)
-        {
-            // Suffix year levels with "st, nd, rd" i.e 1st 2nd etc..
-            $yearLevels[Utils::toOrdinal($i)] = $i;
-        }
-
-        $inputs = array
-        (
-            'frame1' => [
-                $this->buildInput('input-fname', InputTypes::TEXT, 'Firstname'),
-                $this->buildInput('input-mname', InputTypes::TEXT, 'Middlename'),
-                $this->buildInput('input-lname', InputTypes::TEXT, 'Lastname'),
-
-                $this->buildInput('input-student-no', InputTypes::TEXT, 'Student No.'),
-
-                $this->buildInput('input-email', InputTypes::TEXT, 'Email'),
-            ],
-            'frame2' => [
-                $this->buildInput('input-contact',  InputTypes::TEXT, 'Contact #', false),
-            ]
-        );
-
+        $yearLevels = $this->studentModel->getYearLevels();
+        
         return view('backoffice.students.index')
             ->with('studentsDataset', $dataset)
             ->with('totalRecords', $dataset->count())
             ->with('coursesList', $courses)
             ->with('yearLevels', $yearLevels)
-            ->with('storeStudentRoute', route( RouteNames::ADD_STUDENT ))
-            ->with('fields', $inputs);
+            ->with('formActions', 
+            [
+                'storeStudent'  => route( RouteNames::ADD_STUDENT ),
+                'deleteStudent' => route( RouteNames::DELETE_STUDENT )
+            ]);
+    }
+
+    public function delete(Request $request)
+    {
+        if (empty($request->input('student-key')))
+            abort(500);
+
+        try 
+        {
+            $id = decrypt($request->input('student-key'));
+
+            DB::table($this->studentModel->getTable())
+                ->where(Student::FIELD_ID, '=', $id)
+                ->delete();
+
+            $flashMessage = json_encode([
+                'status'   => '0', 
+                'response' => 'Student record and attendance history successfully deleted.'
+            ]);
+
+            return redirect()->route(RouteNames::STUDENTS)->with('flash-message', $flashMessage);
+
+        } catch (\Throwable $th) {
+            //throw $th;
+            abort(500);
+        }
     }
 
     public function store(Request $request)
@@ -64,11 +78,46 @@ class StudentsController extends Controller
         $validator = $this->validateFields($request);
 
         if ($validator->fails())
-        {
             return redirect()->back()->withErrors($validator)->withInput();
-        }
 
-        dump($validator->validated());
+        $inputs = $validator->validated();
+
+        $data = 
+        [
+            Student::FIELD_STUDENT_NUM  => $inputs['input-student-no'],
+            Student::FIELD_FNAME        => $inputs['input-fname'],
+            Student::FIELD_MNAME        => $inputs['input-mname'],
+            Student::FIELD_LNAME        => $inputs['input-lname'],
+            Student::FIELD_EMAIL        => $inputs['input-email'],
+            Student::FIELD_COURSE_ID    => $inputs['input-course-value'],
+            Student::FIELD_YEAR         => $inputs['input-year-level-value'],
+            Student::FIELD_CONTACT      => $inputs['input-contact'],
+            Student::FIELD_BIRTHDAY     => $inputs['input-birthday'],
+        ];
+
+        try 
+        {
+            Student::create($data);
+
+            return redirect()->route(RouteNames::STUDENTS, ['sort' => 'recent']);
+        } 
+        catch (QueryException $ex) 
+        {
+            if ($ex->errorInfo[1] == 1062)
+            {
+                $errMsg = [];
+
+                if (Str::contains($ex->getMessage(), "for key 'students_student_no_unique'"))
+                    $errMsg['input-student-no'] = 'Student Number is already in use.';
+
+                if (Str::contains($ex->getMessage(), "for key 'students_email_unique"))
+                    $errMsg['input-email'] = 'Email is already in use.';
+
+                return redirect()->back()->withErrors($errMsg)->withInput();
+            }
+
+            abort(500);
+        }
     }
 
     private function validateFields(Request $request)
@@ -81,7 +130,7 @@ class StudentsController extends Controller
             'input-student-no'   => 'required|max:32|regex:' . RegexPatterns::NUMERIC_DASH,
             'input-contact'      => 'nullable|regex:'        . RegexPatterns::MOBILE_NO,
             'input-email'        => 'required|max:50|email',
-            'input-birthday'     => 'nullable|date_format:m/d/Y',
+            'input-birthday'     => 'nullable|date_format:n/j/Y',
             
             'input-course-value'     => 'required|integer',
             'input-year-level-value' => 'required|integer',
@@ -128,15 +177,5 @@ class StudentsController extends Controller
         ];
         
         return $validationMessage;
-    }
-
-    private function buildInput($name, $type, $label, $required = true) : array
-    {
-        return [
-            'type'      => $type, 
-            'name'      => $name, 
-            'label'     => $label,  
-            'required'  => $required 
-        ];
     }
 }

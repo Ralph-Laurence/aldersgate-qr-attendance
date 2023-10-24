@@ -13,6 +13,7 @@
     {{-- <link rel="stylesheet" href="{{ asset('css/lib/fontawesome/css/brands.css') }}"> --}}
     <link rel="stylesheet" href="{{ asset('css/lib/simplebar/simplebar.6.2.5.min.css') }}">
     <link rel="stylesheet" href="{{ asset('css/base.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/components/flat-colors.css') }}">
     <link rel="stylesheet" href="{{ asset('css/backoffice/backoffice.css') }}">
     <link rel="stylesheet" href="{{ asset('css/backoffice/sidebar.css') }}">
     <link rel="stylesheet" href="{{ asset('css/backoffice/overrides/simplebar.css') }}">

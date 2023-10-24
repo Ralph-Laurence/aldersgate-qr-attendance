@@ -1,0 +1,16 @@
+:root {
+
+    --flat-color-primary-dark:  #01875F;
+    --flat-color-primary:       #03A575;
+    --flat-color-primary-600:   #03B080;
+    /* --flat-color-primary:       #E6F3EF; */
+    /* --flat-color-primary:       #0F9D58; */
+    /* --flat-color-primary-500:   #12BE57;
+    --flat-color-primary-600:   #2FB344; */
+
+    --flat-color-warning:       #FFAC34;
+    --flat-color-warning-600:   #FF9534;
+
+    --flat-color-danger:        #FE1D42;
+    --flat-color-danger-300:    #FE3D53;
+}

@@ -28,7 +28,7 @@
     height: 84px;
     max-height: 84px;
     /* background-color: #51559f; */
-    background-color: var(--base-primary-dark);
+    background-color: var(--flat-color-primary-dark);
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -185,7 +185,7 @@
 .selectedDay {
     /* background-color: #51559f; */
     border: none;
-    background-color: var(--base-primary-dark);
+    background-color: var(--flat-color-primary-dark);
     border-radius: 50%;
     color: #ffffff;
 }
@@ -240,7 +240,7 @@
     font-size: 14px;
     font-weight: 600;
     /* color: #51559f; */
-    color: var(--base-primary-dark);
+    color: var(--flat-color-primary-dark);
     background: transparent;
     text-transform: uppercase;
 }
@@ -269,7 +269,7 @@
 }
 
 .m-datepicker-month-arrows p:hover {
-    background-color: var(--base-primary-dark);
+    background-color: var(--flat-color-primary-dark);
     color: white;
 }
 

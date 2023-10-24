@@ -1,0 +1,53 @@
+.flat-button {
+    border: none;
+    border-radius: 2rem;
+    max-height: 36px !important;
+    height: 36px;
+}
+
+.flat-button[theme='default'] {
+    color: var(--text-color-500);
+    background-color: var(--flat-control-bg);
+}
+
+.flat-button[theme='primary'] {
+    background-color: var(--flat-color-primary-dark);
+    color: white !important;
+}
+
+.flat-button[theme='primary']:hover {
+    background-color: var(--flat-color-primary);
+}
+
+.flat-button[theme='primary-invert'] {
+    background-color: var(--flat-color-primary);
+    color: white !important;
+}
+
+.flat-button[theme='primary-invert']:hover {
+    background-color: var(--flat-color-primary-dark);
+}
+
+.flat-button[theme='warning'] {
+    background-color: var(--flat-color-warning);
+    color: white !important;
+}
+
+.flat-button[theme='warning']:hover {
+    background-color: var(--flat-color-warning-600);
+}
+
+.flat-button[theme='danger'] {
+    background-color: var(--flat-color-danger);
+    color: white !important;
+}
+
+.flat-button[theme='danger']:hover {
+    background-color: var(--flat-color-danger-300);
+}
+
+.flat-button:hover {
+    background-color: #DDE0E3;
+    color: var(--text-color-700);
+    text-shadow: 0 0 1px;
+}

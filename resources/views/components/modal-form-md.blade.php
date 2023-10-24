@@ -38,8 +38,8 @@
                 </form>
 			</div>
 			<div class="modal-footer border-0 d-flex flex-row align-items-center">
-				<button type="button" class="btn btn-negative shadow-0" data-mdb-dismiss="modal">{{ "Cancel" }}</button>
-				<button type="button" class="btn btn-positive shadow-0" data-mdb-dismiss="modal">{{ "Save" }}</button>
+				<x-flat-button as="btn-negative" theme="default" text="Cancel" data-mdb-dismiss="modal"/>
+				<x-flat-button as="btn-positive" theme="primary" text="Save" data-mdb-dismiss="modal"/>
 			</div>
 		</div>
 	</div>

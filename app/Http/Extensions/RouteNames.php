@@ -23,4 +23,21 @@ class RouteNames
     public const ADD_STUDENT    = 'backoffice.add-student';
     public const EDIT_STUDENT   = 'backoffice.edit-student';
     public const DELETE_STUDENT = 'backoffice.delete-student';
+
+    public static function toLabel( $routeName ) : string
+    {
+        $labels = 
+        [
+            self::DASHBOARD     => 'Dashboard',
+            self::ATTENDANCE    => 'Attendance',
+            self::STUDENTS      => 'Students',
+            self::USERS         => 'Users',
+            self::SETTINGS      => 'Settings',
+            self::MY_PROFILE    => 'My Profile',
+            self::SUPPORT       => 'Support',
+            self::ABOUT         => 'About'
+        ];
+
+        return $labels[$routeName];
+    }
 }

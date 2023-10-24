@@ -170,19 +170,7 @@ export class ModalsBase
         if (!this.modalInstance || !this.checkElementsExists)
             throw new Error("Modal isn't initialized");
     }
-
-    updateClass(newClass)
-    {
-        var classes = [this.CLASS_MSG_INFO, this.CLASS_MSG_WARN, this.CLASS_MSG_DANGER];
-        var $domEl = $(this.domElement);
-
-        $.each(classes, function(index, selectorClass){
-            $domEl.removeClass(selectorClass);
-        });
-
-        $domEl.addClass(newClass);
-    }
-
+ 
     //
     // CONSUMER END LOGICS
     //

@@ -3,33 +3,33 @@
     min-height: fit-content !important;
 }
 
-/* INFO MESSAGEBOX */
-.messagebox-info .messagebox-icon {
+/* PRIMARY MESSAGEBOX */
+.messagebox-primary .messagebox-icon {
     background-color: #D5EFE3;
-    color: var(--base-primary-dark);
+    color: var(--flat-color-primary-dark);
 }
 
-.messagebox-info .messagebox-icon::before {
+.messagebox-primary .messagebox-icon::before {
     content: '\f05a';
 }
 
-.messagebox-info .messagebox-buttons .btn-positive {
-    background-color: var(--base-primary-dark);
+.messagebox-primary .messagebox-buttons .btn-positive {
+    background-color: var(--flat-color-primary-dark);
     color: white;
 }
 
-.messagebox-info .messagebox-buttons .btn-positive:hover {
-    background-color: #12BE57;
+.messagebox-primary .messagebox-buttons .btn-positive:hover {
+    background-color: var(--flat-color-primary);
 }
 
-.messagebox-info .messagebox-buttons .btn-negative {
+.messagebox-primary .messagebox-buttons .btn-negative {
     background-color: #F4F5FB;
 }
 
 /* WARNING MESSAGEBOX */
 .messagebox-warn .messagebox-icon {
     background-color: #FEEDD0;
-    color: #FFAC34;
+    color: var(--flat-color-warning);
 }
 
 .messagebox-warn .messagebox-icon::before {
@@ -37,12 +37,12 @@
 }
 
 .messagebox-warn .messagebox-buttons .btn-positive {
-    background-color: #FFAC34;
+    background-color: var(--flat-color-warning);
     color: white;
 }
 
 .messagebox-warn .messagebox-buttons .btn-positive:hover {
-    background-color: #FF9534;
+    background-color: var(--flat-color-warning-600);
 }
 
 .messagebox-warn .messagebox-buttons .btn-negative {
@@ -52,7 +52,7 @@
 /* DANGER MESSAGEBOX */
 .messagebox-danger .messagebox-icon {
     background-color: #F6E1E4;
-    color: #FE1D42;
+    color: var(--flat-color-danger);
 }
 
 .messagebox-danger .messagebox-icon::before {
@@ -60,14 +60,19 @@
 }
 
 .messagebox-danger .messagebox-buttons .btn-positive {
-    background-color: #FE1D42;
+    background-color: var(--flat-color-danger);
     color: white;
 }
 
 .messagebox-danger .messagebox-buttons .btn-positive:hover {
-    background-color: #FE3D53;
+    background-color: var(--flat-color-danger-300);
 }
 
 .messagebox-danger .messagebox-buttons .btn-negative {
     background-color: #F4F5FB;
+}
+
+.messagebox-content .emphasized {
+    font-weight: 600;
+    font-style: italic;
 }

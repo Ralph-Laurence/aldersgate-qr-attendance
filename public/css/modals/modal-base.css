@@ -37,25 +37,3 @@
     color: var(--text-color-500);
     font-size: 14px;
 } 
-
-.modal-footer button {
-    border-radius: 2rem;
-    color: var(--text-color-400);
-    background-color: var(--flat-control-bg);
-}
-
-.modal-footer button:hover {
-    background-color: #DDE0E3;
-    /* font-weight: 600; */
-    color: var(--text-color-700);
-    text-shadow: 0 0 1px;
-}
-
-.modal-footer button.btn-positive {
-    background-color: var(--base-primary-dark);
-    color:  white !important;
-}
-
-.modal-footer button.btn-positive:hover {
-    background-color: var(--base-primary-color);
-}

@@ -27,8 +27,16 @@
     color: var(--text-color-800) !important;
 }
 
+.flat-select .dropdown .dropdown-menu .dropdown-item {
+    color: var(--text-color-500);
+}
+
+.flat-select .dropdown .dropdown-menu .dropdown-item:hover {
+    color: var(--flat-color-primary-dark);
+}
+
 .flat-select .dropdown .dropdown-menu .dropdown-item.active {
-    background-color: var(--base-primary-dark);
+    background-color: var(--flat-color-primary-dark);
     color: white;
 }
 .flat-select .dropdown .dropdown-menu .dropdown-item.active::after {

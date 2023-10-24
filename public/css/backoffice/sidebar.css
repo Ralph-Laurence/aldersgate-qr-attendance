@@ -85,7 +85,8 @@
 }
 
 .sidebar-links .navbar-nav .nav-item .nav-link .icon {
-    background-image: linear-gradient(310deg, rgb(233, 236, 239), rgb(233, 236, 239));
+    /* background-image: linear-gradient(310deg, rgb(233, 236, 239), rgb(233, 236, 239)); */
+    background-color: #F4F5FB;
     width: 32px;
     height: 32px;
     padding: 10px;
@@ -94,9 +95,7 @@
 }
 
 .sidebar-links .navbar-nav .nav-item.active .nav-link .icon {
-    /* background-image: linear-gradient(310deg, var(--base-primary-color), var(--base-primary-dark)); */
-    /* background-image: linear-gradient(310deg, var(--base-primary-dark), var(--base-primary-dark)); */
-    background-image: linear-gradient(310deg, #24B574, var(--base-primary-color));
+    background-image: linear-gradient(310deg, var(--flat-color-primary), var(--flat-color-primary));
     color: white;
 }
 

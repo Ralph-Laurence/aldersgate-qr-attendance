@@ -11,16 +11,22 @@ class Student extends Model
 {
     use HasFactory;
 
+    const FIELD_ID          = 'id';
     const FIELD_STUDENT_NUM = 'student_no';
-    const FIELD_FNAME = 'firstname';
-    const FIELD_MNAME = 'middlename';
-    const FIELD_LNAME = 'lastname';
-    const FIELD_EMAIL = 'email';
-    const FIELD_CONTACT = 'contact';
-    const FIELD_BIRTHDAY = 'birthday';
-    const FIELD_COURSE_ID = 'course_id';
-    const FIELD_YEAR = 'year';
-    const FIELD_PHOTO = 'photo'; 
+    const FIELD_FNAME       = 'firstname';
+    const FIELD_MNAME       = 'middlename';
+    const FIELD_LNAME       = 'lastname';
+    const FIELD_EMAIL       = 'email';
+    const FIELD_CONTACT     = 'contact';
+    const FIELD_BIRTHDAY    = 'birthday';
+    const FIELD_COURSE_ID   = 'course_id';
+    const FIELD_YEAR        = 'year';
+    const FIELD_PHOTO       = 'photo'; 
+
+    protected $guarded = 
+    [
+        self::FIELD_ID
+    ];
 
     /**
      * Base query builder for selecting students in database
@@ -30,41 +36,41 @@ class Student extends Model
         $table   = $this->getTable();
         $courses = Courses::getTableName();
 
-        $dataset = DB::table("$table as s")
+        $query = DB::table("$table as s")
             ->leftJoin("$courses as c", 'c.id', '=', 's.course_id')
             ->select(
-                's.student_no', 's.firstname', 's.middlename', 's.lastname', 's.contact',
-                's.email', 's.birthday', 's.year', 's.photo', 'c.course'
-            )
-            ->orderBy('s.lastname')
-            ->get();
+                's.id', 's.student_no', 's.firstname', 's.middlename', 's.lastname',
+                's.email', 's.birthday', 's.year', 's.photo', 's.contact', 'c.course');
 
-        if (!is_null($dataset))
-        {
-            for ($i = 0; $i < count($dataset); $i++) 
-            {
-                $row = $dataset[$i];
-    
-                // Exclude empty rows
-                if (empty((array)$row))
-                    continue;
-            }
-        }
-
-        return $dataset;
+        return $query;
     }
 
-    public function getStudents()
+    public function getStudents($options = array())
     {
-        $dataset = $this->getStudentsBase();
+        // Default | Fallback query
+        $dataset  = $this->getStudentsBase()->orderBy('s.lastname', 'asc');
 
+        if ( array_key_exists('sort', $options) )
+        { 
+            // Build a query to get the last added row
+            if ($options['sort'] == 'recent')
+                $dataset = $this->getStudentsBase()->orderBy('s.created_at', 'desc');
+        }
+
+        $dataset = $dataset->get(); // Execute the query
+
+        // Beautify the dataset
         for ($i = 0; $i < $dataset->count(); $i++)
         {
             $row = $dataset[$i];
 
+            // Encrypt student id
+            $row->id = encrypt($row->id);
+
             // Fix photo path
-            if ($row->photo)
-                $row->photo = Utils::getPhotoPath($row->photo);
+            $photo = $row->photo ? $row->photo : '';
+            
+            $row->photo = Utils::getPhotoPath($photo);
 
             // Convert the year levels to their ordinal equivalent
             $row->year_ordinal = Utils::toOrdinal($row->year, true);
@@ -77,5 +83,16 @@ class Student extends Model
         }
 
         return $dataset;
+    }
+
+    public function getYearLevels() : array
+    {
+        for ($i = 1; $i <= 5; $i++)
+        {
+            // Suffix year levels with "st, nd, rd" i.e 1st 2nd etc..
+            $yearLevels[Utils::toOrdinal($i)] = $i;
+        }
+
+        return $yearLevels;
     }
 }

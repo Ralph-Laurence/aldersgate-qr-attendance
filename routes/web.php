@@ -35,11 +35,17 @@ Route::controller(DashboardController::class)->group(function()
 
 Route::controller(StudentsController::class)->group(function()
 {
-    Route::get('/backoffice/students', 'index')->name( RouteNames::STUDENTS );
+    // Route::get('/backoffice/students', 'index')->name( RouteNames::STUDENTS );
+    Route::get('/backoffice/students/{sort?}', 'index')->name( RouteNames::STUDENTS );
     Route::post('/backoffice/students/add', 'store')->name( RouteNames::ADD_STUDENT );
+    Route::post('/backoffice/students/delete', 'delete')->name( RouteNames::DELETE_STUDENT );
 });
 
 Route::controller(AttendanceController::class)->group(function()
 {
     Route::get('/backoffice/attendance', 'index')->name( RouteNames::ATTENDANCE );
+});
+
+Route::get('/test', function() {
+    return view('testground');
 });

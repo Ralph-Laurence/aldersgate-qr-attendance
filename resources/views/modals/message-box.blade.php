@@ -16,20 +16,20 @@
 			</div>
 			<div class="modal-body messagebox-content border-0">{{ "Content" }}</div>
 			<div class="modal-footer border-0 messagebox-buttons">
-				<button type="button" class="btn btn-negative shadow-0 d-none" data-mdb-dismiss="modal">{{ "Cancel" }}</button>
-				<button type="button" class="btn btn-positive shadow-0" data-mdb-dismiss="modal">{{ "OK" }}</button>
+				<x-flat-button as="btn-negative" theme="default" text="Cancel" data-mdb-dismiss="modal" class="d-none"/>
+				<x-flat-button as="btn-positive" theme="default" text="OK" data-mdb-dismiss="modal"/>
 			</div>
 		</div>
 	</div>
 </div>
-
+{{-- 
 @push('scripts')
 <script type="module">
 	
   	import { MessageBox } from "{{ asset('js/modals/messagebox.js') }}";
 
-	$(function() {
+	$(document).ready(function() {
 		window.msgBox = new MessageBox($('#messagebox'));
 	});
 </script>
-@endpush
+@endpush --}}

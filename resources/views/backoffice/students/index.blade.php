@@ -6,6 +6,15 @@
 
 @push('styles')
     <link rel="stylesheet" href="{{ asset('css/backoffice/overrides/datatables.css') }}">
+    <style>
+        .btn-add-student {
+            background-color: var(--flat-color-primary) !important;
+        }
+        .btn-add-student:hover {
+
+            background-color: var(--flat-color-primary-600) !important;
+        }
+    </style>
 @endpush
  
 @section('content')
@@ -15,7 +24,8 @@
     @include('controls.datepicker')
 @endonce
 
-<x-modal-form-md id="addEditStudentModal" title="Add new student" method="POST" action="{{ $storeStudentRoute }}">
+{{-- BEGIN STUDENT FORM MODAL --}}
+<x-modal-form-md id="addEditStudentModal" title="Add new student" method="POST" action="{{ $formActions['storeStudent'] }}">
     <x-slot name="formInner">
         <div class="container-fluid mb-3">
             <div class="mb-2">
@@ -43,9 +53,9 @@
                 </div>
             </div>
         </div>
-        <input type="hidden" name="last-action" class="last-action" value="{{ old('last-action') }}">
     </x-slot>
 </x-modal-form-md>
+{{-- END STUDENT FORM MODAL --}}
 
 <div class="content-wrapper py-3">
 
@@ -59,23 +69,21 @@
 
             <div class="row">
                 <div class="col mb-4 align-items-center d-flex">
-                    <div class="pagination-length-control d-inline-flex gap-2 bg-white rounded-8 px-3 py-2 text-sm">
+                    {{-- <div class="pagination-length-control d-inline-flex gap-2 bg-white rounded-8 px-3 py-2 text-sm">
                         {{ "Show" }}
                         <div class="dropdown z-100">
                             <button class="btn btn-page-length" data-mdb-toggle="dropdown"
                                 id="pageLengthMenuButton"></button>
                             <ul class="dropdown-menu user-select-none" aria-labelledby="pageLengthMenuButton">
-                                {{-- Append items here --}}
+                                
                             </ul>
                         </div>
                         {{ "entries" }}
-                    </div>
+                    </div> --}}
+                    <x-flat-pager-length class="pagination-length-control"/>
                 </div>
                 <div class="col mb-4 align-items-center d-flex justify-content-end px-3">
-                    <button class="btn btn-gradient-primary btn-add-student">
-                        <i class="fas fa-user-graduate me-2"></i>
-                        {{ "Add" }}
-                    </button>
+                    <x-flat-button as="btn-add-student" theme="primary" text="Add" icon="fa-user-graduate"/>
                 </div>
             </div>
 
@@ -83,7 +91,7 @@
                 <div class="col">
                     <div class="card mb-4 table-card">
                         <div class="card-header pb-0">
-                            {{-- <h6 class="card-title">{{ "All Students" }}</h6> --}}
+                            
                             <div class="d-flex flex-row align-items-center gap-2 mb-3">
                                 <h6 class="card-title mb-0">{{ "All Students" }}</h6>
                                 <div class="attendance-calendar text-sm px-3 me-auto">
@@ -136,19 +144,15 @@
                                 <thead>
                                     <tr>
                                         <th data-orderable="false" class="text-xs text-uppercase fixed-long-column-300">
-                                            {{ "Student" }}</th>
+                                            {{ "Student" }}
+                                        </th>
+                                        <th data-orderable="false" 
+                                            class="text-xs text-uppercase text-center fixed-medium-column-120">{{ "Year"}}</th>
                                         <th data-orderable="false"
-                                            class="text-xs text-uppercase text-center fixed-medium-column-120">{{ "Year"
-                                            }}</th>
-                                        <th data-orderable="false"
-                                            class="text-xs text-uppercase text-center fixed-medium-column-120">{{
-                                            "Course" }}</th>
-                                        <th data-orderable="false" class="text-xs text-uppercase text-center">{{ "Email"
-                                            }}</th>
-                                        <th data-orderable="false" class="text-xs text-uppercase text-center">{{
-                                            "Contact#" }}</th>
-                                        <th data-orderable="false" class="text-xs text-uppercase text-center">{{
-                                            "Action" }}</th>
+                                            class="text-xs text-uppercase text-center fixed-medium-column-120">{{"Course" }}</th>
+                                        <th data-orderable="false" class="text-xs text-uppercase text-center">{{ "Email"}}</th>
+                                        <th data-orderable="false" class="text-xs text-uppercase text-center">{{"Contact#" }}</th>
+                                        <th data-orderable="false" class="text-xs text-uppercase text-center">{{"Action" }}</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -157,6 +161,13 @@
 
                                         @foreach ($studentsDataset as $row)
 
+                                        @php
+                                            $dataTarget = json_encode([
+                                                'name' => $row->name,
+                                                'key'  => $row->id
+                                            ]);
+                                        @endphp
+
                                         <tr>
                                             <td class="fixed-long-column-300 ps-2">
                                                 <div class="d-flex align-items-center px-2 py-1">
@@ -164,7 +175,7 @@
                                                         <img src="{{ $row->photo }}" width="36" height="36" loading="lazy" />
                                                     </div>
                                                     <div class="d-flex flex-column justify-content-center text-truncate">
-                                                        <h6 class="mb-0 text-sm text-truncate">{{ $row->name }}</h6>
+                                                        <h6 class="mb-0 text-sm text-truncate td-student-name">{{ $row->name }}</h6>
                                                         <p class="mb-0 text-secondary text-xs">{{ $row->student_no }}</p>
                                                     </div>
                                                 </div>
@@ -188,6 +199,7 @@
                                                     <button class="btn btn-sm px-2 btn-delete">
                                                         <i class="fa-solid fa-trash"></i>
                                                     </button>
+                                                    <textarea class="data-target d-none">{{ $dataTarget }}</textarea>
                                                 </div>
                                             </td>
                                         </tr>
@@ -208,10 +220,21 @@
         </div>
     </main>
 </div>
+<div class="d-none actions">
+    <textarea id="flash-message">
+        @if (Session::has('flash-message'))
+            {{ Session::get('flash-message') }}
+        @endif
+    </textarea>
+    <form action="{{ $formActions['deleteStudent'] }}" method="post" id="deleteform">
+        @csrf
+        <input type="text" name="student-key" id="student-key">
+    </form>
+</div>
 
 @endsection
 
 @push('scripts')
 <script src="{{ asset('extensions/datatables/datatables.min.js') }}"></script>
-<script src="{{ asset('js/backoffice/students.js') }}"></script>
+<script type="module" src="{{ asset('js/backoffice/students.js') }}"></script>
 @endpush
