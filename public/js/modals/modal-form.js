@@ -43,6 +43,18 @@ export class ModalForm extends ModalsBase
         return $(this.domElement).find('.modal-body form');
     }
 
+    setSubmitAction(route)
+    {
+        var $form = this.getForm();
+        $form.attr('action', route);
+    }
+
+    clearSubmitAction()
+    {
+        var $form = this.getForm();
+        $form.removeAttr('action');
+    }
+
     hasErrors()
     {
         var errors = $(this.getForm()).find('.flat-controls .has-error').length > 0;
@@ -51,18 +63,26 @@ export class ModalForm extends ModalsBase
 
     resetForm(hardReset)
     {
-        this.getForm().trigger('reset');
+        hardReset = hardReset || true;
+        
+        if (hardReset) // 
+        {
+            $(this.getForm()).find('.flat-controls .main-control').val('')
 
-        var $form = $(this.getForm());
+            console.warn('performing hard reset...');
+        }
+        else
+        {
+            this.getForm().trigger('reset');
+            console.warn('basic form reset');
+        } 
 
-        if (hardReset === true)
-            $form.find('.flat-controls .main-control').removeAttr('value');
-
+        var $form = $(this.getForm())
         $form.find('.flat-controls .has-error').removeClass('has-error');
         $form.find('.flat-controls .error-label').text('');
 
-        // if (onReset && typeof onReset === 'function')
-        //     onReset();
+        this.clearDirty();
+        this.clearSubmitAction();
     }
 
     submitForm()

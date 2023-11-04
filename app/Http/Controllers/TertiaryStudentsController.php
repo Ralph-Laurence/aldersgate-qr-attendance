@@ -1,0 +1,212 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Http\Controllers\Base\StudentController;
+use App\Http\Extensions\Routes;
+use App\Http\Extensions\Utils;
+use App\Http\Extensions\ValidationMessages;
+use App\Models\Courses;
+use App\Models\TertiaryStudent;
+use Illuminate\Database\QueryException;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
+
+
+class TertiaryStudentsController extends StudentController
+{
+    private $studentModel = null;
+    private $courseModel  = null;
+    
+    function __construct()
+    {
+        $this->studentModel = new TertiaryStudent();
+        $this->courseModel  = new Courses();
+    }
+    //
+    //=================================================
+    //:::::::::::::: CONTROLLER METHODS :::::::::::::::
+    //=================================================
+    //
+    public function index($sort = null) 
+    {
+        $options    = ['sort' => $sort];
+        $student    = TertiaryStudent::STUDENT_LEVEL_COLLEGE;
+            
+        $dataset    = $this->studentModel->getStudents($options, $student);
+
+        $courses    = $this->courseModel->getAll(true);
+        $yearLevels = $this->studentModel->getYearLevels();
+        
+        return view('backoffice.students.college.index')
+            ->with('studentsDataset', $dataset)
+            ->with('totalRecords', $dataset->count())
+            ->with('coursesList', $courses)
+            ->with('yearLevels', $yearLevels)
+            ->with('formActions', 
+            [
+                'storeStudent'  => route( Routes::COLLEGE_STUDENT['store']   ),
+                'updateStudent' => route( Routes::COLLEGE_STUDENT['update']  ),
+                'deleteStudent' => route( Routes::COLLEGE_STUDENT['destroy'] )
+            ])
+            ->with('recordNavItemRoutes', 
+            [
+                'elementary' => route(Routes::ELEM_STUDENT['index']),
+            ]);
+    }
+
+    public function destroy(Request $request)
+    {
+        if (empty($request->input('student-key')))
+            abort(500);
+
+        try 
+        {
+            $id = decrypt($request->input('student-key'));
+
+            DB::table($this->studentModel->getTable())
+                ->where(TertiaryStudent::FIELD_ID, '=', $id)
+                ->delete();
+ 
+            $flashMessage = Utils::makeFlashMessage(self::MSG_SUCCESS_DELETE, Utils::FLASH_MESSAGE_SUCCESS, 'toast');
+
+            return redirect()->route( Routes::COLLEGE_STUDENT['index'] )->with('flash-message', $flashMessage);
+
+        } catch (\Throwable $th) {
+            //throw $th;
+            abort(500);
+        }
+    }
+
+    //
+    //=================================================
+    //::::::::::: BUSINESS LOGIC METHODS ::::::::::::::
+    //=================================================
+    //
+    protected function saveModel(Request $request, $mode = 0)
+    {
+        $inputs = $this->validateFields($request);
+
+        // Check if validation failed and a redirect response was returned
+        if ($inputs instanceof \Illuminate\Http\RedirectResponse)
+            return $inputs; // Return the redirect response
+
+        try 
+        { 
+            $data = 
+            [
+                // Table field names        => Input request names
+
+                TertiaryStudent::FIELD_STUDENT_NUM  => $inputs['input-student-no'],
+                TertiaryStudent::FIELD_FNAME        => $inputs['input-fname'],
+                TertiaryStudent::FIELD_MNAME        => $inputs['input-mname'],
+                TertiaryStudent::FIELD_LNAME        => $inputs['input-lname'],
+                TertiaryStudent::FIELD_EMAIL        => $inputs['input-email'],
+                TertiaryStudent::FIELD_COURSE_ID    => $inputs['input-course-value'],
+                TertiaryStudent::FIELD_YEAR         => $inputs['input-year-level-value'],
+                TertiaryStudent::FIELD_CONTACT      => $inputs['input-contact'],
+                TertiaryStudent::FIELD_BIRTHDAY     => $inputs['input-birthday'],
+            ];
+
+            $_flashMsg = '';
+
+            if ($mode === 0)
+            {
+                TertiaryStudent::create($data);
+                $_flashMsg = self::MSG_SUCCESS_ADDED;
+            }
+            else if ($mode === 1)
+            {
+                // There must be a student key present in the input request.
+                if (empty($request->input('student-key')))
+                    abort(500);
+
+                $record_id = decrypt($request->input('student-key'));
+                $student   = TertiaryStudent::find( $record_id );
+
+                // If the student record is not found, do not perform an update
+                if (!$student)
+                    abort(500);
+
+                $student->update($data);
+                $_flashMsg = self::MSG_SUCCESS_UPDATED;
+            }
+
+            $flashMessage = Utils::makeFlashMessage($_flashMsg, Utils::FLASH_MESSAGE_SUCCESS, 'toast');
+
+            return redirect()->route(Routes::COLLEGE_STUDENT['index'], ['sort' => 'recent'])
+                ->withInput( ['form-action' => $request->input('form-action')] )
+                ->with('flash-message', $flashMessage);
+        } 
+        catch (QueryException $ex) 
+        {
+            if ($ex->errorInfo[1] == 1062)
+            {
+                $errMsg = [];
+
+                if (Str::contains($ex->getMessage(), "for key 'tertiary_students_student_no_unique'"))
+                    $errMsg['input-student-no'] = self::MSG_FAIL_INDEX_STUDENT_NO;
+
+                if (Str::contains($ex->getMessage(), "for key 'tertiary_students_email_unique"))
+                    $errMsg['input-email'] = self::MSG_FAIL_INDEX_EMAIL;
+
+                return redirect()->back()->withErrors($errMsg)->withInput();
+            }
+            
+            abort(500);
+        }
+    }
+
+    private function validateFields(Request $request)
+    {
+        // 
+        // Get common validation rules defined in base class
+        // then union / merge extra rules
+        //
+        $validationFields = $this->getCommonValidationFields([ 
+
+            // Extra | Specific Fields
+            'input-course-value'     => 'required',
+            'input-year-level-value' => 'required|integer|between:1,5',
+        ]);
+        // 
+        // Get common validation rule messages defined in base class
+        // then union / merge extra rules
+        //
+        $validationMessages = $this->commonValidationMessages([
+
+            // Extra | Specific Rules
+            'input-course-value.integer'      => ValidationMessages::invalid('Course'),
+            'input-course-value.required'     => ValidationMessages::option('course'),
+            
+            'input-year-level-value.integer'  => ValidationMessages::invalid('Year level'),
+            'input-year-level-value.required' => ValidationMessages::option('year level'),
+            'input-year-level-value.between'  => ValidationMessages::between('Year level', 1, 5),
+        ]);
+
+        $validator = Validator::make($request->all(), $validationFields, $validationMessages);
+
+        if ($validator->fails())
+            return redirect()->back()->withErrors($validator)->withInput();
+
+        // Successfully validated fields
+        $inputs = $validator->validated();
+
+        // Validate course, find its id by its name
+        $courseId = $this->courseModel->findCourseId($request->input('input-course-value'));
+
+        if (is_null($courseId))
+        {
+            return redirect()->back()
+                ->withErrors(['input-course-value' => ValidationMessages::invalid('Course')])
+                ->withInput();
+        }
+
+        // Update the input field values, set it to the course id found
+        $inputs['input-course-value'] = $courseId;
+
+        return $inputs;
+    }
+}

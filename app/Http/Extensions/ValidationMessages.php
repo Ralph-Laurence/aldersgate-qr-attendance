@@ -66,4 +66,12 @@ class ValidationMessages
 
         return "Please select $article $fieldName";
     }
+
+    public static function between($fieldName, $min, $max)
+    {
+        if (!empty($fieldName))
+            return "$fieldName must be between $min and $max.";
+
+        return "The value must be between $min and $max.";
+    }
 }

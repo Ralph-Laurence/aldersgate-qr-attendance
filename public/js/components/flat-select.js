@@ -2,16 +2,16 @@ export class FlatSelect
 {
     constructor(mdbDropdownDom)
     { 
-        this.domElement = $(mdbDropdownDom).get(0);
-        this.control = new mdb.Dropdown(this.domElement);
+        this.domElement     = $(mdbDropdownDom).get(0);
+        this.control        = new mdb.Dropdown(this.domElement);
 
-        this.dropdownRoot = $(this.domElement).closest('.dropdown');
-        this.valueField = $(this.dropdownRoot).find(`${mdbDropdownDom}-value`).get(0);
-        this.toggleButton = $(this.dropdownRoot).find('.flat-select-button');
+        this.$dropdownRoot  = $(this.domElement).closest('.dropdown');
+        this.valueField     = this.$dropdownRoot.find(`${mdbDropdownDom}-value`).get(0);
+        this.toggleButton   = this.$dropdownRoot.find('.flat-select-button');
         
-        this.toggleButtonDefaultText = 'Select'; //$(this.toggleButton).text();
+        this.toggleButtonDefaultText = 'Select'; //$(this.toggleButton).find('.button-text').text();
 
-        this.bindEvents();
+        $((e) => this.bindEvents()); 
     } 
 
     /**
@@ -22,8 +22,11 @@ export class FlatSelect
      */
     bindEvents()
     {
-        $(this.domElement).parent().find('.dropdown-menu .dropdown-item').on('click', (event) =>
+        // $(this.domElement).parent().find('.dropdown-menu .dropdown-item').on('click', (event) =>
+        this.$dropdownRoot.find('.dropdown-menu .dropdown-item').on('click', (event) =>
         { 
+            console.warn('clicked item');
+
             this.resetSelectedItems();
 
             var itemVal = $(event.currentTarget).addClass('active').attr('data-item-value');
@@ -36,19 +39,41 @@ export class FlatSelect
 
         $(this.valueField).on('input', (event) => 
         { 
-            var $control = $(event.currentTarget);
+            var $this_input     = $(event.currentTarget);
+            var this_input_val  = $this_input.val();
+            var itemText        = $(this.domElement).parent().find('.dropdown-menu .dropdown-item.active').text();
 
-            var itemVal = $control.val();
-            var itemText = $(this.domElement).parent().find('.dropdown-menu .dropdown-item.active').text();
-
-            if (itemVal)
-                $control.closest('.flat-select').find('.error-label').text('');
+            if (this_input_val)
+                $this_input.closest('.flat-select').find('.error-label').text('');
 
             if (this.ev_onValueChanged && (typeof this.ev_onValueChanged === 'function'))
-                this.ev_onValueChanged( itemVal );
+                this.ev_onValueChanged( this_input_val );
 
-            $(this.toggleButton).text(itemText);
+            $(this.toggleButton).find('.button-text').text(itemText);
         });
+    }
+
+    setValue(newValue)
+    {
+        $(this.valueField).val(newValue ); //.trigger('input');
+        
+        this.resetSelectedItems();
+
+        var options = $(this.domElement).parent().find('.dropdown-menu .dropdown-item');
+        var selected = 'Select';
+
+        $.each(options, function()
+        {
+            var itemValue = $(this).data('item-value');
+            
+            if (newValue == itemValue)
+            {
+                $(this).addClass('active');
+                selected = $(this).text() //itemValue;
+            }
+        });
+
+        $(this.toggleButton).find('.button-text').text(selected);        
     }
 
     open()
@@ -72,7 +97,7 @@ export class FlatSelect
     reset()
     {
         $(this.valueField).val('')
-        $(this.toggleButton).text(this.toggleButtonDefaultText);
+        $(this.toggleButton).find('.button-text').text(this.toggleButtonDefaultText);
 
         this.resetSelectedItems();
     }

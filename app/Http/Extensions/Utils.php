@@ -30,6 +30,10 @@ class Utils
         self::STATUS_CODE_TIMED_IN_FAILED               => "Failed to record Time In",
     ];
 
+    public const FLASH_MESSAGE_ERROR   = -1;
+    public const FLASH_MESSAGE_WARN    = 1;
+    public const FLASH_MESSAGE_SUCCESS = 0;
+
     /**
      * This builds a path string for the photo file
      */
@@ -132,5 +136,14 @@ class Utils
 
         return "a";
     }
-    
+
+    public static function makeFlashMessage(string $message, int $type, string $showIn, string $title = '')
+    {
+        return json_encode([
+            'title'     => $title,          // used by modal only
+            'response'  => $message,        // used by both toast and modal
+            'type'      => $type,           // used by toast
+            'showIn'    => $showIn          // modal | toast
+        ]);
+    }
 }

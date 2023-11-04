@@ -10,7 +10,7 @@ $routeMarkers =
 [
     route::DASHBOARD    => '',
     route::ATTENDANCE   => '',
-    route::STUDENTS     => '',
+    //route::STUDENTS     => '',
     route::USERS        => '',
     route::SETTINGS     => ''
 ];
@@ -69,8 +69,8 @@ $setHref = function ($routeName) use (&$routeMarkers)
                     <span class="nav-link-text ms-1">{{ "Attendance" }}</span>
                 </a>
             </li>
-            <li class="nav-item {{ $routeMarkers[route::STUDENTS] }}">
-                <a href="{{ $setHref(route::STUDENTS) }}" class="nav-link">
+            <li class="nav-item {{-- $routeMarkers[route::STUDENTS] --}}">
+                <a href="{{-- $setHref(route::STUDENTS) --}}" class="nav-link">
                     <div class="icon me-2 shadow center-flex">
                         <i class="fa-solid fa-user-graduate"></i>
                     </div>

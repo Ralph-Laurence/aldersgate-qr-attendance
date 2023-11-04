@@ -57,7 +57,8 @@
     border: transparent;
     outline: transparent;
     /* outline-color: #6566cc; */
-    cursor: pointer;
+    /* cursor: pointer; */
+    cursor: default;
     border-radius: 5px;
 }
 

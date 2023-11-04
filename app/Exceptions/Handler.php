@@ -3,6 +3,8 @@
 namespace App\Exceptions;
 
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
+use Throwable;
 
 class Handler extends ExceptionHandler
 {
@@ -33,5 +35,16 @@ class Handler extends ExceptionHandler
     public function register()
     {
         //
+    }
+
+    public function render($request, Throwable $e)
+    {
+        if ($e instanceof MethodNotAllowedHttpException)
+        {
+            // redirect to custom error page
+            return response()->view('errors.route-unsupported', [], 500);
+        }
+
+        return parent::render($request, $e);
     }
 }

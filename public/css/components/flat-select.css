@@ -11,13 +11,28 @@
     height: 36px;
 }
 
-.flat-select-button::after {
+.flat-select-button.no-text {
+    padding: 1px 2px 0 2px;
+    border-radius: 50px;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.flat-select-button:not(.drop-arrow-none)::after {
     border: none;
     font-family: var(--fas-font);
     content: '\f078';
     padding-left: 6px;
     position: relative;
     bottom: -0.186rem;
+}
+
+.flat-select-button.drop-arrow-none::after {
+    content: none;
 }
 
 .flat-select-button:hover,

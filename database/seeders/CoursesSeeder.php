@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Courses;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
@@ -14,46 +15,38 @@ class CoursesSeeder extends Seeder
      */
     public function run()
     {
-        $seed = 
-        [
-            ['course' => 'BSA'],
-            ['course' => 'BSBA'],
-            ['course' => 'BSCS'],
-            ['course' => 'BSIT'],
-            ['course' => 'BSN'],
-            ['course' => 'BSP'],
-            ['course' => 'BSRT'],
-            ['course' => 'BSMT'],
-            ['course' => 'BSPT'],
-            ['course' => 'BSOT'],
-            ['course' => 'BAC'],
-            ['course' => 'BAE'],
-            ['course' => 'BAPS'],
-            ['course' => 'BEED'],
-            ['course' => 'BTVTEd']
-        ];
+        $fieldCourse = Courses::FIELD_COURSE;
+        $fieldDesc   = Courses::FIELD_COURSE_DESC;
+
+        $seed =
+            [
+                [$fieldCourse => 'AB PolSci',   $fieldDesc => 'Bachelor of Arts in Political Science'],
+                [$fieldCourse => 'ABCOMM',      $fieldDesc => 'Bachelor of Arts in Mass Communication'],
+                [$fieldCourse => 'BAE',         $fieldDesc => 'Bachelor of Arts in English'],
+                [$fieldCourse => 'BEED',        $fieldDesc => 'Bachelor of Elementary Education'],
+                [$fieldCourse => 'BSED',        $fieldDesc => 'Bachelor of Secondary Education'],
+                [$fieldCourse => 'BSA',         $fieldDesc => 'Bachelor of Science in Accountancy'],
+                [$fieldCourse => 'BSArch',      $fieldDesc => 'Bachelor of Science in Architecture'],
+                [$fieldCourse => 'BSBA',        $fieldDesc => 'Bachelor of Science in Business Administration'],
+                [$fieldCourse => 'BSCpE',       $fieldDesc => 'Bachelor of Science in Computer Engineering'],
+                [$fieldCourse => 'BSCrim',      $fieldDesc => 'Bachelor of Science in Criminology'],
+                [$fieldCourse => 'BSCS',        $fieldDesc => 'Bachelor of Science in Computer Science'],
+                [$fieldCourse => 'BSCE',        $fieldDesc => 'Bachelor of Science in Civil Engineering'],
+                [$fieldCourse => 'BSEE',        $fieldDesc => 'Bachelor of Science in Electrical Engineering'],
+                [$fieldCourse => 'BSECE',       $fieldDesc => 'Bachelor of Science in Electronics and Communications Engineering'],
+                [$fieldCourse => 'BSIT',        $fieldDesc => 'Bachelor of Science in Information Technology'],
+                [$fieldCourse => 'BSME',        $fieldDesc => 'Bachelor of Science in Mechanical Engineering'],
+                [$fieldCourse => 'BSMT',        $fieldDesc => 'Bachelor of Science in Medical Technology'],
+                [$fieldCourse => 'BSN',         $fieldDesc => 'Bachelor of Science in Nursing'],
+                [$fieldCourse => 'BSOT',        $fieldDesc => 'Bachelor of Science in Occupational Therapy'],
+                [$fieldCourse => 'BSPsych',     $fieldDesc => 'Bachelor of Science in Psychology'],
+                [$fieldCourse => 'BSPT',        $fieldDesc => 'Bachelor of Science in Physical Therapy'],
+                [$fieldCourse => 'BPharm',      $fieldDesc => 'Bachelor of Science in Pharmacy'],
+                [$fieldCourse => 'BSRadTech',   $fieldDesc => 'Bachelor of Science in Radiologic Technology'],
+                [$fieldCourse => 'BSRT',        $fieldDesc => 'Bachelor of Science in Respiratory Therapy'],
+                [$fieldCourse => 'BTVTEd',      $fieldDesc => 'Bachelor of Technical-Vocational Teacher Education']
+            ];
 
         DB::table('courses')->insert($seed);
     }
 }
-
-/*
-['course' => 'Bachelor of Science in Accountancy (BSA)'],
-            ['course' => 'Bachelor of Science in Business Administration (BSBA)'],
-            ['course' => 'Bachelor of Science in Computer Science (BSCS)'],
-            ['course' => 'Bachelor of Science in Information Technology (BSIT)'],
-            ['course' => 'Bachelor of Science in Nursing (BSN)'],
-            ['course' => 'Bachelor of Science in Pharmacy (BSP)'],
-            ['course' => 'Bachelor of Science in Radiologic Technology (BSRT)'],
-            ['course' => 'Bachelor of Science in Medical Technology (BSMT)'],
-            ['course' => 'Bachelor of Science in Physical Therapy (BSPT)'],
-            ['course' => 'Bachelor of Science in Occupational Therapy (BSOT)'],
-            ['course' => 'Bachelor of Science in Respiratory Therapy (BSRT)'],
-            ['course' => 'Bachelor of Science in Psychology (BSP)'],
-            ['course' => 'Bachelor of Arts in Communication (BAC)'],
-            ['course' => 'Bachelor of Arts in English (BAE)'],
-            ['course' => 'Bachelor of Arts in Political Science (BAPS)'],
-            ['course' => 'Bachelor of Elementary Education (BEED)'],
-            ['course' => 'Bachelor of Secondary Education (BSED)'],
-            ['course' => 'Bachelor of Technical-Vocational Teacher Education (BTVTEd)']
-*/

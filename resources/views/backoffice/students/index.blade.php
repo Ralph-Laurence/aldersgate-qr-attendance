@@ -22,12 +22,17 @@
 @once
     @include('modals.message-box')
     @include('controls.datepicker')
+    @include('modals.toast')
 @endonce
 
 {{-- BEGIN STUDENT FORM MODAL --}}
-<x-modal-form-md id="addEditStudentModal" title="Add new student" method="POST" action="{{ $formActions['storeStudent'] }}">
+<x-modal-form-md id="studentFormModal" title="Student Form" method="POST" action="">
     <x-slot name="formInner">
         <div class="container-fluid mb-3">
+            <div class="d-none">
+                <textarea id="form-action-container-store">{{ $formActions['storeStudent'] }}</textarea>
+                <textarea id="form-action-container-update">{{ $formActions['updateStudent'] }}</textarea>
+            </div>
             <div class="mb-2">
                 <i class="fas fa-info-circle me-1"></i>
                 <small>{{ "Please fill out the fields marked with an asterisk (*) as they are required." }}</small>
@@ -42,16 +47,20 @@
                 <div class="col">
 
                     <div class="d-flex justify-content-between">
-                        <x-flat-select with-caption required :items="$coursesList" as="{{ 'input-course' }}"     label="Course"/>
-                        <x-flat-select with-caption required :items="$yearLevels"  as="{{ 'input-year-level' }}" label="Year Level"/>
+                        <x-flat-select as="{{ 'input-course' }}"     caption="Course"     :items="$coursesList" use-caption required />
+                        <x-flat-select as="{{ 'input-year-level' }}" caption="Year Level" :items="$yearLevels"  use-caption required />
                     </div>
 
-                    <x-flat-input  as="{{ 'input-email' }}"     fill="{{ 'Email' }}"  required with-caption  />
-                    
+                    <x-flat-input  as="{{ 'input-email' }}"     fill="{{ 'Email' }}"        with-caption required />
                     <x-flat-input  as="{{ 'input-contact' }}"   fill="{{ 'Contact No.' }}"  with-caption />
                     <x-flat-input  as="{{ 'input-birthday' }}"  fill="{{ 'Birthday' }}"     with-caption readonly/>
                 </div>
             </div>
+            {{-- WILL BE USED TO TRACK FORM ACTIONS SUCH AS EDIT CREATE --}}
+            <input type="text" name="form-action" id="form-action" class="d-none" value="{{ $errors->any() ? old('form-action', '0') : '0'  }}">
+            
+            {{-- WILL BE USED DURING UPDATE --}}
+            <input type="text" name="student-key" id="student-key" class="d-none" value="{{ old('student-key') }}">
         </div>
     </x-slot>
 </x-modal-form-md>
@@ -69,18 +78,15 @@
 
             <div class="row">
                 <div class="col mb-4 align-items-center d-flex">
-                    {{-- <div class="pagination-length-control d-inline-flex gap-2 bg-white rounded-8 px-3 py-2 text-sm">
-                        {{ "Show" }}
-                        <div class="dropdown z-100">
-                            <button class="btn btn-page-length" data-mdb-toggle="dropdown"
-                                id="pageLengthMenuButton"></button>
-                            <ul class="dropdown-menu user-select-none" aria-labelledby="pageLengthMenuButton">
-                                
-                            </ul>
-                        </div>
-                        {{ "entries" }}
-                    </div> --}}
                     <x-flat-pager-length class="pagination-length-control"/>
+                </div>
+                <div class="col">
+                    <x-flat-records-nav />
+                    {{-- <div class="btn-group" role="group" aria-label="Basic example">
+                        <button type="button" class="btn btn-primary">Left</button>
+                        <button type="button" class="btn btn-primary">Middle</button>
+                        <button type="button" class="btn btn-primary">Right</button>
+                    </div> --}}
                 </div>
                 <div class="col mb-4 align-items-center d-flex justify-content-end px-3">
                     <x-flat-button as="btn-add-student" theme="primary" text="Add" icon="fa-user-graduate"/>
@@ -93,7 +99,7 @@
                         <div class="card-header pb-0">
                             
                             <div class="d-flex flex-row align-items-center gap-2 mb-3">
-                                <h6 class="card-title mb-0">{{ "All Students" }}</h6>
+                                <h6 class="card-title mb-0">{{ "Senior High School" }}</h6>
                                 <div class="attendance-calendar text-sm px-3 me-auto">
                                     <i class="fas fa-user-graduate me-2"></i> {{ "$totalRecords Total Records" }}
                                 </div>
@@ -105,36 +111,17 @@
                                         <input type="text" name="q" id="search-input" placeholder="Search"
                                             autocomplete="off" value="" maxlength="32">
                                     </div>
-                                    <div class="dropdown">
-                                        <div class="search-filter justify-content-center px-3 ripple outlined-on-hover"
-                                            id="filtersDropdown" data-mdb-toggle="dropdown"
-                                            data-mdb-ripple-color="#67748E">
-                                            <i class="fas fa-filter text-sm me-2"></i> {{ "Filters" }}
-                                        </div>
-                                        <ul class="dropdown-menu" aria-labelledby="filtersDropdown">
-                                            <li><a class="dropdown-item" href="#">Action</a></li>
-                                            <li><a class="dropdown-item" href="#">Another action</a></li>
-                                            <li><a class="dropdown-item" href="#">Something else here</a></li>
-                                        </ul>
-                                    </div>
-                                    <div class="dropdown">
-                                        <div class="search-filter justify-content-center px-3 ripple outlined-on-hover"
-                                            id="filtersDropdown" data-mdb-toggle="dropdown"
-                                            data-mdb-ripple-color="#67748E">
-                                            <i class="fa-solid fa-arrow-down-a-z me-2"></i> {{ "Sort" }}
-                                        </div>
-                                        <ul class="dropdown-menu" aria-labelledby="filtersDropdown">
-                                            <li><a class="dropdown-item" href="#">Action</a></li>
-                                            <li><a class="dropdown-item" href="#">Another action</a></li>
-                                            <li><a class="dropdown-item" href="#">Something else here</a></li>
-                                        </ul>
-                                    </div>
-                                    <div class="dropdown">
-                                        <button class="btn shadow-0 btn-sm btn-sort outlined-on-hover"
-                                            data-mdb-toggle="dropdown" data-mdb-ripple-color="#67748E">
-                                            <i class="fa-solid fa-ellipsis-vertical"></i>
-                                        </button>
-                                    </div>
+                                    @php
+                                        $filterItems = [
+                                            'Action' => 'Action',
+                                            'Another action' => '#',
+                                            'Something else here' => '#',
+                                        ];
+                                    @endphp
+                                    <x-flat-select as="{{ 'search-filter' }}" :items="$filterItems" text="Filter" drop-arrow="none" use-icon="fa-filter"/>
+                                    <x-flat-select as="{{ 'sort-filter' }}"   text="Sort"   drop-arrow="none" use-icon="fa-arrow-down-a-z"/>
+                                    <x-flat-select as="{{ 'sort-filter' }}"   no-text       drop-arrow="none" use-icon="fa-ellipsis-vertical"/>
+                                    
                                 </div>
                             </div>
                         </div>
@@ -175,7 +162,7 @@
                                                         <img src="{{ $row->photo }}" width="36" height="36" loading="lazy" />
                                                     </div>
                                                     <div class="d-flex flex-column justify-content-center text-truncate">
-                                                        <h6 class="mb-0 text-sm text-truncate td-student-name">{{ $row->name }}</h6>
+                                                        <h6 class="mb-0 text-sm text-truncate">{{ $row->name }}</h6>
                                                         <p class="mb-0 text-secondary text-xs">{{ $row->student_no }}</p>
                                                     </div>
                                                 </div>
@@ -200,6 +187,7 @@
                                                         <i class="fa-solid fa-trash"></i>
                                                     </button>
                                                     <textarea class="data-target d-none">{{ $dataTarget }}</textarea>
+                                                    <textarea class="row-data d-none">{{ $row->rowData }}</textarea>
                                                 </div>
                                             </td>
                                         </tr>
@@ -237,4 +225,5 @@
 @push('scripts')
 <script src="{{ asset('extensions/datatables/datatables.min.js') }}"></script>
 <script type="module" src="{{ asset('js/backoffice/students.js') }}"></script>
+<script src="{{ asset('js/utils.js') }}"></script>
 @endpush

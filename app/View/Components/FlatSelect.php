@@ -5,50 +5,32 @@ namespace App\View\Components;
 use Illuminate\View\Component;
 
 class FlatSelect extends Component
-{
-    /**
-     * The select button text.
-     *
-     * @var string
-     */
-    public $label;
-    public $withCaption;
+{ 
+    public $items;          // Array of items
+    public $useCaption;     // Should we use caption labels?
+    public $caption;        // The label above
+    public $text;           // The button text
+    public $as;             // The element's name and id.
 
     /**
-     * The select options.
-     *
-     * @var string
+     * Create the component instance. 
      */
-    public $items;
+    public function __construct($as, $items = null, $text = null, $useCaption = null, $caption = null)
+    {  
+        $this->as = $as;
 
-    public $text;
+        if (is_null($items) || empty($items))
+            $this->items = array();
+        else
+            $this->items = $items;
 
-    /**
-     * The element's name and id.
-     *
-     * @var string
-     */
-    public $as;
-
-    /**
-     * Create the component instance.
-     *
-     * @param  string  $label
-     * @param  array  $items
-     * @return void
-     */
-    public function __construct($label, $items, $as, $text = null, $withCaption = null)
-    { 
-        $this->items = $items;
-        $this->label = $label;
-        $this->as    = $as;
-
-        if (is_null($text))
+        if (is_null($text) || empty($text))
             $this->text = 'Select';
         else
             $this->text = $text;
-
-        $this->withCaption = $withCaption;
+ 
+        $this->useCaption = $useCaption;
+        $this->caption = (!empty($caption)) ? $caption : '';
     }
 
     /**

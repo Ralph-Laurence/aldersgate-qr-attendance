@@ -8,7 +8,8 @@ export class FlatPagerLength
     applyTo(dropdown)
     {
         var $select = this.$control.find('select');
-        $select.hide();
+        
+        this.$control.hide();
 
         // Find the pagination length options, iterate thru each of them,
         // then copy their values and append them onto the dropdowns
