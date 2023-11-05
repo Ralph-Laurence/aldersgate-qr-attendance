@@ -4,7 +4,7 @@ namespace App\View\Components;
 
 use Illuminate\View\Component;
 
-class FlatRecordsNavItem extends Component
+class FlatWorksheetTabsItem extends Component
 { 
     public $text;
     public $current;
@@ -28,6 +28,6 @@ class FlatRecordsNavItem extends Component
      */
     public function render()
     {
-        return view('components.flat-records-nav-item');
+        return view('components.flat-worksheet-tabs-item');
     }
 }

@@ -15,7 +15,7 @@ class ElementaryStudent extends Student
     {
         for ($i = 1; $i <= 6; $i++)
         { 
-            $gradeLevels[$i] = $i;
+            $gradeLevels["Grade $i"] = $i;
         }
 
         return $gradeLevels;

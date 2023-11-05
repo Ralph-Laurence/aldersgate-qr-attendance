@@ -47,8 +47,8 @@
                 <div class="col">
 
                     <div class="d-flex justify-content-between">
-                        <x-flat-select as="{{ 'input-course' }}"     caption="Course"     :items="$coursesList" use-caption required />
-                        <x-flat-select as="{{ 'input-year-level' }}" caption="Year Level" :items="$yearLevels"  use-caption required />
+                        <x-flat-select as="{{ 'input-strand' }}"      caption="Strand"      :items="$strandsList" use-caption required />
+                        <x-flat-select as="{{ 'input-grade-level' }}" caption="Grade Level" :items="$gradeLevels"  use-caption required />
                     </div>
 
                     <x-flat-input  as="{{ 'input-email' }}"     fill="{{ 'Email' }}"        with-caption required />
@@ -81,14 +81,14 @@
                     <x-flat-pager-length class="pagination-length-control"/>
                 </div>
                 <div class="col">
-                    <x-flat-records-nav leading-label="Show" trailing-label="students">
+                    <x-flat-worksheet-tabs leading-label="Show" trailing-label="students">
                         <x-slot name="navItems">
-                            <x-flat-records-nav-item text="Elementary"/>
-                            <x-flat-records-nav-item to="http://" text="Juniors" current/>
-                            <x-flat-records-nav-item text="Seniors"/>
-                            <x-flat-records-nav-item to="{{ route( 'backoffice.students.college' ) }}" text="College" />
+                            <x-flat-worksheet-tabs-item to="{{ $worksheetTabRoutes['elementary'] }}" text="Elementary"/>
+                            <x-flat-worksheet-tabs-item to="{{ $worksheetTabRoutes['juniors'] }}" text="Juniors"/>
+                            <x-flat-worksheet-tabs-item text="Seniors" current/>
+                            <x-flat-worksheet-tabs-item to="{{ $worksheetTabRoutes['college'] }}" text="College"/>
                         </x-slot>
-                    </x-flat-records-nav> 
+                    </x-flat-worksheet-tabs> 
                 </div>
                 <div class="col mb-4 align-items-center d-flex justify-content-end px-3">
                     <x-flat-button as="btn-add-student" theme="primary" text="Add" icon="fa-user-graduate"/>
@@ -101,7 +101,7 @@
                         <div class="card-header pb-0">
                             
                             <div class="d-flex flex-row align-items-center gap-2 mb-3">
-                                <h6 class="card-title mb-0">{{ "Highschool Students" }}</h6>
+                                <h6 class="card-title mb-0">{{ "Senior High School" }}</h6>
                                 <div class="attendance-calendar text-sm px-3 me-auto">
                                     <i class="fas fa-user-graduate me-2"></i> {{ "$totalRecords Total Records" }}
                                 </div>
@@ -136,9 +136,9 @@
                                             {{ "Student" }}
                                         </th>
                                         <th data-orderable="false" 
-                                            class="text-xs text-uppercase text-center fixed-medium-column-120">{{ "Year"}}</th>
+                                            class="text-xs text-uppercase text-center fixed-medium-column-120">{{ "Grade"}}</th>
                                         <th data-orderable="false"
-                                            class="text-xs text-uppercase text-center fixed-medium-column-120">{{"Course" }}</th>
+                                            class="text-xs text-uppercase text-center fixed-medium-column-120">{{"Strand" }}</th>
                                         <th data-orderable="false" class="text-xs text-uppercase text-center">{{ "Email"}}</th>
                                         <th data-orderable="false" class="text-xs text-uppercase text-center">{{"Contact#" }}</th>
                                         <th data-orderable="false" class="text-xs text-uppercase text-center">{{"Action" }}</th>
@@ -170,10 +170,9 @@
                                                 </div>
                                             </td>
                                             <td class="text-center opacity-75 fixed-medium-column-120">
-                                                <span class="fw-600">{{ $row->year }}</span>
-                                                <sup class="opacity-65">{{ $row->year_ordinal }}</sup>
+                                                <span class="fw-600">{{ $row->grade_level }}</span>
                                             </td>
-                                            <td class="text-center opacity-75 fixed-medium-column-120">{{ $row->course }}
+                                            <td class="text-center opacity-75 fixed-medium-column-120">{{ $row->strand }}
                                             </td>
                                             <td class="text-center opacity-75 text-truncate">{{ $row->email }}</td>
                                             <td class="text-center opacity-75">{{ $row->contact }}</td>
@@ -226,6 +225,7 @@
 
 @push('scripts')
 <script src="{{ asset('extensions/datatables/datatables.min.js') }}"></script>
-<script type="module" src="{{ asset('js/backoffice/students.js') }}"></script>
+<script type="module" src="{{ asset('js/backoffice/students/common.js') }}"></script>
+<script type="module" src="{{ asset('js/backoffice/students/seniorhigh-students.js') }}"></script>
 <script src="{{ asset('js/utils.js') }}"></script>
 @endpush

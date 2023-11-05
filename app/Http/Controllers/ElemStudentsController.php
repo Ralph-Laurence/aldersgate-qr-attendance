@@ -7,14 +7,12 @@ use App\Http\Extensions\Routes;
 use App\Http\Extensions\Utils;
 use App\Http\Extensions\ValidationMessages;
 use App\Models\ElementaryStudent;
-use App\Models\ElemStudent;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 
-class ElemStudentsController extends StudentController//Controller
+class ElemStudentsController extends StudentController
 {
     private $studentModel = null;
 
@@ -26,11 +24,10 @@ class ElemStudentsController extends StudentController//Controller
     //
     public function index($sort = null) 
     {
-        $options = ['sort' => $sort];
-        $student = ElementaryStudent::STUDENT_LEVEL_ELEMENTARY;
-        
-        $dataset = $this->studentModel->getStudents($options, $student);
-    
+        $options     = ['sort' => $sort];
+        $student     = ElementaryStudent::STUDENT_LEVEL_ELEMENTARY;
+
+        $dataset     = $this->studentModel->getStudents($options, $student);
         $gradeLevels = $this->studentModel->getGradeLevels();
         
         return view('backoffice.students.elementary.index')
@@ -43,24 +40,30 @@ class ElemStudentsController extends StudentController//Controller
                 'updateStudent' => route(Routes::ELEM_STUDENT['update'] ),
                 'deleteStudent' => route(Routes::ELEM_STUDENT['destroy']),
             ])
-            ->with('recordNavItemRoutes', 
-            [
-                'college'    => route(Routes::COLLEGE_STUDENT['index']),
-            ]);
+            ->with('worksheetTabRoutes', $this->getWorksheetTabRoutesExcept('elementary'));
     }
 
+    public function destroy(Request $request)
+    {
+        return $this->deleteStudent($request, $this->studentModel);
+    }
     //
     //=================================================
     //::::::::::: BUSINESS LOGIC METHODS ::::::::::::::
     //=================================================
     //
-    protected function saveModel(Request $request, $mode = 0)
+    public function saveModel(Request $request, $mode = 0)
     {
-        $inputs = $this->validateFields($request);
+        $studentKey = $request->input('student-key');
+        
+        if (!empty($studentKey))
+            $studentKey = decrypt($studentKey);
 
-        // Check if validation failed and a redirect response was returned
+        $inputs = $this->validateFields($request, $studentKey);
+        
+        // Check if validation failed and a 'redirect' response was returned
         if ($inputs instanceof \Illuminate\Http\RedirectResponse)
-            return $inputs; // Return the redirect response
+            return $inputs;
 
         try 
         { 
@@ -88,11 +91,10 @@ class ElemStudentsController extends StudentController//Controller
             else if ($mode === 1)
             {
                 // There must be a student key present in the input request.
-                if (empty($request->input('student-key')))
+                if (empty($studentKey))
                     abort(500);
 
-                $record_id = decrypt($request->input('student-key'));
-                $student   = ElementaryStudent::find( $record_id );
+                $student = ElementaryStudent::find( $studentKey );
 
                 // If the student record is not found, do not perform an update
                 if (!$student)
@@ -127,20 +129,20 @@ class ElemStudentsController extends StudentController//Controller
         }
     }
 
-    private function validateFields(Request $request)
+    private function validateFields(Request $request, $recordId = null)
     {
         // 
         // Get common validation rules defined in base class
         // then union / merge extra rules
         //
-        $validationFields = $this->studentModel->getCommonValidationFields([ 
+        $validationFields = $this->commonValidationFields([ 
             'input-grade-level-value' => 'required|integer|between:1,6',
-        ]);
+        ], $recordId);
         // 
         // Get common validation rule messages defined in base class
         // then union / merge extra rules
         //
-        $validationMessages = $this->studentModel->commonValidationMessages([
+        $validationMessages = $this->commonValidationMessages([
 
             // Extra | Specific Rules
             'input-grade-level-value.integer'  => ValidationMessages::invalid('Grade level'),
@@ -152,10 +154,7 @@ class ElemStudentsController extends StudentController//Controller
 
         if ($validator->fails())
             return redirect()->back()->withErrors($validator)->withInput();
-
-        // Successfully validated fields
-        $inputs = $validator->validated();
-
-        return $inputs;
+ 
+        return $validator->validated();
     }
 }

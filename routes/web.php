@@ -5,6 +5,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ElemStudentsController;
 use App\Http\Controllers\JuniorStudentsController;
 use App\Http\Controllers\QRScannerController;
+use App\Http\Controllers\SeniorStudentsController;
 use App\Http\Controllers\TertiaryStudentsController;
 use App\Http\Extensions\RouteNames;
 use App\Http\Extensions\Routes;
@@ -47,6 +48,22 @@ Route::controller(ElemStudentsController::class)->group(function()
     Route::post('/backoffice/students/elementary/add',       'store'  )->name( Routes::ELEM_STUDENT['store']   );
     Route::post('/backoffice/students/elementary/edit',      'update' )->name( Routes::ELEM_STUDENT['update']  );
     Route::post('/backoffice/students/elementary/delete',    'destroy')->name( Routes::ELEM_STUDENT['destroy'] );
+});
+
+Route::controller(JuniorStudentsController::class)->group(function()
+{
+    Route::get( '/backoffice/students/juniorhigh/{sort?}',   'index'  )->name( Routes::JUNIOR_STUDENT['index']   );
+    Route::post('/backoffice/students/juniorhigh/add',       'store'  )->name( Routes::JUNIOR_STUDENT['store']   );
+    Route::post('/backoffice/students/juniorhigh/edit',      'update' )->name( Routes::JUNIOR_STUDENT['update']  );
+    Route::post('/backoffice/students/juniorhigh/delete',    'destroy')->name( Routes::JUNIOR_STUDENT['destroy'] );
+});
+
+Route::controller(SeniorStudentsController::class)->group(function()
+{
+    Route::get( '/backoffice/students/seniorhigh/{sort?}',   'index'  )->name( Routes::SENIOR_STUDENT['index']   );
+    Route::post('/backoffice/students/seniorhigh/add',       'store'  )->name( Routes::SENIOR_STUDENT['store']   );
+    Route::post('/backoffice/students/seniorhigh/edit',      'update' )->name( Routes::SENIOR_STUDENT['update']  );
+    Route::post('/backoffice/students/seniorhigh/delete',    'destroy')->name( Routes::SENIOR_STUDENT['destroy'] );
 });
 
 Route::controller(TertiaryStudentsController::class)->group(function()

@@ -6,6 +6,7 @@ use App\Http\Extensions\Utils;
 use App\Models\Courses;
 use App\Models\ElementaryStudent;
 use App\Models\JuniorStudent;
+use App\Models\SeniorStudent;
 use App\Models\Strand;
 use App\Models\TertiaryStudent;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -103,6 +104,11 @@ class Student extends Model
                 $fields[] = 's.year';
                 $fields[] = 'c.course';
                 break;
+
+            case self::STUDENT_LEVEL_SENIORS:
+                $fields[] = 's.grade_level';
+                $fields[] = 't.strand';
+                break;
     
             case self::STUDENT_LEVEL_ELEMENTARY: 
             case self::STUDENT_LEVEL_JUNIORS:
@@ -133,7 +139,7 @@ class Student extends Model
 
     private function makeQuery_SeniorHighStudents()
     {
-        $table   = JuniorStudent::getTableName();
+        $table   = SeniorStudent::getTableName();
         $strands = Strand::getTableName();
 
         $query   = DB::table( "$table as s" )
@@ -196,6 +202,15 @@ class Student extends Model
                     'yearlevel' => $row->year
                 ];
                 
+                break;
+
+            case self::STUDENT_LEVEL_SENIORS:
+ 
+                $rowData = $initialRowData + [
+                    'strand'     => $row->strand,
+                    'gradeLevel' => $row->grade_level
+                ];
+
                 break;
 
             case self::STUDENT_LEVEL_ELEMENTARY:

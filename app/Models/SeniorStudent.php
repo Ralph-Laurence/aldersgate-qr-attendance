@@ -2,10 +2,10 @@
 
 namespace App\Models;
 
+use App\Models\Base\Student;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 
-class SeniorStudent extends Model
+class SeniorStudent extends Student
 {
     use HasFactory;
 
@@ -29,5 +29,13 @@ class SeniorStudent extends Model
     public static function getTableName()
     {
         return (new self)->getTable();
+    }
+
+    public function getGradeLevels()
+    {
+        return [
+            "Grade 11" => 11,
+            "Grade 12" => 12,
+        ];
     }
 }

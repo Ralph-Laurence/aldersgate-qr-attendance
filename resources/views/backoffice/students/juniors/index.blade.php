@@ -39,21 +39,16 @@
             </div>
             <div class="row">
                 <div class="col">
-                    <x-flat-input as="{{ 'input-student-no' }}" fill="{{ 'Student No.' }}"  required with-caption />
-                    <x-flat-input as="{{ 'input-fname' }}"      fill="{{ 'Firstname' }}"    required with-caption />
-                    <x-flat-input as="{{ 'input-mname' }}"      fill="{{ 'Middlename' }}"   required with-caption />
-                    <x-flat-input as="{{ 'input-lname' }}"      fill="{{ 'Lastname' }}"     required with-caption />
+                    <x-flat-input  as="{{ 'input-student-no' }}"  fill="{{ 'Student No.' }}"  required with-caption />
+                    <x-flat-input  as="{{ 'input-fname' }}"       fill="{{ 'Firstname' }}"    required with-caption />
+                    <x-flat-input  as="{{ 'input-mname' }}"       fill="{{ 'Middlename' }}"   required with-caption />
+                    <x-flat-input  as="{{ 'input-lname' }}"       fill="{{ 'Lastname' }}"     required with-caption />
                 </div>
                 <div class="col">
-
-                    <div class="d-flex justify-content-between">
-                        <x-flat-select as="{{ 'input-course' }}"     caption="Course"     :items="$coursesList" use-caption required />
-                        <x-flat-select as="{{ 'input-year-level' }}" caption="Year Level" :items="$yearLevels"  use-caption required />
-                    </div>
-
-                    <x-flat-input  as="{{ 'input-email' }}"     fill="{{ 'Email' }}"        with-caption required />
-                    <x-flat-input  as="{{ 'input-contact' }}"   fill="{{ 'Contact No.' }}"  with-caption />
-                    <x-flat-input  as="{{ 'input-birthday' }}"  fill="{{ 'Birthday' }}"     with-caption readonly/>
+                    <x-flat-select as="{{ 'input-grade-level' }}" caption="Grade Level"       :items="$gradeLevels"  use-caption required />
+                    <x-flat-input  as="{{ 'input-email' }}"       fill="{{ 'Email' }}"        with-caption required />
+                    <x-flat-input  as="{{ 'input-contact' }}"     fill="{{ 'Contact No.' }}"  with-caption />
+                    <x-flat-input  as="{{ 'input-birthday' }}"    fill="{{ 'Birthday' }}"     with-caption readonly/>
                 </div>
             </div>
             {{-- WILL BE USED TO TRACK FORM ACTIONS SUCH AS EDIT CREATE --}}
@@ -81,14 +76,14 @@
                     <x-flat-pager-length class="pagination-length-control"/>
                 </div>
                 <div class="col">
-                    <x-flat-records-nav leading-label="Show" trailing-label="students">
+                    <x-flat-worksheet-tabs leading-label="Show" trailing-label="students">
                         <x-slot name="navItems">
-                            <x-flat-records-nav-item text="Elementary"/>
-                            <x-flat-records-nav-item to="http://" text="Juniors" current/>
-                            <x-flat-records-nav-item text="Seniors"/>
-                            <x-flat-records-nav-item to="{{ route( 'backoffice.students.college' ) }}" text="College" />
+                            <x-flat-worksheet-tabs-item to="{{ $worksheetTabRoutes['elementary'] }}" text="Elementary"/>
+                            <x-flat-worksheet-tabs-item text="Juniors" current/>
+                            <x-flat-worksheet-tabs-item to="{{ $worksheetTabRoutes['seniors'] }}" text="Seniors"/>
+                            <x-flat-worksheet-tabs-item to="{{ $worksheetTabRoutes['college'] }}" text="College" />
                         </x-slot>
-                    </x-flat-records-nav> 
+                    </x-flat-worksheet-tabs> 
                 </div>
                 <div class="col mb-4 align-items-center d-flex justify-content-end px-3">
                     <x-flat-button as="btn-add-student" theme="primary" text="Add" icon="fa-user-graduate"/>
@@ -136,9 +131,7 @@
                                             {{ "Student" }}
                                         </th>
                                         <th data-orderable="false" 
-                                            class="text-xs text-uppercase text-center fixed-medium-column-120">{{ "Year"}}</th>
-                                        <th data-orderable="false"
-                                            class="text-xs text-uppercase text-center fixed-medium-column-120">{{"Course" }}</th>
+                                            class="text-xs text-uppercase text-center fixed-medium-column-120">{{ "Grade"}}</th>
                                         <th data-orderable="false" class="text-xs text-uppercase text-center">{{ "Email"}}</th>
                                         <th data-orderable="false" class="text-xs text-uppercase text-center">{{"Contact#" }}</th>
                                         <th data-orderable="false" class="text-xs text-uppercase text-center">{{"Action" }}</th>
@@ -147,7 +140,7 @@
                                 <tbody>
 
                                     @if (!empty($studentsDataset))
-
+                                        
                                         @foreach ($studentsDataset as $row)
 
                                         @php
@@ -170,10 +163,8 @@
                                                 </div>
                                             </td>
                                             <td class="text-center opacity-75 fixed-medium-column-120">
-                                                <span class="fw-600">{{ $row->year }}</span>
-                                                <sup class="opacity-65">{{ $row->year_ordinal }}</sup>
+                                                <span class="fw-600">{{ $row->grade_level }}</span>
                                             </td>
-                                            <td class="text-center opacity-75 fixed-medium-column-120">{{ $row->course }}
                                             </td>
                                             <td class="text-center opacity-75 text-truncate">{{ $row->email }}</td>
                                             <td class="text-center opacity-75">{{ $row->contact }}</td>
@@ -226,6 +217,7 @@
 
 @push('scripts')
 <script src="{{ asset('extensions/datatables/datatables.min.js') }}"></script>
-<script type="module" src="{{ asset('js/backoffice/students.js') }}"></script>
+<script type="module" src="{{ asset('js/backoffice/students/common.js') }}"></script>
+<script type="module" src="{{ asset('js/backoffice/students/elementary-students.js') }}"></script>
 <script src="{{ asset('js/utils.js') }}"></script>
 @endpush

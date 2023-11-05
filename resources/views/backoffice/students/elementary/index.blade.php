@@ -76,14 +76,14 @@
                     <x-flat-pager-length class="pagination-length-control"/>
                 </div>
                 <div class="col">
-                    <x-flat-records-nav leading-label="Show" trailing-label="students">
+                    <x-flat-worksheet-tabs leading-label="Show" trailing-label="students">
                         <x-slot name="navItems">
-                            <x-flat-records-nav-item text="Elementary" current/>
-                            <x-flat-records-nav-item to="http://" text="Juniors"/>
-                            <x-flat-records-nav-item text="Seniors"/>
-                            <x-flat-records-nav-item to="{{ $recordNavItemRoutes['college'] }}" text="College" />
+                            <x-flat-worksheet-tabs-item text="Elementary" current/>
+                            <x-flat-worksheet-tabs-item to="{{ $worksheetTabRoutes['juniors'] }}" text="Juniors"/>
+                            <x-flat-worksheet-tabs-item to="{{ $worksheetTabRoutes['seniors'] }}" text="Seniors"/>
+                            <x-flat-worksheet-tabs-item to="{{ $worksheetTabRoutes['college'] }}" text="College" />
                         </x-slot>
-                    </x-flat-records-nav> 
+                    </x-flat-worksheet-tabs> 
                 </div>
                 <div class="col mb-4 align-items-center d-flex justify-content-end px-3">
                     <x-flat-button as="btn-add-student" theme="primary" text="Add" icon="fa-user-graduate"/>

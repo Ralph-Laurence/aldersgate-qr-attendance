@@ -12,6 +12,11 @@ class ValidationMessages
         return 'Please fill out this field.';
     }
 
+    public static function unique($fieldName) : string
+    {
+        return "$fieldName has already been taken.";
+    }
+
     public static function maxLength($length, $fieldName = '') : string
     {
         if (!empty($fieldName))
