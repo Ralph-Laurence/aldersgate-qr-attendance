@@ -6,15 +6,6 @@
 
 @push('styles')
     <link rel="stylesheet" href="{{ asset('css/backoffice/overrides/datatables.css') }}">
-    <style>
-        .btn-add-student {
-            background-color: var(--flat-color-primary) !important;
-        }
-        .btn-add-student:hover {
-
-            background-color: var(--flat-color-primary-600) !important;
-        }
-    </style>
 @endpush
  
 @section('content')
@@ -91,7 +82,7 @@
                     </x-flat-worksheet-tabs> 
                 </div>
                 <div class="col mb-4 align-items-center d-flex justify-content-end px-3">
-                    <x-flat-button as="btn-add-student" theme="primary" text="Add" icon="fa-user-graduate"/>
+                    <x-flat-button as="btn-add-record" theme="primary" text="Add" icon="fa-user-graduate"/>
                 </div>
             </div>
 

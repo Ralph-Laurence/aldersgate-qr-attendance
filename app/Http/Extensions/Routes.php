@@ -4,6 +4,31 @@ namespace App\Http\Extensions;
 
 class Routes
 {
+    public const DASHBOARD =
+    [
+        'index'    => 'backoffice.dashboard.index'
+    ];
+
+    public const ATTENDANCE =
+    [
+        'index'    => 'backoffice.attendance.index'
+    ];
+
+    public const LIBRARIANS =
+    [
+        'index'    => 'backoffice.users.librarians.index'
+    ];
+
+    public const MODERATORS =
+    [
+        'index'    => 'backoffice.users.moderators.index'
+    ];
+
+    public const MASTER_USERS =
+    [
+        'index'    => 'backoffice.users.master.index'
+    ];
+
     public const ELEM_STUDENT =
     [
         'index'     => 'backoffice.students.elementary.index',

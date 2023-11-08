@@ -217,7 +217,7 @@ function handleDelete(eventTarget)
 
 function bindEvents()
 {
-    $("#btn-add-student").on('click', () => 
+    $("#btn-add-record").on('click', () => 
     {
         setFormAction(ACTION_CREATE);
         showStudentForm();

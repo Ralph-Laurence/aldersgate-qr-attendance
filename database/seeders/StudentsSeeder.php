@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Models\Student;
+use App\Models\Base\Student;
 use Carbon\Carbon;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
@@ -342,6 +342,6 @@ class StudentsSeeder extends Seeder
 
         $birthday = Carbon::createFromTimestamp(rand($min, $max));
 
-        return $birthday->toDateString();
+        return $birthday->format('n/j/Y');
     }
 }

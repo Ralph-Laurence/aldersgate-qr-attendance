@@ -1,7 +1,7 @@
 @extends('layouts.backoffice.master')
 
 @section('title')
-{{ "Students" }}
+{{ "Users" }}
 @endsection
 
 @push('styles')
@@ -17,12 +17,12 @@
 @endonce
 
 {{-- BEGIN STUDENT FORM MODAL --}}
-<x-modal-form-md id="studentFormModal" title="Student Form" method="POST" action="">
+{{-- <x-modal-form-md id="studentFormModal" title="Student Form" method="POST" action="">
     <x-slot name="formInner">
         <div class="container-fluid mb-3">
             <div class="d-none">
-                <textarea id="form-action-container-store">{{ $formActions['storeStudent'] }}</textarea>
-                <textarea id="form-action-container-update">{{ $formActions['updateStudent'] }}</textarea>
+                <textarea id="form-action-container-store">{{ $formActions['storeUser'] }}</textarea>
+                <textarea id="form-action-container-update">{{ $formActions['updateUser'] }}</textarea>
             </div>
             <div class="mb-2">
                 <i class="fas fa-info-circle me-1"></i>
@@ -30,26 +30,31 @@
             </div>
             <div class="row">
                 <div class="col">
-                    <x-flat-input  as="{{ 'input-student-no' }}"  fill="{{ 'Student No.' }}"  required with-caption />
-                    <x-flat-input  as="{{ 'input-fname' }}"       fill="{{ 'Firstname' }}"    required with-caption />
-                    <x-flat-input  as="{{ 'input-mname' }}"       fill="{{ 'Middlename' }}"   required with-caption />
-                    <x-flat-input  as="{{ 'input-lname' }}"       fill="{{ 'Lastname' }}"     required with-caption />
+                    <x-flat-input as="{{ 'input-student-no' }}" fill="{{ 'Student No.' }}"  required with-caption />
+                    <x-flat-input as="{{ 'input-fname' }}"      fill="{{ 'Firstname' }}"    required with-caption />
+                    <x-flat-input as="{{ 'input-mname' }}"      fill="{{ 'Middlename' }}"   required with-caption />
+                    <x-flat-input as="{{ 'input-lname' }}"      fill="{{ 'Lastname' }}"     required with-caption />
                 </div>
                 <div class="col">
-                    <x-flat-select as="{{ 'input-grade-level' }}" caption="Grade Level"       :items="$gradeLevels"  use-caption required />
-                    <x-flat-input  as="{{ 'input-email' }}"       fill="{{ 'Email' }}"        with-caption required />
-                    <x-flat-input  as="{{ 'input-contact' }}"     fill="{{ 'Contact No.' }}"  with-caption />
-                    <x-flat-input  as="{{ 'input-birthday' }}"    fill="{{ 'Birthday' }}"     with-caption readonly/>
+
+                    <div class="d-flex justify-content-between">
+                        <x-flat-select as="{{ 'input-course' }}"     caption="Course"     :items="$coursesList" use-caption required />
+                        <x-flat-select as="{{ 'input-year-level' }}" caption="Year Level" :items="$yearLevels"  use-caption required />
+                    </div>
+
+                    <x-flat-input  as="{{ 'input-email' }}"     fill="{{ 'Email' }}"        with-caption required />
+                    <x-flat-input  as="{{ 'input-contact' }}"   fill="{{ 'Contact No.' }}"  with-caption />
+                    <x-flat-input  as="{{ 'input-birthday' }}"  fill="{{ 'Birthday' }}"     with-caption readonly/>
                 </div>
             </div>
-            {{-- WILL BE USED TO TRACK FORM ACTIONS SUCH AS EDIT CREATE --}}
+            {{ -- WILL BE USED TO TRACK FORM ACTIONS SUCH AS EDIT CREATE -- }}
             <input type="text" name="form-action" id="form-action" class="d-none" value="{{ $errors->any() ? old('form-action', '0') : '0'  }}">
             
-            {{-- WILL BE USED DURING UPDATE --}}
+            {{-- WILL BE USED DURING UPDATE -- }}
             <input type="text" name="student-key" id="student-key" class="d-none" value="{{ old('student-key') }}">
         </div>
     </x-slot>
-</x-modal-form-md>
+</x-modal-form-md> --}}
 {{-- END STUDENT FORM MODAL --}}
 
 <div class="content-wrapper py-3">
@@ -67,12 +72,11 @@
                     <x-flat-pager-length class="pagination-length-control"/>
                 </div>
                 <div class="col">
-                    <x-flat-worksheet-tabs leading-label="Show" trailing-label="students">
+                    <x-flat-worksheet-tabs leading-label="Show" trailing-label="users">
                         <x-slot name="navItems">
-                            <x-flat-worksheet-tabs-item text="Elementary" current/>
-                            <x-flat-worksheet-tabs-item to="{{ $worksheetTabRoutes['juniors'] }}" text="Juniors"/>
-                            <x-flat-worksheet-tabs-item to="{{ $worksheetTabRoutes['seniors'] }}" text="Seniors"/>
-                            <x-flat-worksheet-tabs-item to="{{ $worksheetTabRoutes['college'] }}" text="College" />
+                            <x-flat-worksheet-tabs-item to="{{ $worksheetTabRoutes['librarians'] }}" text="Librarians"/>
+                            <x-flat-worksheet-tabs-item text="Moderators" current/>
+                            <x-flat-worksheet-tabs-item to="{{ $worksheetTabRoutes['master'] }}" text="Master"/>
                         </x-slot>
                     </x-flat-worksheet-tabs> 
                 </div>
@@ -87,9 +91,9 @@
                         <div class="card-header pb-0">
                             
                             <div class="d-flex flex-row align-items-center gap-2 mb-3">
-                                <h6 class="card-title mb-0">{{ "Elementary" }}</h6>
+                                <h6 class="card-title mb-0">{{ "Moderators" }}</h6>
                                 <div class="attendance-calendar text-sm px-3 me-auto">
-                                    <i class="fas fa-user-graduate me-2"></i> {{ "$totalRecords Total Records" }}
+                                    <i class="fas fa-user-shield me-2"></i> {{ "$totalRecords Total Records" }}
                                 </div>
                                 <div class="d-inline-flex align-items-center gap-2">
                                     <div class="search-bar px-2">
@@ -119,21 +123,23 @@
                                 <thead>
                                     <tr>
                                         <th data-orderable="false" class="text-xs text-uppercase fixed-long-column-300">
-                                            {{ "Student" }}
+                                            {{ "Name" }}
                                         </th>
                                         <th data-orderable="false" 
-                                            class="text-xs text-uppercase text-center fixed-medium-column-120">{{ "Grade"}}</th>
-                                        <th data-orderable="false" class="text-xs text-uppercase text-center">{{ "Email"}}</th>
-                                        <th data-orderable="false" class="text-xs text-uppercase text-center">{{"Contact#" }}</th>
+                                            class="text-xs text-uppercase text-center">{{ "Username"}}</th>
+                                        <th data-orderable="false"
+                                            class="text-xs text-uppercase text-center fixed-medium-column-200">{{"Email" }}</th>
+                                        <th data-orderable="false" class="text-xs text-uppercase text-center fixed-medium-column-120">{{ "Access"}}</th>
+                                        <th data-orderable="false" class="text-xs text-uppercase text-center fixed-medium-column-120">{{"Status" }}</th>
                                         <th data-orderable="false" class="text-xs text-uppercase text-center">{{"Action" }}</th>
                                     </tr>
                                 </thead>
                                 <tbody>
 
-                                    @if (!empty($studentsDataset))
-                                        
-                                        @foreach ($studentsDataset as $row)
+                                    @if (!empty($usersDataset))
 
+                                        @foreach ($usersDataset as $row)
+  
                                         @php
                                             $dataTarget = json_encode([
                                                 'name' => $row->name,
@@ -149,16 +155,27 @@
                                                     </div>
                                                     <div class="d-flex flex-column justify-content-center text-truncate">
                                                         <h6 class="mb-0 text-sm text-truncate">{{ $row->name }}</h6>
-                                                        <p class="mb-0 text-secondary text-xs">{{ $row->student_no }}</p>
+                                                        {{-- <p class="mb-0 text-secondary text-xs">{{ $row->student_no }}</p> --}}
                                                     </div>
                                                 </div>
                                             </td>
-                                            <td class="text-center opacity-75 fixed-medium-column-120">
-                                                <span class="fw-600">{{ $row->grade_level }}</span>
+                                            <td class="text-center opacity-75 fixed-medium-column-200">
+                                                {{ $row->username }}
                                             </td>
+                                            <td class="text-center opacity-75 fixed-medium-column-200">{{ $row->email }}
                                             </td>
-                                            <td class="text-center opacity-75 text-truncate">{{ $row->email }}</td>
-                                            <td class="text-center opacity-75">{{ $row->contact }}</td>
+                                            <td class="text-center opacity-75 text-truncate">
+                                                <span class="badge {{ $permBadges[$row->permission]['type'] }}">
+                                                    <i class="fa-solid {{ $permBadges[$row->permission]['icon'] }} me-1"></i>
+                                                    {{ $row->permission }}
+                                                </span>
+                                            </td>
+                                            <td class="text-center opacity-75">
+                                                <span class="badge {{ $statusBadges[$row->status]['type'] }}">
+                                                    <i class="fa-solid {{ $statusBadges[$row->status]['icon'] }} me-1"></i>
+                                                    {{ $row->status }}
+                                                </span>
+                                            </td>
                                             <td class="text-center">
                                                 <div class="center-flex gap-2 record-actions">
                                                     <button class="btn btn-sm px-2 btn-details">
@@ -171,7 +188,7 @@
                                                         <i class="fa-solid fa-trash"></i>
                                                     </button>
                                                     <textarea class="data-target d-none">{{ $dataTarget }}</textarea>
-                                                    <textarea class="row-data d-none">{{ $row->rowData }}</textarea>
+                                                    <textarea class="row-data d-none">{{-- $row->rowData --}}</textarea>
                                                 </div>
                                             </td>
                                         </tr>
@@ -198,9 +215,9 @@
             {{ Session::get('flash-message') }}
         @endif
     </textarea>
-    <form action="{{ $formActions['deleteStudent'] }}" method="post" id="deleteform">
+    <form action="{{ $formActions['deleteUser'] }}" method="post" id="deleteform">
         @csrf
-        <input type="text" name="student-key" id="student-key">
+        <input type="text" name="student-user" id="student-user">
     </form>
 </div>
 
@@ -209,6 +226,6 @@
 @push('scripts')
 <script src="{{ asset('extensions/datatables/datatables.min.js') }}"></script>
 <script type="module" src="{{ asset('js/backoffice/students/common.js') }}"></script>
-<script type="module" src="{{ asset('js/backoffice/students/elementary-students.js') }}"></script>
+<script type="module" src="{{ asset('js/backoffice/students/college-students.js') }}"></script>
 <script src="{{ asset('js/utils.js') }}"></script>
 @endpush

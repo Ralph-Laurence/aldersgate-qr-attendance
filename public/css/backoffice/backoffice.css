@@ -170,6 +170,10 @@ hr {
     width: 120px;
 }
 
+.fixed-medium-column-200 {
+    width: 200px;
+}
+
 .footer, 
 .footer .nav-footer a {
     color: var(--text-color-800);
@@ -199,6 +203,14 @@ hr {
 
 .status-out {
     background-image: linear-gradient(310deg, #627594, #a8b8d8);
+}
+
+.btn-add-record {
+    background-color: var(--flat-color-primary) !important;
+}
+.btn-add-record:hover {
+
+    background-color: var(--flat-color-primary-600) !important;
 }
 
 .record-actions button {
@@ -258,7 +270,7 @@ hr {
         BUTTON OVERRIDES
 ====================================
 */
-
+/* 
 .btn-gradient-primary {
     background: linear-gradient(310deg, #24B574, var(--base-primary-color));
     border-radius: 2rem !important;
@@ -273,4 +285,9 @@ hr {
 
 .btn-gradient-primary:active {
     background: #1BB46B !important;
+} */
+
+.badge-success,
+.badge-success i {
+    color: var(--flat-color-primary-dark) !important;
 }
