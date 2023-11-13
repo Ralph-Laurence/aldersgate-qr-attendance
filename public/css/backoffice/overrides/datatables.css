@@ -62,8 +62,8 @@
 .dataTables_paginate .paginate_button.current {
     border: none !important;
     border-radius: 50px !important;
-    background-color: var(--text-color-800) !important;
-    /* replace with your preferred color */
+    /* background-color: var(--text-color-800) !important; */
+    background-color: var(--flat-color-primary) !important;
     color: #fff !important;
     text-align: center;
     padding: 4px .56rem;

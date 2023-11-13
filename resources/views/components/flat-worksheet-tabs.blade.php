@@ -26,6 +26,8 @@
         font-size: 0.8125rem;
         display: flex;
         align-items: center;
+        width: fit-content;
+        white-space: nowrap;
     }
 
     .flat-worksheet-tabs .flat-worksheet-tabs-item:hover,

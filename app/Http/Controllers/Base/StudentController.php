@@ -12,11 +12,9 @@ use App\Models\ElementaryStudent;
 use App\Models\JuniorStudent;
 use App\Models\SeniorStudent;
 use App\Models\TertiaryStudent;
-use App\Rules\UniqueStudentNumber;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
-use Whoops\Run;
 
 abstract class StudentController extends Controller
 {
@@ -92,6 +90,8 @@ abstract class StudentController extends Controller
         $studentNumRule = $this->uniqueRuleAcrossStudents('student_no', $updateRecordKey, ['max:32','regex:' . RegexPatterns::NUMERIC_DASH]);
         $emailRule = $this->uniqueRuleAcrossStudents('email', $updateRecordKey, ['max:50','email']);
 
+        //dump($studentNumRule); exit;
+
         $fields = array(
             'input-student-no'   => $studentNumRule,
             'input-fname'        => 'required|max:32|regex:' . RegexPatterns::ALPHA_DASH_DOT_SPACE,
@@ -102,7 +102,7 @@ abstract class StudentController extends Controller
             'input-birthday'     => 'nullable|date_format:n/j/Y',
         );
 
-        return $fields + $extraFields;
+        return array_merge($fields, $extraFields); //$fields + $extraFields;
     }
 
     private function uniqueRuleAcrossStudents($field, $updateRecordKey = null, $extraRules = [])
@@ -126,7 +126,7 @@ abstract class StudentController extends Controller
             $rule[] = $uniqueRule;
         }
 
-        return $rule + $extraRules;
+        return array_merge($rule, $extraRules); //$rule + $extraRules;
     }
 
     public function commonValidationMessages(array $extraRules)
@@ -149,7 +149,8 @@ abstract class StudentController extends Controller
             'input-student-no.max'       => ValidationMessages::maxLength(32, 'Student number'),
             'input-student-no.regex'     => ValidationMessages::numericDash('Student number'),
             'input-student-no.unique'    => ValidationMessages::unique('Student Number'),
-
+            
+            'input-email.unique'         => ValidationMessages::unique('Email'),
             'input-email.required'       => ValidationMessages::required('Email'),
             'input-email.email'          => ValidationMessages::invalid('Email'),
             'input-email.max'            => ValidationMessages::maxLength(50, 'Email'),

@@ -11,10 +11,14 @@ $routeSegments = \Request::segments();
 
             @foreach ($routeSegments as $segment)
                 
+                @php
+                    $clean_segment = str_replace('-', ' ', $segment);
+                @endphp
+
                 @if ($segment === end($routeSegments))
-                    <li class="breadcrumb-item text-sm active">{{ ucfirst($segment) }}</li>
+                    <li class="breadcrumb-item text-sm active">{{ ucfirst($clean_segment) }}</li>
                 @else
-                    <li class="breadcrumb-item text-sm opacity-50">{{ ucfirst($segment) }}</li>
+                    <li class="breadcrumb-item text-sm opacity-50">{{ ucfirst($clean_segment) }}</li>
                 @endif                    
                 
             @endforeach

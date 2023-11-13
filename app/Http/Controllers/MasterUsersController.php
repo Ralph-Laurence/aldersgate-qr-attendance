@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Base\UsersController;
+use App\Http\Extensions\Routes;
 use App\Models\User;
 use App\Models\Security\UserAccountControl as UAC;
+use Illuminate\Http\Request;
 
 class MasterUsersController extends UsersController
 {
@@ -21,33 +23,26 @@ class MasterUsersController extends UsersController
         $privilege  = UAC::ROLE_MASTER;
         
         $dataset    = $this->usersModel->getUsers($options, $privilege);
-        
-        $permBadges = 
-        [
-            UAC::permToString(UAC::PERM_FULL_CONTROL)  => [ 'type' => 'badge-success', 'icon' => 'fa-crown'    ],
-            UAC::permToString(UAC::PERM_MODIFY)        => [ 'type' => 'badge-warning', 'icon' => 'fa-gear'     ],
-            UAC::permToString(UAC::PERM_READ)          => [ 'type' => 'badge-info',    'icon' => 'fa-bookmark' ],
-            UAC::permToString(UAC::PERM_WRITE)         => [ 'type' => 'badge-warning', 'icon' => 'fa-pen'      ],
-            UAC::permToString(UAC::PERM_DENIED)        => [ 'type' => 'badge-danger',  'icon' => 'fa-ban'      ]
-        ];
-
-        $statusBadges =
-        [
-            UAC::statusToString(UAC::STATUS_ACTIVE)    => [ 'type' => 'badge-success', 'icon' => 'fa-check'  ],
-            UAC::statusToString(UAC::STATUS_DISABLED)  => [ 'type' => 'badge-danger',  'icon' => 'fa-times'  ],
-        ];
-
+         
         return view('backoffice.master-users.index')
             ->with('usersDataset'   , $dataset)
             ->with('totalRecords'   , $dataset->count())
-            ->with('permBadges'     , $permBadges)
-            ->with('statusBadges'   , $statusBadges)
             ->with('formActions', 
             [
-                'storeUser'  => '',/*route(Routes::ADMINISTRATORS['store'] ),*/
-                'updateUser' => '', /* route(Routes::ADMINISTRATORS['update'] ), */
-                'deleteUser' => '',/* route(Routes::ADMINISTRATORS['destroy']), */
+                'storeUser'  => route( Routes::MASTER_USERS['store'] ),
+                'updateUser' => route( Routes::MASTER_USERS['update']),
+                'deleteUser' => route( Routes::MASTER_USERS['destroy']),
             ])
             ->with('worksheetTabRoutes', $this->getWorksheetTabRoutesExcept('master'));
+    }
+
+    public function destroy(Request $request)
+    {
+        return $this->deleteUser($request, $this->usersModel);
+    }
+
+    public function saveModel(Request $request, $mode = 0)
+    {
+        dump($request);
     }
 }

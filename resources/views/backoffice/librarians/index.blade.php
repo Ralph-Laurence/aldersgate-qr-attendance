@@ -17,7 +17,7 @@
 @endonce
 
 {{-- BEGIN STUDENT FORM MODAL --}}
-{{-- <x-modal-form-md id="studentFormModal" title="Student Form" method="POST" action="">
+{{-- <x-modal-form-md id="crudFormModal" title="User Form" method="POST" action="" title-create="Add new user" title-edit="Edit user">
     <x-slot name="formInner">
         <div class="container-fluid mb-3">
             <div class="d-none">
@@ -81,7 +81,7 @@
                     </x-flat-worksheet-tabs> 
                 </div>
                 <div class="col mb-4 align-items-center d-flex justify-content-end px-3">
-                    <x-flat-button as="btn-add-record" theme="primary" text="Add" icon="fa-user-graduate"/>
+                    <x-flat-button as="btn-add-record" theme="primary" text="Add" icon="fa-plus"/>
                 </div>
             </div>
 
@@ -165,15 +165,15 @@
                                             <td class="text-center opacity-75 fixed-medium-column-200">{{ $row->email }}
                                             </td>
                                             <td class="text-center opacity-75 text-truncate">
-                                                <span class="badge {{ $permBadges[$row->permission]['type'] }}">
-                                                    <i class="fa-solid {{ $permBadges[$row->permission]['icon'] }} me-1"></i>
-                                                    {{ $row->permission }}
+                                                <span class="badge {{ $row->permBadge['type'] }}">
+                                                    <i class="fa-solid {{ $row->permBadge['icon'] }} me-1"></i>
+                                                    {{ $row->permBadge['label'] }}
                                                 </span>
                                             </td>
-                                            <td class="text-center opacity-75">
-                                                <span class="badge {{ $statusBadges[$row->status]['type'] }}">
-                                                    <i class="fa-solid {{ $statusBadges[$row->status]['icon'] }} me-1"></i>
-                                                    {{ $row->status }}
+                                            <td class="text-center user-select-none">
+                                                <span class="badge {{ $row->statusBadge['type'] }}">
+                                                    <i class="fa-solid {{ $row->statusBadge['icon'] }} me-1"></i>
+                                                    {{ $row->statusBadge['label'] }}
                                                 </span>
                                             </td>
                                             <td class="text-center">

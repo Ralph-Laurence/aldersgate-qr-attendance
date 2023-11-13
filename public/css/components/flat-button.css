@@ -46,6 +46,7 @@
     background-color: var(--flat-color-danger-300);
 }
 
+.flat-button[theme='default']:active,
 .flat-button:hover {
     background-color: #DDE0E3;
     color: var(--text-color-700);

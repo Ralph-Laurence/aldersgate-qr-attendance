@@ -11,22 +11,77 @@ class Routes
 
     public const ATTENDANCE =
     [
-        'index'    => 'backoffice.attendance.index'
+        'index'        => 'backoffice.attendance.index',
     ];
+
+    public const ATTENDANCE_ELEM = 
+    [
+        'index'        => 'backoffice.attendance.elem.index',
+        'weekly'       => 'backoffice.attendance.elem.index.weekly',
+        'monthly'      => 'backoffice.attendance.elem.index.monthly',
+        //'index'        => 'backoffice.attendance.elem.index',
+    ];
+
+    public const ATTENDANCE_JUNIORS = 
+    [
+        'index'     => 'backoffice.attendance.juniors.index',
+    ];
+
+    public const ATTENDANCE_SENIORS = 
+    [
+        'index'     => 'backoffice.attendance.seniors.index',
+    ];
+
+    public const ATTENDANCE_COLLEGE = 
+    [
+        'index'     => 'backoffice.attendance.college.index',
+    ];
+
+    // public const ATTENDANCE_TODAY =
+    // [
+    //     'elem_index'    => 'backoffice.attendance.elem.today.index',
+    //     'elem_store'    => 'backoffice.attendance.elem.today.store',
+    //     'elem_update'   => 'backoffice.attendance.elem.today.update',
+    //     'elem_destroy'  => 'backoffice.attendance.elem.today.destroy',
+
+    //     'college_index'    => 'backoffice.attendance.college.today.index',
+    //     'college_store'    => 'backoffice.attendance.college.today.store',
+    //     'college_update'   => 'backoffice.attendance.college.today.update',
+    //     'college_destroy'  => 'backoffice.attendance.college.today.destroy',
+    // ];
+    
+    // public const ATTENDANCE_MONTHLY =
+    // [
+    //     'index'    => 'backoffice.attendance.monthly.index',
+    // ];
+
+    // public const ATTENDANCE_YEARLY =
+    // [
+    //     'index'    => 'backoffice.attendance.yearly.index',
+    // ];
 
     public const LIBRARIANS =
     [
-        'index'    => 'backoffice.users.librarians.index'
+        'index'    => 'backoffice.users.librarians.index',
+        'store'    => 'backoffice.users.librarians.store',
+        'update'   => 'backoffice.users.librarians.update',
+        'destroy'  => 'backoffice.users.librarians.destroy',
     ];
 
     public const MODERATORS =
     [
-        'index'    => 'backoffice.users.moderators.index'
+        'index'    => 'backoffice.users.moderators.index',
+        'store'    => 'backoffice.users.moderators.store',
+        'update'   => 'backoffice.users.moderators.update',
+        'destroy'  => 'backoffice.users.moderators.destroy',
     ];
 
     public const MASTER_USERS =
     [
-        'index'    => 'backoffice.users.master.index'
+        'index'    => 'backoffice.users.master.index',
+        'store'    => 'backoffice.users.master.store',
+        'update'   => 'backoffice.users.master.update',
+        'destroy'  => 'backoffice.users.master.destroy',
     ];
 
     public const ELEM_STUDENT =

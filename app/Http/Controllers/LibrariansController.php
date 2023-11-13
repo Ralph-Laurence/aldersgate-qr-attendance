@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Base\UsersController;
 use App\Models\User;
 use App\Models\Security\UserAccountControl as UAC;
+use Illuminate\Http\Request;
 
 class LibrariansController extends UsersController
 {
@@ -22,15 +23,6 @@ class LibrariansController extends UsersController
         
         $dataset    = $this->usersModel->getUsers($options, $privilege);
         
-        $permBadges = 
-        [
-            UAC::permToString(UAC::PERM_FULL_CONTROL)  => [ 'type' => 'badge-success', 'icon' => 'fa-crown'    ],
-            UAC::permToString(UAC::PERM_MODIFY)        => [ 'type' => 'badge-warning', 'icon' => 'fa-gear'     ],
-            UAC::permToString(UAC::PERM_READ)          => [ 'type' => 'badge-info',    'icon' => 'fa-bookmark' ],
-            UAC::permToString(UAC::PERM_WRITE)         => [ 'type' => 'badge-warning', 'icon' => 'fa-pen'      ],
-            UAC::permToString(UAC::PERM_DENIED)        => [ 'type' => 'badge-danger',  'icon' => 'fa-ban'      ]
-        ];
-
         $statusBadges =
         [
             UAC::statusToString(UAC::STATUS_ACTIVE)    => [ 'type' => 'badge-success', 'icon' => 'fa-check'  ],
@@ -40,7 +32,6 @@ class LibrariansController extends UsersController
         return view('backoffice.librarians.index')
             ->with('usersDataset'   , $dataset)
             ->with('totalRecords'   , $dataset->count())
-            ->with('permBadges'     , $permBadges)
             ->with('statusBadges'   , $statusBadges)
             ->with('formActions', 
             [
@@ -49,5 +40,15 @@ class LibrariansController extends UsersController
                 'deleteUser' => '',/* route(Routes::ADMINISTRATORS['destroy']), */
             ])
             ->with('worksheetTabRoutes', $this->getWorksheetTabRoutesExcept('librarians'));
+    }
+
+    public function destroy(Request $request)
+    {
+        return $this->deleteUser($request, $this->usersModel);
+    }
+
+    public function saveModel(Request $request, $mode = 0)
+    {
+        dump($request);
     }
 }

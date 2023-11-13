@@ -1,13 +1,19 @@
 <?php
 
 use App\Http\Controllers\AttendanceController;
+use App\Http\Controllers\AttendanceHomeController;
+use App\Http\Controllers\AttendanceTodayController;
+use App\Http\Controllers\CollegeAttendanceController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\ElemAttendanceController;
 use App\Http\Controllers\ElemStudentsController;
+use App\Http\Controllers\JuniorsAttendanceController;
 use App\Http\Controllers\JuniorStudentsController;
 use App\Http\Controllers\LibrariansController;
 use App\Http\Controllers\MasterUsersController;
 use App\Http\Controllers\ModeratorsController;
 use App\Http\Controllers\QRScannerController;
+use App\Http\Controllers\SeniorsAttendanceController;
 use App\Http\Controllers\SeniorStudentsController;
 use App\Http\Controllers\TertiaryStudentsController;
 use App\Http\Extensions\Routes;
@@ -39,10 +45,51 @@ Route::controller(DashboardController::class)->group(function()
     Route::get('/backoffice/dashboard', 'index')->name( Routes::DASHBOARD['index'] );
 });
 
-Route::controller(AttendanceController::class)->group(function()
+//===================================================================
+// .................... ATTENDANCE CONTROLLERS ......................
+//===================================================================
+
+Route::controller(AttendanceHomeController::class)->group(function()
 {
     Route::get('/backoffice/attendance', 'index')->name( Routes::ATTENDANCE['index'] );
 });
+
+Route::controller(ElemAttendanceController::class)->group(function()
+{
+    Route::get('/backoffice/attendance/elementary/today/{sort?}',      'index'        )->name( Routes::ATTENDANCE_ELEM['index']);
+    Route::get('/backoffice/attendance/elementary/this-week/{sort?}',  'showWeekly'   )->name( Routes::ATTENDANCE_ELEM['weekly'] );
+    Route::get('/backoffice/attendance/elementary/this-month/{sort?}', 'showMonthly'  )->name( Routes::ATTENDANCE_ELEM['monthly'] );
+    //Route::get('/backoffice/attendance/elementary/{mode}/{sort?}',   'index'  )->name( Routes::ATTENDANCE_ELEM['index'] );
+});
+
+Route::controller(JuniorsAttendanceController::class)->group(function()
+{
+    Route::get('/backoffice/attendance/juniors',    'index')->name( Routes::ATTENDANCE_JUNIORS['index'] );
+});
+
+Route::controller(SeniorsAttendanceController::class)->group(function()
+{
+    Route::get('/backoffice/attendance/seniors',    'index')->name( Routes::ATTENDANCE_SENIORS['index'] );
+});
+
+Route::controller(CollegeAttendanceController::class)->group(function()
+{
+    Route::get('/backoffice/attendance/college',    'index')->name( Routes::ATTENDANCE_COLLEGE['index'] );
+});
+
+// Route::controller(AttendanceMonthlyController::class)->group(function()
+// {
+//     Route::get('/backoffice/attendance/monthly/{sort?}', 'index')->name( Routes::ATTENDANCE_MONTHLY['index'] );
+// });
+
+// Route::controller(AttendanceYearlyController::class)->group(function()
+// {
+//     Route::get('/backoffice/attendance/yearly/{sort?}', 'index')->name( Routes::ATTENDANCE_YEARLY['index'] );
+// });
+
+//===================================================================
+// ...................... USERS CONTROLLERS .........................
+//===================================================================
 
 Route::controller(LibrariansController::class)->group(function()
 {
@@ -56,8 +103,15 @@ Route::controller(ModeratorsController::class)->group(function()
 
 Route::controller(MasterUsersController::class)->group(function()
 {
-    Route::get('/backoffice/users/master/{sort?}', 'index')->name( Routes::MASTER_USERS['index'] );
+    Route::get('/backoffice/users/master/{sort?}',   'index'   )->name( Routes::MASTER_USERS['index']   );
+    Route::post('/backoffice/users/master/add',      'store'   )->name( Routes::MASTER_USERS['store']   );
+    Route::post('/backoffice/users/master/edit',     'update'  )->name( Routes::MASTER_USERS['update']  );
+    Route::post('/backoffice/users/master/destroy',  'destroy' )->name( Routes::MASTER_USERS['destroy'] );
 });
+
+//===================================================================
+// ...................... USERS CONTROLLERS .........................
+//===================================================================
 
 Route::controller(ElemStudentsController::class)->group(function()
 {

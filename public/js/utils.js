@@ -1,3 +1,21 @@
+$(document).ready(function()
+{
+    // Allow input texts to accept only positive non-zero integer
+    $(".abs-int")
+    .on("input", function() 
+    {
+        var nonNumReg = /[^0-9]/g;
+        $(this).val($(this).val().replace(nonNumReg, ''));
+    })
+    .on('blur', function()
+    {
+        if ($(this).val())
+            return;
+
+        $(this).val('1');
+    });
+});
+
 function generateRandomString(length, prefix) 
 {
     prefix = prefix || '';

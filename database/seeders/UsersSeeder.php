@@ -85,7 +85,7 @@ class UsersSeeder extends Seeder
                 User::FIELD_EMAIL       => 'pirates@carribean.com',
                 User::FIELD_PASSWORD    => Hash::make('1234'),
                 User::FIELD_PRIVILEGE   => UAC::ROLE_MASTER,
-                User::FIELD_PERMS       => UAC::PERM_FULL_CONTROL,
+                User::FIELD_PERMS       => UAC::PERM_DENIED,
                 User::FIELD_STATUS      => UAC::STATUS_DISABLED,
                 'created_at'            => Carbon::now(),
                 'updated_at'            => Carbon::now(),

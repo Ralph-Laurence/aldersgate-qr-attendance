@@ -35,9 +35,20 @@ class UserAccountControl
     */
     public const PERM_READ           = 'r';
     public const PERM_WRITE          = 'w';
-    public const PERM_MODIFY     = 'm';
+    public const PERM_MODIFY         = 'm';
     public const PERM_FULL_CONTROL   = 'f';
     public const PERM_DENIED         = 'x';
+
+    public static function toArray()
+    {
+        return [ 
+            self::PERM_READ,       
+            self::PERM_WRITE,       
+            self::PERM_MODIFY,      
+            self::PERM_FULL_CONTROL,
+            self::PERM_DENIED
+        ];
+    }
 
     public static function permToString(string $perm)
     {

@@ -7,6 +7,16 @@
 	$formAction = !empty($action)	? $action	: '';
 	$formMethod	= !empty($method)	? $method	: '';
 
+	$titleOnCreate = '';
+
+	if (!empty($titleCreate))
+		$titleOnCreate = $titleCreate;
+
+	$titleOnEdit = '';
+
+	if (!empty($titleEdit))
+		$titleOnEdit = $titleEdit;
+
 @endphp
 
 
@@ -17,7 +27,7 @@
 @endonce
 
 <div class="modal fade form-modal show" id="{{ $modalId }}" tabindex="-1" aria-labelledby="{{ $modalId }}ModalLabel"
-	data-mdb-backdrop="static" data-mdb-keyboard="false" aria-hidden="true">
+	data-mdb-backdrop="static" data-mdb-keyboard="false" aria-hidden="true" title-create="{{ $titleOnCreate }}" title-edit="{{ $titleOnEdit }}">
 	<div class="modal-dialog modal-md">
 		<div class="modal-content">
 			<div class="modal-header border-0">

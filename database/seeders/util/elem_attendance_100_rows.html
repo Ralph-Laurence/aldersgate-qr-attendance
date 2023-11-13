@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <textarea class="queryBox"></textarea>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment-with-locales.min.js"></script>
+    <script>
+        var query =
+            `INSERT INTO elem_attendances (student_fk_id, time_in, time_out, status, week_no, updated_by, created_at, updated_at) VALUES`;
+
+        function randomBetween(min, max) {
+            return Math.floor(Math.random() * max) + min;
+        }
+
+        var timeIn = moment().startOf('day').hour(8); // start at 8AM today
+
+        $.each(new Array(100), function (i) {
+            var studentId = randomBetween(1, 14);
+            var timeOut = moment(timeIn).add(30, 'minutes');
+            var weekNo = timeIn.week();
+            var values =
+                `(${studentId}, '${timeIn.format()}', '${timeOut.format()}', 'out', ${weekNo}, '', '${timeIn.format()}', '${timeOut.format()}')`;
+
+            query += (i > 0 ? ',' : '') + '\n' + values;
+
+            if ((i + 1) % 10 === 0) { // every 10th iteration
+                do {
+                    timeIn.add(1, 'day'); // increase by one day
+                } while (timeIn.day() === 0 || timeIn.day() === 6); // skip Saturdays and Sundays
+
+                timeIn.hour(8).minute(0); // reset to 8AM
+            } else {
+                timeIn = timeOut; // next time_in is current time_out
+            }
+        });
+
+        $('.queryBox').val(query + ';')
+    </script>
+</body>
+
+</html>

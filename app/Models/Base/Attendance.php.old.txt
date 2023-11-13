@@ -8,22 +8,22 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB; 
 
-class Attendance extends Model
+abstract class Attendance extends Model
 {
     use HasFactory;
 
-    const FIELD_STUDENT_FK = 'student_fk_id';
-    const FIELD_TIME_IN = 'time_in';
-    const FIELD_TIME_OUT = 'time_out';
-    const FIELD_STAY_DURATION = 'stay_duration';
-    const FIELD_WEEK_NO = 'week_no';
-    const FIELD_STATUS = 'status';
-    const FIELD_UPDATED_BY = 'updated_by';
-    const FIELD_ATTENDANCE_DATE = 'attendance_date';
-    const FIELD_CREATED_AT = 'created_at';
+    const FIELD_STUDENT_FK          = 'student_fk_id';
+    const FIELD_TIME_IN             = 'time_in';
+    const FIELD_TIME_OUT            = 'time_out';
+    const FIELD_STAY_DURATION       = 'stay_duration';
+    const FIELD_WEEK_NO             = 'week_no';
+    const FIELD_STATUS              = 'status';
+    const FIELD_UPDATED_BY          = 'updated_by';
+    const FIELD_ATTENDANCE_DATE     = 'attendance_date';
+    const FIELD_CREATED_AT          = 'created_at';
 
-    const STATUS_VAL_TIMED_IN = 'in';
-    const STATUS_VAL_TIMED_OUT = 'out';
+    const STATUS_VAL_TIMED_IN       = 'in';
+    const STATUS_VAL_TIMED_OUT      = 'out';
 
     protected $table = 'attendance';
 

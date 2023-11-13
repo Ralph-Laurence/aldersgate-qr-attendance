@@ -3,7 +3,36 @@
     $inputHint  = !empty($fill)   ? $fill   : '';
     $maxLength  = !empty($limit)  ? $limit  : 32;
 
+    // Limit input data to specific type
+    $acceptData = $attributes->has('clamp')   ? $attributes->get('clamp') : '';
+
+    $isReadOnly = $attributes->has('locked')   ? 'readonly' : '';
     $isRequired = $attributes->has('required') ? 'required' : '';
+    $gravity    = '';
+    
+    if ($attributes->has('gravity'))
+    {
+        switch ($attributes->get('gravity')) 
+        {
+            case 'start':
+                $gravity = 'text-start';
+                break;
+            
+            case 'center':
+                $gravity = 'text-center';
+                break;
+
+            case 'end':
+                $gravity = 'text-end';
+                break;
+        }
+    }
+
+    // default value
+    $defaultValue = old($inputName);
+
+    if ($attributes->has('initial'))
+        $defaultValue = $attributes->get('initial');
 @endphp
 
 @once 
@@ -31,10 +60,11 @@
         <input  type="text" 
                 name="{{ $inputName }}" 
                 id="{{ $inputName }}" 
-                class="main-control"
+                class="main-control {{ $gravity }} {{ $acceptData }}"
                 maxlength="{{ $maxLength }}"
-                value="{{ old($inputName) }}" 
+                value="{{ $defaultValue }}" 
                 aria-autocomplete="none" 
+                {{ $isReadOnly }}
                 placeholder="{{ $inputHint }}"
                 {{ $attributes }} />
 

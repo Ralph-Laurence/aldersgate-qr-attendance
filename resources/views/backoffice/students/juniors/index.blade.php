@@ -17,12 +17,12 @@
 @endonce
 
 {{-- BEGIN STUDENT FORM MODAL --}}
-<x-modal-form-md id="studentFormModal" title="Student Form" method="POST" action="">
+<x-modal-form-md id="crudFormModal" title="Student Form" method="POST" action="" title-create="Add new student" title-edit="Edit student">
     <x-slot name="formInner">
         <div class="container-fluid mb-3">
             <div class="d-none">
-                <textarea id="form-action-container-store">{{ $formActions['storeStudent'] }}</textarea>
-                <textarea id="form-action-container-update">{{ $formActions['updateStudent'] }}</textarea>
+                <textarea id="form-action-store">{{ $formActions['storeStudent'] }}</textarea>
+                <textarea id="form-action-update">{{ $formActions['updateStudent'] }}</textarea>
             </div>
             <div class="mb-2">
                 <i class="fas fa-info-circle me-1"></i>
@@ -77,7 +77,7 @@
                     </x-flat-worksheet-tabs> 
                 </div>
                 <div class="col mb-4 align-items-center d-flex justify-content-end px-3">
-                    <x-flat-button as="btn-add-record" theme="primary" text="Add" icon="fa-user-graduate"/>
+                    <x-flat-button as="btn-add-record" theme="primary" text="Add" icon="fa-plus"/>
                 </div>
             </div>
 
@@ -89,7 +89,7 @@
                             <div class="d-flex flex-row align-items-center gap-2 mb-3">
                                 <h6 class="card-title mb-0">{{ "Junior High School" }}</h6>
                                 <div class="attendance-calendar text-sm px-3 me-auto">
-                                    <i class="fas fa-user-graduate me-2"></i> {{ "$totalRecords Total Records" }}
+                                    <i class="fas fa-user-graduate me-2"></i> {{ "$totalRecords Records" }}
                                 </div>
                                 <div class="d-inline-flex align-items-center gap-2">
                                     <div class="search-bar px-2">

@@ -124,7 +124,7 @@ class Student extends Model
     private function makeQuery_ElemStudents()
     {
         $table = ElementaryStudent::getTableName();
-        $query = DB::table( "$table as s" )->whereBetween('s.grade_level', [1, 6]);
+        $query = DB::table( "$table as s" ); //->whereBetween('s.grade_level', [1, 6]);
 
         return $query;
     }
@@ -132,7 +132,7 @@ class Student extends Model
     private function makeQuery_HighschoolStudents()
     {
         $table = JuniorStudent::getTableName();
-        $query = DB::table( "$table as s" )->whereBetween('s.grade_level', [7, 10]);
+        $query = DB::table( "$table as s" ); //->whereBetween('s.grade_level', [7, 10]);
 
         return $query;
     }

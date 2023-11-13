@@ -13,4 +13,11 @@
 
     --flat-color-danger:        #FE1D42;
     --flat-color-danger-300:    #FE3D53;
+
+    --flat-color-light:         #F0F0F0;
+    --flat-color-control:       #E9ECEF;
+}
+
+.flat-color-control {
+    background-color: var(--flat-color-control);
 }

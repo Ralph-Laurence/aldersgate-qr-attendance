@@ -146,4 +146,30 @@ class Utils
             'showIn'    => $showIn          // modal | toast
         ]);
     }
+
+    public static function getTimeDuration($from, $to)
+    {
+        $t1 = Carbon::parse($from);
+        $t2 = Carbon::parse($to);
+
+        $seconds = $t1->diffInSeconds($t2);
+        $minutes = $t1->diffInMinutes($t2);
+        $hours   = $t1->diffInHours($t2);
+
+        if ($seconds < 60) 
+        {
+            return $seconds . ($seconds == 1 ? ' sec' : ' secs');
+        } 
+        elseif ($minutes < 60) 
+        {
+            $remainingSeconds = $seconds % 60;
+            return $minutes . ($minutes == 1 ? ' min' : ' mins') . ($remainingSeconds > 0 ? ', ' . $remainingSeconds . ($remainingSeconds == 1 ? ' sec' : ' secs') : '');
+        } 
+        else 
+        {
+            $remainingMinutes = $minutes % 60;
+            return "$hours h" . ($remainingMinutes > 0 ? ', ' . "$remainingMinutes m" : '');
+            // return $hours . ($hours == 1 ? ' hr' : ' hrs') . ($remainingMinutes > 0 ? ', ' . $remainingMinutes . ($remainingMinutes == 1 ? ' min' : ' mins') : '');
+        }
+    }
 }
