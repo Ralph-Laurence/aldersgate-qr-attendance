@@ -15,7 +15,7 @@
     <script type="module">
         $(() => 
         {
-            window.timePicker = new FlatTimePicker('.myTimePicker');
+            window.timePicker = new FlatTimePicker('#myTimePicker');
         });
     </script>
 @endpush

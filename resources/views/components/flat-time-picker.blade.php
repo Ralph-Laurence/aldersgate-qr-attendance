@@ -57,50 +57,67 @@
             padding-right: 14px !important;
         }
 
+        .flat-time-picker-modal .meridiem-toggle .meridiem-label 
+        {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 2rem;
+            background: rgba(255, 255, 255, 0.985);
+            color: var(--text-color-700);
+            width: 28px;
+            height: 28px;
+            font-size: 12px;
+            font-weight: 700;
+            box-shadow: 0 0 8px rgb(241, 230, 191);
+        }
         .flat-time-picker-modal .meridiem-toggle 
         {
             border: none;
             outline: none;
             border-radius: 2rem;
             font-size: 14px;
-            transition: background-color 0.25s ease-in-out, color 0.25s ease-in-out;
-        }
-        
-        .meridiem-toggle[data-meridiem="am"]
-        {
-            background-color: #2b62b4;
-            color: white;
-        }
-
-        .meridiem-toggle[data-meridiem="pm"]
-        {
-            background-color: #2E3963;
-            color: #F5C87B;
-        }
-
-        .meridiem-toggle[data-meridiem="am"]::before 
-        {
-            font-family: var(--fas-font);
-            content: '\f185';
-            padding-right: 4px;
-            font-size: 13px;
-            color: #F5C87B;
+            height: 34px;
+            max-height: 34px;
+            width: 64px;
+            max-width: 64px;
+            background-size: 66px 36px;
+            background-repeat: no-repeat;
+            background-position: center;
+            background-image: url("{{ asset('img/meridiem-bg-noon.png') }}");
+            transition: background 0.25s ease-in-out, 
+                        color 0.25s ease-in-out;
+            display: flex;
+            align-items: center;
+            padding: 3px;
         }
 
-        .meridiem-toggle[data-meridiem="pm"]::after
-        {
-            font-family: var(--fas-font);
-            content: '\f186';
-            padding-left: 4px;
-            font-size: 13px;
-            color: #F5C87B;
+        .meridiem-toggle[data-time-period="night"] {
+            background-image: url("{{ asset('img/meridiem-bg-night.png') }}");
+        }
+
+        .meridiem-toggle[data-time-period="noon"] {
+            background-image: url("{{ asset('img/meridiem-bg-noon.png') }}");
+        }
+
+        .meridiem-toggle[data-time-period="morning"] {
+            background-image: url("{{ asset('img/meridiem-bg-morning.png') }}");
+        }
+
+        .meridiem-toggle[data-meridiem="am"] {
+            justify-content: start;
+        }
+
+        .meridiem-toggle[data-meridiem="pm"] {
+            justify-content: end;
         }
     </style>
     @endpush
 @endonce
-<x-flat-input as="{{ $elementId }}" fill="{{ 'Select Time' }}" data-mdb-toggle="modal" data-mdb-target="#{{ $elementId }}-modal"/>
+<x-flat-input as="{{ $elementId }}" fill="{{ 'Select Time' }}" data-mdb-toggle="modal" data-mdb-target="#{{ $elementId }}-modal" locked/>
+
 <div class="modal fade flat-time-picker-modal {{ $elementId }}-modal" id="{{ $elementId }}-modal" tabindex="-1" aria-labelledby="{{ $elementId }}Label"
-    aria-hidden="true" data-mdb-backdrop="static" data-mdb-keyboard="false">
+    aria-hidden="true" data-mdb-backdrop="static" data-mdb-keyboard="false" data-output-control="{{ $elementId }}">
 
     <div class="modal-dialog">
         <div class="modal-content">
@@ -127,17 +144,19 @@
                         <div class="col"></div>
                     </div>
                     <div class="row">
-                        <div class="col">
+                        <div class="col flex-center">
                             <x-flat-input as="{{ 'input-hours' }}" gravity="center" limit="3" clamp="abs-int" initial="{{ $initialHrs }}"/>
                         </div>
                         <div class="col-1 px-1 flex-center">
                             <h5 class="fw-bold opacity-70 m-0">{{ ':' }}</h5>
                         </div>
-                        <div class="col">
+                        <div class="col flex-center">
                             <x-flat-input as="{{ 'input-minutes' }}" gravity="center" limit="3" clamp="abs-int" initial="{{ $initialMins }}"/>
                         </div>
                         <div class="col flex-center">
-                            <button class="meridiem-toggle w-100 text-uppercase" data-meridiem="{{ $initialAmPm }}">{{ $initialAmPm }}</button>
+                            <button class="meridiem-toggle w-100 text-uppercase mb-1" data-time-period="night" data-meridiem="{{ $initialAmPm }}">
+                                <span class="meridiem-label">{{ $initialAmPm }}</span>
+                            </button>
                         </div>
                     </div>
                     <div class="row">

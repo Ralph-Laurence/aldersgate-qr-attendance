@@ -4,24 +4,49 @@ class FlatTimePicker
 {
     constructor(elementId)
     {
-        this.$mainControl   = $(`${elementId}-modal`);
+        this.$mainControl    = $(`${elementId}-modal`);
+        this.$textOutput     = $(elementId);
         
-        this.$hourInput     = this.$mainControl.find('#input-hours');
-        this.$minuteInput   = this.$mainControl.find('#input-minutes');
-        this.$hourIncrement = this.$mainControl.find('.btn-increment-hour');
-        this.$hourDecrement = this.$mainControl.find('.btn-decrement-hour');
-        this.$minsIncrement = this.$mainControl.find('.btn-increment-minute');
-        this.$minsDecrement = this.$mainControl.find('.btn-decrement-minute');
-        this.$hourLabel     = this.$mainControl.find('.hour-label');
-        this.$minsLabel     = this.$mainControl.find('.minute-label');
-        this.meridiemToggle = this.$mainControl.find('.meridiem-toggle');
-
+        this.__initComponents();
         this.__bindEvents();
+    }
+
+    __initComponents()
+    {
+        this.$hourInput      = this.$mainControl.find('#input-hours');
+        this.$minuteInput    = this.$mainControl.find('#input-minutes');
+        this.$hourIncrement  = this.$mainControl.find('.btn-increment-hour');
+        this.$hourDecrement  = this.$mainControl.find('.btn-decrement-hour');
+        this.$minsIncrement  = this.$mainControl.find('.btn-increment-minute');
+        this.$minsDecrement  = this.$mainControl.find('.btn-decrement-minute');
+        this.$hourLabel      = this.$mainControl.find('.hour-label');
+        this.$minsLabel      = this.$mainControl.find('.minute-label');
+        this.$meridiemToggle = this.$mainControl.find('.meridiem-toggle');
+        this.$meridiemLabel  = this.$mainControl.find('.meridiem-label');
+
+        this.$clearButton    = this.$mainControl.find('.btn-clear');
+        this.$okButton       = this.$mainControl.find('.btn-ok');
     }
 
     __bindEvents()
     {
-        this.$mainControl.on('show.bs.modal', (e) => this.setFromCurrent());
+        this.$mainControl.on('show.bs.modal', (e) => {
+
+            var output = this.$textOutput.val();
+
+            if (output)
+            {
+                var time = moment(output, 'hh:mm A');
+
+                this.setHour(time.format('hh'));
+                this.setMinute(time.format('mm'));
+                this.setMeridiem(time.format('A'));
+
+                return;
+            }
+
+            this.setFromCurrent();
+        });
 
         this.$mainControl.find('.btn-reset').on('click', (e) => this.setFromCurrent());
 
@@ -103,22 +128,49 @@ class FlatTimePicker
             this.setMinute(minute);
         });
 
-        this.meridiemToggle.on('click', (e) => 
+        this.$meridiemToggle.on('click', (e) => 
         {
-            var $control = $(e.currentTarget);
-            var data = $control.attr('data-meridiem');
-            
-            switch (data)
+            var $control      = $(e.currentTarget);
+            var currentPeriod = $control.attr('data-time-period');
+
+            switch ( $control.attr('data-meridiem') )
             {
                 case 'am':
-                    $control.text('pm').attr('data-meridiem', 'pm');
+                    $control.attr('data-meridiem', 'pm');
+                    $control.find('.meridiem-label').text('pm');
+
+                    $control.attr('data-time-period', this.getCurrentTimePeriod());
                     break;
 
                 case 'pm':
-                    $control.text('am').attr('data-meridiem', 'am');
+                    $control.attr('data-meridiem', 'am');
+                    $control.find('.meridiem-label').text('am');
+
+                    if (currentPeriod != 'morning')
+                        $control.attr('data-time-period', 'morning');
+
                     break;
             }
         });
+
+        this.$clearButton.on('click', () => this.clear());
+        this.$okButton.on('click', () => this.applyOutput());
+    }
+    
+    setMeridiem(meridiem)
+    {
+        switch ( meridiem )
+        {
+            case 'am':
+                this.$meridiemToggle.attr('data-meridiem', 'am').attr('data-time-period', 'morning');
+                this.$meridiemLabel.text('am');
+                break;
+
+            case 'pm':
+                this.$meridiemToggle.attr('data-meridiem', 'pm').attr('data-time-period', this.getCurrentTimePeriod());
+                this.$meridiemLabel.text('pm');
+                break;
+        }
     }
 
     setTime(timeString)
@@ -175,8 +227,46 @@ class FlatTimePicker
         return (pad != undefined && typeof pad === 'boolean' && pad === true) ? val : parseInt(val);
     }
 
+    /**
+     * Gets the current time period if it is Morning, Noon or Night
+     * @returns string time period
+     */
+    getCurrentTimePeriod()
+    {
+        //var date = moment(time, 'hh:mm:ss a');
+        var hour = moment().format('H');
+    
+        if (hour >= 5 && hour < 12)
+            return "morning";
+
+        else if (hour >= 12 && hour < 17)
+            return "noon";
+
+        else
+            return "night";
+    }
+
+    getMeridiem()
+    {
+        return this.$meridiemToggle.attr('data-meridiem');
+    }
+
     padLeft(num)
     {
         return String(num).padStart(2, '0');
+    }
+
+    clear()
+    {
+        this.$textOutput.val('');
+    }
+
+    applyOutput()
+    {
+        var hours = this.getHour();
+        var mins  = this.getMinute();
+        var ampm  = this.getMeridiem();
+
+        this.$textOutput.val(`${hours}:${mins} ${ampm}`);
     }
 }
