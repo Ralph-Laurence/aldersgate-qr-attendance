@@ -77,7 +77,7 @@
                             <x-flat-worksheet-tabs-item to="{{ $worksheetTabRoutes['today'] }}"   text="Today"/>
                             <x-flat-worksheet-tabs-item to="{{ $worksheetTabRoutes['weekly'] }}" text="This Week"/>
                             <x-flat-worksheet-tabs-item text="This Month" current/>
-                            <x-flat-worksheet-tabs-item to="{{ $worksheetTabRoutes['annual'] }}"  text="This Year"/>
+                            <x-flat-worksheet-tabs-item to="{{ $worksheetTabRoutes['alltime'] }}" text="All Time"/>
                         </x-slot>
                     </x-flat-worksheet-tabs> 
                 </div>
@@ -139,7 +139,7 @@
                                         <th data-orderable="false" class="text-xs text-uppercase text-center fixed-medium-column-120">{{"Time Out" }}</th>
                                         <th data-orderable="false" class="text-xs text-uppercase text-center fixed-medium-column-120">{{"Duration" }}</th>
                                         {{-- <th data-orderable="false" class="text-xs text-uppercase text-center fixed-short-column-80 px-1">{{ "Status"}}</th> --}}
-                                        <th data-orderable="false" class="text-xs text-uppercase text-center fixed-medium-column-120">{{ "Day"}}</th>
+                                        <th data-orderable="false" class="text-xs text-uppercase text-center fixed-medium-column-120">{{ "Date"}}</th>
                                         <th data-orderable="false" class="text-xs text-uppercase text-center fixed-medium-column-140">{{"Action" }}</th>
                                     </tr>
                                 </thead>

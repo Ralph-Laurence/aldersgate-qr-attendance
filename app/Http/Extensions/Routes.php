@@ -17,48 +17,30 @@ class Routes
     public const ATTENDANCE_ELEM = 
     [
         'index'        => 'backoffice.attendance.elem.index',
-        'weekly'       => 'backoffice.attendance.elem.index.weekly',
-        'monthly'      => 'backoffice.attendance.elem.index.monthly',
-        //'index'        => 'backoffice.attendance.elem.index',
+        'weekly'       => 'backoffice.attendance.elem.weekly',
+        'monthly'      => 'backoffice.attendance.elem.monthly',
     ];
 
     public const ATTENDANCE_JUNIORS = 
     [
         'index'     => 'backoffice.attendance.juniors.index',
+        'weekly'    => 'backoffice.attendance.juniors.weekly',
+        'monthly'   => 'backoffice.attendance.juniors.monthly',
     ];
 
     public const ATTENDANCE_SENIORS = 
     [
         'index'     => 'backoffice.attendance.seniors.index',
+        'weekly'    => 'backoffice.attendance.seniors.weekly',
+        'monthly'   => 'backoffice.attendance.seniors.monthly',
     ];
 
     public const ATTENDANCE_COLLEGE = 
     [
         'index'     => 'backoffice.attendance.college.index',
+        'weekly'    => 'backoffice.attendance.college.weekly',
+        'monthly'   => 'backoffice.attendance.college.monthly',
     ];
-
-    // public const ATTENDANCE_TODAY =
-    // [
-    //     'elem_index'    => 'backoffice.attendance.elem.today.index',
-    //     'elem_store'    => 'backoffice.attendance.elem.today.store',
-    //     'elem_update'   => 'backoffice.attendance.elem.today.update',
-    //     'elem_destroy'  => 'backoffice.attendance.elem.today.destroy',
-
-    //     'college_index'    => 'backoffice.attendance.college.today.index',
-    //     'college_store'    => 'backoffice.attendance.college.today.store',
-    //     'college_update'   => 'backoffice.attendance.college.today.update',
-    //     'college_destroy'  => 'backoffice.attendance.college.today.destroy',
-    // ];
-    
-    // public const ATTENDANCE_MONTHLY =
-    // [
-    //     'index'    => 'backoffice.attendance.monthly.index',
-    // ];
-
-    // public const ATTENDANCE_YEARLY =
-    // [
-    //     'index'    => 'backoffice.attendance.yearly.index',
-    // ];
 
     public const LIBRARIANS =
     [

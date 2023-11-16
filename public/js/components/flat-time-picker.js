@@ -200,6 +200,7 @@ class FlatTimePicker
 
         this.setHour(temp.format('hh'));
         this.setMinute(temp.format('mm'));
+        this.setMeridiem(temp.format('a'));
     }
 
     getCurrentTime()

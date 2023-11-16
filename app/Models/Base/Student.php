@@ -8,7 +8,7 @@ use App\Models\ElementaryStudent;
 use App\Models\JuniorStudent;
 use App\Models\SeniorStudent;
 use App\Models\Strand;
-use App\Models\TertiaryStudent;
+use App\Models\CollegeStudent;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
@@ -150,7 +150,7 @@ class Student extends Model
 
     private function makeQuery_CollegeStudents()
     {
-        $table   = TertiaryStudent::getTableName();   
+        $table   = CollegeStudent::getTableName();   
         $courses = Courses::getTableName();
 
         $query   = DB::table( "$table as s" )->leftJoin("$courses as c", 'c.id', '=', 's.course_id');

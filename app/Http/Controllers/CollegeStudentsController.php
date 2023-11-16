@@ -7,20 +7,20 @@ use App\Http\Extensions\Routes;
 use App\Http\Extensions\Utils;
 use App\Http\Extensions\ValidationMessages;
 use App\Models\Courses;
-use App\Models\TertiaryStudent;
+use App\Models\CollegeStudent;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 
-class TertiaryStudentsController extends StudentController
+class CollegeStudentsController extends StudentController
 {
     private $studentModel = null;
     private $courseModel  = null;
     
     function __construct()
     {
-        $this->studentModel = new TertiaryStudent();
+        $this->studentModel = new CollegeStudent();
         $this->courseModel  = new Courses();
     }
     //
@@ -31,7 +31,7 @@ class TertiaryStudentsController extends StudentController
     public function index($sort = null) 
     {
         $options    = ['sort' => $sort];
-        $student    = TertiaryStudent::STUDENT_LEVEL_COLLEGE;
+        $student    = CollegeStudent::STUDENT_LEVEL_COLLEGE;
             
         $dataset    = $this->studentModel->getStudents($options, $student);
         $courses    = $this->courseModel->getAll(true);
@@ -80,22 +80,22 @@ class TertiaryStudentsController extends StudentController
             [
                 // Table field names        => Input request names
 
-                TertiaryStudent::FIELD_STUDENT_NUM  => $inputs['input-student-no'],
-                TertiaryStudent::FIELD_FNAME        => $inputs['input-fname'],
-                TertiaryStudent::FIELD_MNAME        => $inputs['input-mname'],
-                TertiaryStudent::FIELD_LNAME        => $inputs['input-lname'],
-                TertiaryStudent::FIELD_EMAIL        => $inputs['input-email'],
-                TertiaryStudent::FIELD_COURSE_ID    => $inputs['input-course-value'],
-                TertiaryStudent::FIELD_YEAR         => $inputs['input-year-level-value'],
-                TertiaryStudent::FIELD_CONTACT      => $inputs['input-contact'],
-                TertiaryStudent::FIELD_BIRTHDAY     => $inputs['input-birthday'],
+                CollegeStudent::FIELD_STUDENT_NUM  => $inputs['input-student-no'],
+                CollegeStudent::FIELD_FNAME        => $inputs['input-fname'],
+                CollegeStudent::FIELD_MNAME        => $inputs['input-mname'],
+                CollegeStudent::FIELD_LNAME        => $inputs['input-lname'],
+                CollegeStudent::FIELD_EMAIL        => $inputs['input-email'],
+                CollegeStudent::FIELD_COURSE_ID    => $inputs['input-course-value'],
+                CollegeStudent::FIELD_YEAR         => $inputs['input-year-level-value'],
+                CollegeStudent::FIELD_CONTACT      => $inputs['input-contact'],
+                CollegeStudent::FIELD_BIRTHDAY     => $inputs['input-birthday'],
             ];
 
             $_flashMsg = '';
 
             if ($mode === 0)
             {
-                TertiaryStudent::create($data);
+                CollegeStudent::create($data);
                 $_flashMsg = self::MSG_SUCCESS_ADDED;
             }
             else if ($mode === 1)
@@ -104,7 +104,7 @@ class TertiaryStudentsController extends StudentController
                 if (empty($studentKey))
                     abort(500);
 
-                $student = TertiaryStudent::find( $studentKey );
+                $student = CollegeStudent::find( $studentKey );
 
                 // If the student record is not found, do not perform an update
                 if (!$student)
@@ -126,10 +126,10 @@ class TertiaryStudentsController extends StudentController
             {
                 $errMsg = [];
 
-                if (Str::contains($ex->getMessage(), "for key 'tertiary_students_student_no_unique'"))
+                if (Str::contains($ex->getMessage(), "for key 'college_students_student_no_unique'"))
                     $errMsg['input-student-no'] = self::MSG_FAIL_INDEX_STUDENT_NO;
 
-                if (Str::contains($ex->getMessage(), "for key 'tertiary_students_email_unique"))
+                if (Str::contains($ex->getMessage(), "for key 'college_students_email_unique"))
                     $errMsg['input-email'] = self::MSG_FAIL_INDEX_EMAIL;
                     
                 return redirect()->back()->withErrors($errMsg)->withInput();

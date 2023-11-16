@@ -74,9 +74,9 @@
                 <div class="col">
                     <x-flat-worksheet-tabs leading-label="Show" trailing-label="records">
                         <x-slot name="navItems">
-                            <x-flat-worksheet-tabs-item text="Today" current/>
-                            <x-flat-worksheet-tabs-item to="{{ $worksheetTabRoutes['weekly'] }}"  text="This Week"/>
-                            <x-flat-worksheet-tabs-item to="{{ $worksheetTabRoutes['monthly'] }}" text="This Month"/>
+                            <x-flat-worksheet-tabs-item to="{{ $worksheetTabRoutes['today'] }}"   text="Today"/>
+                            <x-flat-worksheet-tabs-item to="{{ $worksheetTabRoutes['weekly'] }}" text="This Week"/>
+                            <x-flat-worksheet-tabs-item text="This Month" current/>
                             <x-flat-worksheet-tabs-item to="{{ $worksheetTabRoutes['alltime'] }}" text="All Time"/>
                         </x-slot>
                     </x-flat-worksheet-tabs> 
@@ -120,17 +120,26 @@
                             </div>
                         </div>
                         <div class="card-body px-0 pt-0 pb-2">
+                            <div class="text-center month-indicator d-flex align-items-center justify-content-center rounded-2 gap-2 my-2 p-2 flat-color-control mx-3">
+                                <i class="fa-solid fa-caret-right opacity-75 small"></i>
+                                <p class="m-0 small opacity-85">{{ 'This Month' }}</p>
+                                <p class="m-0 small opacity-85">
+                                    <i>{{ '( '. $monthHint['monthStart'] . " --to-- " . $monthHint['monthEnd'] . ' )' }}</i>
+                                </p>
+                                <i class="fa-solid fa-caret-left opacity-75 small"></i>
+                            </div>
                             <table
                                 class="table table-sm table-fixed table-striped table-hover align-middle bg-white attendance-table">
                                 <thead>
                                     <tr>
                                         <th data-orderable="false" class="text-xs text-uppercase text-center fixed-short-column-60 px-1">{{ "No." }}</th>
-                                        <th data-orderable="false" class="text-xs text-uppercase fixed-long-column-300x">{{ "Student" }}</th>
+                                        <th data-orderable="false" class="text-xs text-uppercase">{{ "Student" }}</th>
                                         <th data-orderable="false" class="text-xs text-uppercase text-center fixed-short-column-60 px-1">{{ "Grade"}}</th>
                                         <th data-orderable="false" class="text-xs text-uppercase text-center fixed-medium-column-120">{{ "Time In"}}</th>
                                         <th data-orderable="false" class="text-xs text-uppercase text-center fixed-medium-column-120">{{"Time Out" }}</th>
-                                        <th data-orderable="false" class="text-xs text-uppercase text-center fixed-medium-column-140">{{"Duration" }}</th>
-                                        <th data-orderable="false" class="text-xs text-uppercase text-center fixed-short-column-80 px-1">{{ "Status"}}</th>
+                                        <th data-orderable="false" class="text-xs text-uppercase text-center fixed-medium-column-120">{{"Duration" }}</th>
+                                        {{-- <th data-orderable="false" class="text-xs text-uppercase text-center fixed-short-column-80 px-1">{{ "Status"}}</th> --}}
+                                        <th data-orderable="false" class="text-xs text-uppercase text-center fixed-medium-column-120">{{ "Date"}}</th>
                                         <th data-orderable="false" class="text-xs text-uppercase text-center fixed-medium-column-140">{{"Action" }}</th>
                                     </tr>
                                 </thead>
@@ -150,7 +159,7 @@
                                             <td class="fixed-short-column-60 opacity-55 text-center text-truncate px-1">
                                                 {{ $loop->iteration }}
                                             </td>
-                                            <td class="fixed-long-column-300x">
+                                            <td>
                                                 <div class="d-flex flex-column justify-content-center text-truncate px-3">
                                                     <h6 class="mb-0 text-sm text-truncate">{{ $row->name }}</h6>
                                                     <p class="mb-0 text-secondary text-xs">{{ $row->student_no }}</p>
@@ -162,12 +171,9 @@
                                             </td>
                                             <td class="text-center opacity-75 text-truncate">{{ $row->time_in }}</td>
                                             <td class="text-center opacity-75 text-truncate">{{ $row->time_out }}</td>
-                                            <td class="text-center opacity-85 text-truncate fixed-medium-column-140">{{ $row->duration }}</td>
-                                            <td class="text-center fixed-short-column-80 px-1">
-                                                <span class="badge {{ $row->statusBadge['type'] }}">
-                                                    <i class="fa-solid {{ $row->statusBadge['icon'] }} me-1"></i>
-                                                    {{ $row->statusBadge['label'] }}
-                                                </span>
+                                            <td class="text-center opacity-85 text-truncate fixed-medium-column-120">{{ $row->duration }}</td>
+                                            <td class="text-center fixed-medium-column-120 px-1">
+                                                {{ $row->created_at }}
                                             </td>
                                             <td class="text-center fixed-medium-column-140">
                                                 <div class="center-flex gap-2 record-actions">
@@ -181,7 +187,7 @@
                                                         <i class="fa-solid fa-trash"></i>
                                                     </button>
                                                     <textarea class="data-target d-none">{{-- $dataTarget --}}</textarea>
-                                                    <textarea class="row-data d-none">{{ $row->rowData }}</textarea>
+                                                    <textarea class="row-data d-none">{{-- $row->rowData --}}</textarea>
                                                 </div>
                                             </td>
                                         </tr>

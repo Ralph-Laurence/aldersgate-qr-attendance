@@ -5,7 +5,7 @@ namespace App\Models;
 use App\Http\Extensions\Utils;
 use App\Models\Base\Student;
 
-class TertiaryStudent extends Student
+class CollegeStudent extends Student
 { 
     public static function getTableName()
     {

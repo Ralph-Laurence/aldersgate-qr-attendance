@@ -77,7 +77,7 @@
                             <x-flat-worksheet-tabs-item text="Today" current/>
                             <x-flat-worksheet-tabs-item to="{{ $worksheetTabRoutes['weekly'] }}"  text="This Week"/>
                             <x-flat-worksheet-tabs-item to="{{ $worksheetTabRoutes['monthly'] }}" text="This Month"/>
-                            <x-flat-worksheet-tabs-item to="{{ $worksheetTabRoutes['annual'] }}"  text="This Year"/>
+                            <x-flat-worksheet-tabs-item to="{{ $worksheetTabRoutes['alltime'] }}" text="All Time"/>
                         </x-slot>
                     </x-flat-worksheet-tabs> 
                 </div>
@@ -181,7 +181,7 @@
                                                         <i class="fa-solid fa-trash"></i>
                                                     </button>
                                                     <textarea class="data-target d-none">{{-- $dataTarget --}}</textarea>
-                                                    <textarea class="row-data d-none">{{-- $row->rowData --}}</textarea>
+                                                    <textarea class="row-data d-none">{{ $row->rowData }}</textarea>
                                                 </div>
                                             </td>
                                         </tr>

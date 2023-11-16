@@ -7,7 +7,7 @@ use App\Models\Base\Attendance;
 use App\Models\ElemAttendance;
 use App\Models\JuniorsAttendance;
 use App\Models\SeniorsAttendance;
-use App\Models\TertiaryAttendance;
+use App\Models\CollegeAttendance;
 use Illuminate\Http\Request;
 
 class AttendanceHomeController extends Controller
@@ -24,7 +24,7 @@ class AttendanceHomeController extends Controller
             'elem'      => [ 'link' => route(Routes::ATTENDANCE_ELEM['index']) , 'count' => ElemAttendance::count() ],
             'juniors'   => [ 'link' => route(Routes::ATTENDANCE_JUNIORS['index']) , 'count' => JuniorsAttendance::count()  ],
             'seniors'   => [ 'link' => route(Routes::ATTENDANCE_SENIORS['index']) , 'count' => SeniorsAttendance::count()  ],
-            'college'   => [ 'link' => route(Routes::ATTENDANCE_COLLEGE['index']) , 'count' => TertiaryAttendance::count() ],
+            'college'   => [ 'link' => route(Routes::ATTENDANCE_COLLEGE['index']) , 'count' => CollegeAttendance::count() ],
         ];
 
         return view('backoffice.attendance.index')

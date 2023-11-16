@@ -1,8 +1,6 @@
 <?php
 
-use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\AttendanceHomeController;
-use App\Http\Controllers\AttendanceTodayController;
 use App\Http\Controllers\CollegeAttendanceController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ElemAttendanceController;
@@ -15,7 +13,7 @@ use App\Http\Controllers\ModeratorsController;
 use App\Http\Controllers\QRScannerController;
 use App\Http\Controllers\SeniorsAttendanceController;
 use App\Http\Controllers\SeniorStudentsController;
-use App\Http\Controllers\TertiaryStudentsController;
+use App\Http\Controllers\CollegeStudentsController;
 use App\Http\Extensions\Routes;
 use Illuminate\Support\Facades\Route;
 
@@ -64,28 +62,24 @@ Route::controller(ElemAttendanceController::class)->group(function()
 
 Route::controller(JuniorsAttendanceController::class)->group(function()
 {
-    Route::get('/backoffice/attendance/juniors',    'index')->name( Routes::ATTENDANCE_JUNIORS['index'] );
+    Route::get('/backoffice/attendance/juniors/today/{sort?}',      'index'      )->name( Routes::ATTENDANCE_JUNIORS['index'] );
+    Route::get('/backoffice/attendance/juniors/this-week/{sort?}',  'showWeekly' )->name( Routes::ATTENDANCE_JUNIORS['weekly'] );
+    Route::get('/backoffice/attendance/juniors/this-month/{sort?}', 'showMonthly')->name( Routes::ATTENDANCE_JUNIORS['monthly'] );
 });
 
 Route::controller(SeniorsAttendanceController::class)->group(function()
 {
-    Route::get('/backoffice/attendance/seniors',    'index')->name( Routes::ATTENDANCE_SENIORS['index'] );
+    Route::get('/backoffice/attendance/seniors/today/{sort?}',      'index'      )->name( Routes::ATTENDANCE_SENIORS['index'] );
+    Route::get('/backoffice/attendance/seniors/this-week/{sort?}',  'showWeekly' )->name( Routes::ATTENDANCE_SENIORS['weekly'] );
+    Route::get('/backoffice/attendance/seniors/this-month/{sort?}', 'showMonthly')->name( Routes::ATTENDANCE_SENIORS['monthly'] );
 });
 
 Route::controller(CollegeAttendanceController::class)->group(function()
 {
-    Route::get('/backoffice/attendance/college',    'index')->name( Routes::ATTENDANCE_COLLEGE['index'] );
+    Route::get('/backoffice/attendance/college/{sort?}',            'index'  )->name( Routes::ATTENDANCE_COLLEGE['index'] );
+    Route::get('/backoffice/attendance/college/this-week/{sort?}',  'weekly' )->name( Routes::ATTENDANCE_COLLEGE['weekly'] );
+    Route::get('/backoffice/attendance/college/this-month/{sort?}', 'monthly')->name( Routes::ATTENDANCE_COLLEGE['monthly'] );
 });
-
-// Route::controller(AttendanceMonthlyController::class)->group(function()
-// {
-//     Route::get('/backoffice/attendance/monthly/{sort?}', 'index')->name( Routes::ATTENDANCE_MONTHLY['index'] );
-// });
-
-// Route::controller(AttendanceYearlyController::class)->group(function()
-// {
-//     Route::get('/backoffice/attendance/yearly/{sort?}', 'index')->name( Routes::ATTENDANCE_YEARLY['index'] );
-// });
 
 //===================================================================
 // ...................... USERS CONTROLLERS .........................
@@ -137,7 +131,7 @@ Route::controller(SeniorStudentsController::class)->group(function()
     Route::post('/backoffice/students/seniors/delete',    'destroy')->name( Routes::SENIOR_STUDENT['destroy'] );
 });
 
-Route::controller(TertiaryStudentsController::class)->group(function()
+Route::controller(CollegeStudentsController::class)->group(function()
 { 
     Route::get( '/backoffice/students/college/{sort?}', 'index'  )->name( Routes::COLLEGE_STUDENT['index']   );
     Route::post('/backoffice/students/college/add',     'store'  )->name( Routes::COLLEGE_STUDENT['store']   );

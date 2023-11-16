@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 
-class TertiaryAttendance extends Attendance
+class CollegeAttendance extends Attendance
 {
     use HasFactory;
 

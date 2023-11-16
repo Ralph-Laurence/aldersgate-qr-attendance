@@ -14,7 +14,7 @@ class CollegeStudentsSeeder extends Seeder
      */
     public function run()
     {
-        $path = base_path().'/database/seeders/sql/tertiary_students.sql';
+        $path = base_path().'/database/seeders/sql/college_students.sql';
         $sql = file_get_contents($path);
         DB::unprepared($sql);
 

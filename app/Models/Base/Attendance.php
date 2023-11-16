@@ -11,8 +11,8 @@ use App\Models\JuniorStudent;
 use App\Models\SeniorsAttendance;
 use App\Models\SeniorStudent;
 use App\Models\Strand;
-use App\Models\TertiaryAttendance;
-use App\Models\TertiaryStudent;
+use App\Models\CollegeAttendance;
+use App\Models\CollegeStudent;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -38,9 +38,9 @@ class Attendance extends Model
     const STATUS_VAL_TIMED_IN       = 'in';
     const STATUS_VAL_TIMED_OUT      = 'out';
 
-    const MODE_DAILY    = 'daily';
-    const MODE_WEEKLY   = 'weekly';
-    const MODE_MONTHLY  = 'monthly';
+    const MODE_DAILY                = 'daily';
+    const MODE_WEEKLY               = 'weekly';
+    const MODE_MONTHLY              = 'monthly';
 
     protected $guarded = 
     [
@@ -66,120 +66,88 @@ class Attendance extends Model
         self::STATUS_VAL_TIMED_IN  => [ 'type' => 'status-badge-success', 'icon' => 'fa-check'  ],
         self::STATUS_VAL_TIMED_OUT => [ 'type' => 'status-badge-dark',    'icon' => 'fa-times'  ],
     ];
-    
-    public $QUERY_MAP = [];
 
-    public function getAttendance($options = array(), $studentType)
+    public function getAttendance($options = array(), $studentLevel)
     {   
-        $query = $this->getAttendanceBase($studentType);            // Build the base query
-        
-        if ($options['sort'] == 'oldest') 
-            $query->orderBy('a.created_at', 'asc');     // Query for the last added row
-        else
-            $query->orderBy('a.created_at', 'desc');    // Query for the last added row
+        $queryBuilder = 
+        [
+            Student::STUDENT_LEVEL_COLLEGE      => $this->makeQuery_CollegeAttendance(),
+            Student::STUDENT_LEVEL_SENIORS      => $this->makeQuery_SHSAttendance(),
+            Student::STUDENT_LEVEL_JUNIORS      => $this->makeQuery_JHSAttendance(),
+            Student::STUDENT_LEVEL_ELEMENTARY   => $this->makeQuery_ElemAttendance(),
+        ];
 
-        switch ($options['mode']) 
-        {
-            case Attendance::MODE_DAILY:
-                $query->whereDate('a.created_at', '=', Carbon::today());
-                break;
-
-            case Attendance::MODE_WEEKLY:
-                $query->where(Attendance::FIELD_WEEK_NO, Carbon::now()->weekOfYear);
-                break;
-
-            case Attendance::MODE_MONTHLY:
+        $attendanceModes = 
+        [
+            Attendance::MODE_DAILY  => function ($query) 
+            { 
+                $query->whereDate('a.created_at', '=', Carbon::today()); 
+            },
+            Attendance::MODE_WEEKLY => function ($query) 
+            { 
+                $query->where(Attendance::FIELD_WEEK_NO, Carbon::now()->weekOfYear); 
+            },
+            Attendance::MODE_MONTHLY => function ($query) 
+            {
                 $query->whereMonth('a.created_at', date('m'))
                       ->whereYear('a.created_at',  date('Y'));
-                break;
-        }
-        //
-        // get only records every 30 rows. Then simulate a backend pagination
-        // using ?page=1 | 2 | 3 | etc
-        // return $this->beautifyDataset( $query->paginate(30), $options['mode'] );
-        //
-        return $this->beautifyDataset( $query->get(), $options['mode'] );
+            }
+        ];
+
+        $query = $queryBuilder[$studentLevel];        // Build the query for target student level
+        $attendanceModes[$options['mode']]($query);   // Set attendance to retrieve by its mode
+        
+        $sortMode = 'desc';
+        
+        if (isset($options['sort']) && $options['sort'] == 'oldest') 
+            $sortMode = 'asc';
+
+        $query->orderBy('a.created_at', $sortMode);
+
+        return $this->beautifyDataset( $query->get(), $options['mode'], $studentLevel);
     }
 
-    public function getAttendanceBase($studentLevel)
+    private function beautifyDataset($dataset, $mode = Attendance::MODE_DAILY, $studentLevel)
     {
-        $fields = self::COMMON_FIELDS;                      // These fields are always selected
-
-        switch ($studentLevel)
+        foreach ($dataset as $row) 
         {
-            case Student::STUDENT_LEVEL_COLLEGE: 
-                $fields[] = 's.year';
-                $fields[] = 'c.course';
-                break;
+            $row->id   = encrypt($row->id);                 // Encrypt attendance record id
+            $row->name = $this->implodeNames($row);         // Fix the name as one fullname
+            $row->duration  = '';                           // Store the formatted time duration here, only if there is timeout
 
-            case Student::STUDENT_LEVEL_SENIORS:
-                $fields[] = 's.grade_level';
-                $fields[] = 't.strand';
-                break;
-    
-            case Student::STUDENT_LEVEL_ELEMENTARY: 
-            case Student::STUDENT_LEVEL_JUNIORS:
-                $fields[] = 's.grade_level';
-                break;
-        }
-
-        $query = $this->getQueryMap()[$studentLevel];
- 
-        return $query->select($fields);
-    }
-
-    private function beautifyDataset($dataset, $mode = Attendance::MODE_DAILY) //, $studentLevel)
-    {
-        for ($i = 0; $i < $dataset->count(); $i++) 
-        {
-            $row = $dataset[$i];
-
-            $row->id = encrypt($row->id);                   // Encrypt attendance record id
-
-            // Fix the name as one fullname
-            $row->name = implode(" ", [$row->lastname . ",", $row->firstname, $row->middlename]);
-
-            //$this->bindExtraData($row, $studentLevel);      // Add extra data to the row
-
-            $_timeIn        = '';       // Store original time in here before we format it
-            $row->duration  = '';       // Store the formatted time duration here, only if there is timeout
-
-            if ($row->time_in)
+            if ($row->time_out) 
             {
-                $_timeIn      = $row->time_in;
-                $row->time_in = date('g:i A', strtotime($row->time_in));
+                $row->duration = Utils::getTimeDuration($row->time_in, $row->time_out);
+                $row->time_out = Utils::timeToString($row->time_out);
             }
 
-            if ($row->time_out)
-            {
-                $row->duration = Utils::getTimeDuration($_timeIn, $row->time_out);
-                $row->time_out = date('g:i A', strtotime($row->time_out));
-            }
-            
+            $row->time_in = Utils::timeToString($row->time_in);
+
             // Only today's records will have status badges.
             // Older records will have the 'Date created' field.
             if ($mode != Attendance::MODE_DAILY)
-                $row->created_at   = date('D., M d', strtotime($row->created_at));
-            
+                $row->created_at   = Utils::dateToString($row->created_at, 'D., M d');
+
             else
                 $row->statusBadge  = $this->makeStatusBadge($row->status);
-            
-            $dataset[$i] = $row;                            // Update the current row
+
+            $this->bindExtraData($row, $studentLevel);          // Add extra data to the row
         }
 
         return $dataset;
     }
-
-    // 
-    //     $query = DB::table( "$table as a" )->where(self::FIELD_CREATED_AT, '=', Carbon::today());
 
     public function makeQuery_ElemAttendance()
     {
         $attendance_table = ElemAttendance::getTableName();
         $students_table   = ElementaryStudent::getTableName();
 
+        $fields   = self::COMMON_FIELDS;
+        $fields[] = 's.grade_level';
+
         $query = DB::table( "$attendance_table as a" )
-            ->leftJoin("$students_table as s", 's.id', '=', 'a.student_fk_id');
+            ->leftJoin("$students_table as s", 's.id', '=', 'a.student_fk_id')
+            ->select($fields);
 
         return $query;
     }
@@ -189,8 +157,12 @@ class Attendance extends Model
         $attendance_table = JuniorsAttendance::getTableName();
         $students_table   = JuniorStudent::getTableName();
 
+        $fields   = self::COMMON_FIELDS;
+        $fields[] = 's.grade_level';
+
         $query = DB::table( "$attendance_table as a" )
-            ->leftJoin("$students_table as s", 's.id', '=', 'a.student_fk_id');
+            ->leftJoin("$students_table as s", 's.id', '=', 'a.student_fk_id')
+            ->select($fields);
 
         return $query;
     }
@@ -201,40 +173,34 @@ class Attendance extends Model
         $students_table   = SeniorStudent::getTableName();
         $strands          = Strand::getTableName();
 
+        $fields   = self::COMMON_FIELDS;
+        $fields[] = 's.grade_level'; 
+        $fields[] = 't.strand';
+
         $query = DB::table( "$attendance_table as a" )
             ->leftJoin("$students_table as s", 's.id', '=', 'a.student_fk_id')
-            ->leftJoin("$strands as t", 't.id', '=', 's.strand_id');
+            ->leftJoin("$strands as t", 't.id', '=', 's.strand_id')
+            ->select($fields);
 
         return $query;
     }
 
     private function makeQuery_CollegeAttendance()
     {
-        $attendance_table = TertiaryAttendance::getTableName();
-        $students_table   = TertiaryStudent::getTableName();
+        $attendance_table = CollegeAttendance::getTableName();
+        $students_table   = CollegeStudent::getTableName();
         $courses          = Courses::getTableName();
+
+        $fields   = self::COMMON_FIELDS;
+        $fields[] = 's.year'; 
+        $fields[] = 'c.course';
 
         $query = DB::table( "$attendance_table as a" )
             ->leftJoin("$students_table as s", 's.id', '=', 'a.student_fk_id')
-            ->leftJoin("$courses as c", 'c.id', '=', 's.course_id');
+            ->leftJoin("$courses as c", 'c.id', '=', 's.course_id')
+            ->select($fields);
 
         return $query;
-    }
-
-    private function getQueryMap()
-    {
-        if (empty($this->QUERY_MAP)) 
-        {
-            $this->QUERY_MAP =
-            [
-                Student::STUDENT_LEVEL_ELEMENTARY  => $this->makeQuery_ElemAttendance(),
-                Student::STUDENT_LEVEL_JUNIORS     => $this->makeQuery_JHSAttendance(),
-                Student::STUDENT_LEVEL_SENIORS     => $this->makeQuery_SHSAttendance(),
-                Student::STUDENT_LEVEL_COLLEGE     => $this->makeQuery_CollegeAttendance()
-            ];
-        }
-
-        return $this->QUERY_MAP;
     }
 
     private function makeStatusBadge($status)
@@ -249,5 +215,52 @@ class Attendance extends Model
         }
         
         return self::StatusBadges[$status] + ['label' => Str::ucfirst($status)];
+    }
+    //
+    // Create a JSON object that will be used later to
+    // autofill the form during Edit mode
+    //
+    private function bindExtraData($row, $studentLevel) : void
+    {
+        $initialRowData = [
+            'studentNo' => $row->student_no,
+            'name'      => $this->implodeNames($row),
+            'timeIn'    => $row->time_in,
+            'timeOut'   => $row->time_out,
+            'status'    => $row->status
+        ];
+
+        $extraData = 
+        [
+            Student::STUDENT_LEVEL_ELEMENTARY => fn ($row) => ['gradeLevel' => $row->grade_level],
+            Student::STUDENT_LEVEL_JUNIORS    => fn ($row) => ['gradeLevel' => $row->grade_level],
+            Student::STUDENT_LEVEL_SENIORS    => fn ($row) => 
+            [
+                'strand'     => $row->strand,
+                'gradeLevel' => $row->grade_level
+            ],
+            Student::STUDENT_LEVEL_COLLEGE    => function ($row) 
+            {
+                // Convert the year levels to their ordinal equivalent
+                // but only return the ordinal suffix
+                $row->year_ordinal = Utils::toOrdinal($row->year, true);
+
+                return [
+                    'course'    => $row->course,
+                    'yearlevel' => $row->year
+                ];
+            },
+        ];
+
+        if (isset($extraData[$studentLevel])) 
+        {
+            $rowData        = $initialRowData + $extraData[$studentLevel]($row);
+            $row->rowData   = json_encode($rowData);
+        }
+    }
+
+    private function implodeNames($row)
+    {
+        return implode(" ", [$row->lastname . ",", $row->firstname, $row->middlename]);
     }
 }

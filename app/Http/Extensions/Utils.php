@@ -107,6 +107,13 @@ class Utils
         return date($format, strtotime($date));
     }
 
+    public static function timeToString($time, $format = 'g:i a') : string
+    {
+        if (empty($time))
+            return '';
+
+        return date($format, strtotime($time));
+    }
     /**
      * Converts a number into its ordinal form.
      * This ordinal function takes a number as input and returns 

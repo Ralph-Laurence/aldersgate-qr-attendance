@@ -15,6 +15,7 @@ class ElemAttendanceController extends AttendanceController
     private $attendance     = null;
     private $studentType    = null;
     private $landingRoute   = null;
+
     private $tabRoutes      = [];
 
     public function __construct() 
@@ -24,44 +25,20 @@ class ElemAttendanceController extends AttendanceController
         $this->landingRoute = route( Routes::ATTENDANCE['index'] );
     }
 
-    // public function index($mode, $sort = null)
-    // {
-    //     // sort -> recent | mode -> daily / monthly
-    //     $options    = ['sort' => $sort, 'mode' => $mode];
-
-    //     $student    = ElementaryStudent::STUDENT_LEVEL_ELEMENTARY;
-    //     $dataset    = $this->attendance->getAttendance($options, $student);
-
-    //     $viewData = view('backoffice.attendance.elem.index')
-    //     ->with('attendanceDataset'  , $dataset)
-    //     ->with('totalRecords'       , $dataset->count())
-    //     ->with('worksheetTabRoutes' ,
-    //     [
-    //         'weekly'   => route(Routes::ATTENDANCE_ELEM['index'], ['mode' => Attendance::MODE_WEEKLY ]),
-    //         'monthly'  => route(Routes::ATTENDANCE_ELEM['index'], ['mode' => Attendance::MODE_MONTHLY])
-    //     ]);
-
-    //     return $viewData;
-    // }
-
     public function index($sort = null)
     {
-        // sort -> recent | mode -> daily / monthly
         $options    = ['sort' => $sort, 'mode' => Attendance::MODE_DAILY];
         $dataset    = $this->attendance->getAttendance($options, $this->studentType);
 
-        $viewData = view('backoffice.attendance.elem.index')
-        ->with('attendanceDataset'  , $dataset)
-        ->with('totalRecords'       , $dataset->count())
-        ->with('backPage'           , $this->landingRoute)
-        ->with('worksheetTabRoutes' , $this->getWorksheetTabRoutes());
-
-        return $viewData;
+        return view('backoffice.attendance.elem.index')
+                ->with('attendanceDataset'  , $dataset)
+                ->with('totalRecords'       , $dataset->count())
+                ->with('backPage'           , $this->landingRoute)
+                ->with('worksheetTabRoutes' , $this->getWorksheetTabRoutes());
     }
 
     public function showWeekly($sort = null)
     {
-        // sort -> recent | mode -> daily / monthly
         $options    = ['sort' => $sort, 'mode' => Attendance::MODE_WEEKLY];
         $dataset    = $this->attendance->getAttendance($options, $this->studentType);
         
@@ -82,7 +59,6 @@ class ElemAttendanceController extends AttendanceController
 
     public function showMonthly($sort = null)
     {
-        // sort -> recent | mode -> daily / monthly
         $options    = ['sort' => $sort, 'mode' => Attendance::MODE_MONTHLY];
         $dataset    = $this->attendance->getAttendance($options, $this->studentType);
         
@@ -100,7 +76,7 @@ class ElemAttendanceController extends AttendanceController
                ->with('worksheetTabRoutes' , $this->getWorksheetTabRoutes());
     }
 
-    private function getWorksheetTabRoutes()
+    public function getWorksheetTabRoutes()
     {
         if ( empty($this->tabRoutes) )
         {
@@ -109,7 +85,7 @@ class ElemAttendanceController extends AttendanceController
                 'today'   => route( Routes::ATTENDANCE_ELEM['index'] ),
                 'weekly'  => route( Routes::ATTENDANCE_ELEM['weekly'] ),
                 'monthly' => route( Routes::ATTENDANCE_ELEM['monthly']),
-                'annual'  => ''
+                'alltime' => ''
             ];
         }
 

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Base;
 
 use App\Http\Controllers\Controller;
+use App\Http\Extensions\Routes;
 use App\Http\Extensions\Utils;
 use App\Models\Base\Attendance;
 use Illuminate\Http\Request;

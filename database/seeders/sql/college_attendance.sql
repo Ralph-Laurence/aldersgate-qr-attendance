@@ -1,4 +1,4 @@
-INSERT INTO tertiary_attendances (student_fk_id, time_in, time_out, status, week_no, updated_by, created_at, updated_at)
+INSERT INTO college_attendances (student_fk_id, time_in, time_out, status, week_no, updated_by, created_at, updated_at)
 VALUES
   (FLOOR(1 + RAND() * 25), NOW(), NULL, 'in', WEEK(NOW()), NULL, NOW(), NOW()),
   (FLOOR(1 + RAND() * 25), NOW(), NOW(), 'out', WEEK(NOW()), NULL, NOW(), NOW()),
