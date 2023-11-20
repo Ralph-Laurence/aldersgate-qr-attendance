@@ -5,43 +5,133 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <style>
+        .flex-center {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .gap-4 {
+            gap: 2rem;
+        }
+
+        .queryBox {
+            width: 640px;
+            height: 480px;
+        }
+
+        select, button {
+            padding: .25rem;
+        }
+    </style>
+    <link rel="stylesheet" href="../../../public/css/lib/jquery-ui/jquery-ui.min.css">
 </head>
 
 <body>
-    <textarea class="queryBox"></textarea>
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment-with-locales.min.js"></script>
-    <script>
-        var query =
-            `INSERT INTO elem_attendances (student_fk_id, time_in, time_out, status, week_no, updated_by, created_at, updated_at) VALUES`;
 
+    <di class="flex-center gap-4">
+        <textarea class="queryBox"></textarea>
+        <div>
+            <label for="field-options">Field:</label>
+            <select id="field-options">
+                <option value="college_attendances">College</option>
+                <option value="elem_attendances">Elem</option>
+                <option value="juniors_attendances">JHS</option>
+                <option value="seniors_attendances">SHS</option>
+            </select>
+        </div>
+        <div>
+            <label for="length-options">Length:</label>
+            <select id="length-options">
+                <option value="50">50</option>
+                <option value="75">75</option>
+                <option value="100">100</option>
+                <option value="150">150</option>
+                <option value="175">175</option>
+                <option value="200">200</option>
+            </select>
+        </div>
+        <button class="btn-generate">Generate</button>
+        <button class="btn-copy">Copy</button>
+    </di>
+
+    <script src="../../../public/js/lib/jquery/jquery-3.7.1.min.js"></script>
+    <script src="../../../public/js/lib/jquery-ui/jquery-ui.min.js"></script>
+    <script src="../../../public/js/lib/momentjs/moment-with-locales.js"></script>
+    <script>
         function randomBetween(min, max) {
             return Math.floor(Math.random() * max) + min;
         }
 
-        var timeIn = moment().startOf('day').hour(8); // start at 8AM today
+        const studentsCount = {
+            'college_attendances'   : 34,
+            'elem_attendances'      : 14,
+            'juniors_attendances'   : 11,
+            'seniors_attendances'   : 15
+        };
 
-        $.each(new Array(100), function (i) {
-            var studentId = randomBetween(1, 15);
-            var timeOut = moment(timeIn).add(30, 'minutes');
-            var weekNo = timeIn.week();
-            var values =
-                `(${studentId}, '${timeIn.format()}', '${timeOut.format()}', 'out', ${weekNo}, '', '${timeIn.format()}', '${timeOut.format()}')`;
+        $(() => 
+        {
+            $("#length-options").selectmenu({
+                width: 120,
+            });
 
-            query += (i > 0 ? ',' : '') + '\n' + values;
+            $("#field-options").selectmenu({
+                width: 120,
+            });
 
-            if ((i + 1) % 10 === 0) { // every 10th iteration
-                do {
-                    timeIn.add(1, 'day'); // increase by one day
-                } while (timeIn.day() === 0 || timeIn.day() === 6); // skip Saturdays and Sundays
+            $(".btn-generate").on('click', () => generateSQL());
 
-                timeIn.hour(8).minute(0); // reset to 8AM
-            } else {
-                timeIn = timeOut; // next time_in is current time_out
-            }
+            $('.btn-copy').click(() => 
+            {
+                var text = $(".queryBox").val();
+                var $temp = $("<input>");
+                $("body").append($temp);
+                $temp.val(text).select();
+                document.execCommand("copy");
+                $temp.remove();
+            });
         });
 
-        $('.queryBox').val(query + ';')
+        function generateSQL()
+        {
+            var timeIn = moment().startOf('day').hour(8); // start at 8AM today
+            
+            var rowLength = parseInt($("#length-options").val());
+            var field = $('#field-options').val();
+            var studentFk = studentsCount[field];
+            var query =
+            `INSERT INTO ${field} (student_fk_id, time_in, time_out, status, week_no, updated_by, created_at, updated_at) VALUES`;
+
+            $.each(new Array(rowLength), function (i) 
+            {
+                var studentId = randomBetween(1, studentFk);
+                var timeOut = moment(timeIn).add(30, 'minutes');
+                var weekNo = timeIn.week();
+                var values =
+                    `(${studentId}, '${timeIn.format()}', '${timeOut.format()}', 'out', ${weekNo}, '', '${timeIn.format()}', '${timeOut.format()}')`;
+
+                query += (i > 0 ? ',' : '') + '\n' + values;
+
+                if ((i + 1) % 10 === 0) 
+                { // every 10th iteration
+                    do 
+                    {
+                        timeIn.add(1, 'day'); // increase by one day
+                    } 
+                    while (timeIn.day() === 0 || timeIn.day() === 6); // skip Saturdays and Sundays
+
+                    timeIn.hour(8).minute(0); // reset to 8AM
+                } 
+                else 
+                {
+                    timeIn = timeOut; // next time_in is current time_out
+                }
+            });
+
+            $('.queryBox').val(query + ';')
+        }
     </script>
 </body>
 

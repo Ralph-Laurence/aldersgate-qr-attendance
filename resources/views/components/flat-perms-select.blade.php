@@ -1,74 +1,49 @@
 @once
 @push('styles')
-    <style>
-        .permission-select label 
-        {
-            height: 25px;
-            padding: 2px 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-transform: capitalize;
-            background-color: #ebedef;
-            color: #40464f;
-        } 
-
-        .permission-select .btn-check:checked[checked-color='success'] + label {
-            background-color: var(--flat-color-primary-dark);
-        }
- 
-        .permission-select .btn-check:checked[checked-color='danger']  + label {
-            background-color: var(--flat-color-danger);
-        }
-
-        .permission-select .btn-check:checked[checked-color='warning'] + label {
-            background-color: var(--flat-color-warning);
-        }
-
-        .permission-select .btn-check:checked[checked-color='primary'] + label {
-            background-color: #2c58a0;
-        }
-
-        .permission-select .btn-check:checked[checked-color='success'] + label::before { content: '\f521'; }
-        .permission-select .btn-check:checked[checked-color='danger']  + label::before { content: '\f05e'; }
-        .permission-select .btn-check:checked[checked-color='warning'] + label::before { content: '\f304'; }
-        .permission-select .btn-check:checked[checked-color='primary'] + label::before { content: '\f02e'; }
-        .permission-select .btn-check:checked + label { color: white; }
-        .permission-select .btn-check:checked + label::before 
-        {
-            font-family: var(--fas-font);
-            margin-right: 4px;
-            font-size: 10px;
-        }
-
-    </style>
+    <link rel="stylesheet" href="{{ asset('css/components/flat-perms-select.css') }}">
 @endpush
 @endonce
 <div {{ $attributes->merge(['class' => "d-flex flex-column " . $stretchWidth ]) }}>
+    
     @if (!empty($caption))
     <div class="my-1 px-1">
         <small class="fw-600">{{ $caption }}</small>
     </div>
     @endif
-    <div class="btn-group flat-controls permission-select {{ $stretchWidth }}">
     
-        <input type="radio" class="btn-check" name="option-{{ $as }}" id="option-{{ $as }}-full" autocomplete="off" checked-color="success" {{ $FLAG_ATTR_FULL }} {{ $FLAG_EXCEPT_FULL }}/>
-        <label class="btn" for="option-{{ $as }}-full" data-item-value="4">Full</label>
+    <div class="btn-group mb-1 permission-select flat-controls {{ $stretchWidth }}">
     
-        <input type="radio" class="btn-check" name="option-{{ $as }}" id="option-{{ $as }}-modify" autocomplete="off" checked-color="warning" {{ $FLAG_ATTR_MODIFY }} {{ $FLAG_EXCEPT_MODIFY }}/>
-        <label class="btn" for="option-{{ $as }}-modify" data-item-value="3">Modify</label>
-    
-        <input type="radio" class="btn-check" name="option-{{ $as }}" id="option-{{ $as }}-write" autocomplete="off" checked-color="warning" {{ $FLAG_ATTR_WRITE }}/>
-        <label class="btn" for="option-{{ $as }}-write" data-item-value="2">Write</label>
-        
-        <input type="radio" class="btn-check" name="option-{{ $as }}" id="option-{{ $as }}-read" autocomplete="off" checked-color="primary" {{ $FLAG_ATTR_READ }} />
-        <label class="btn" for="option-{{ $as }}-read" data-item-value="1">Read</label>
-        
-        <input type="radio" class="btn-check" name="option-{{ $as }}" id="option-{{ $as }}-deny" autocomplete="off" checked-color="danger" {{ $FLAG_ATTR_DENY }}/>
-        <label class="btn" for="option-{{ $as }}-deny" data-item-value="0">Deny</label>
-    
-        <input type="text" name="{{ $as }}" id="{{ $as }}" class="d-none select-value {{ $as }}" value="{{ old($as) }}" data-default="{{ $dataDefault }}">
+        @foreach ($controls as $k => $obj)
+            @php
+                $isChecked = (old($as) == $k || $level == -1) ? 'checked' : '';
+                $isDisabled = $obj['disable'];
+            @endphp
+            <input {{ $isDisabled }} value="{{ $k }}" type="radio" class="btn-check" name="{{ $obj['name'] }}" id="{{ $obj['id'] }}" autocomplete="off" checked-color="{{ $obj['style'] }}" {{ $isChecked }}/>
+            <label class="btn" for="{{ $obj['id'] }}" data-item-value="{{ $k }}">{{ $k }}</label>
+
+            {{-- 
+            The ‘checked’ attribute in HTML specifies that an input element should be pre-selected when the page loads. 
+            However, if the radio button is not selected when the form is submitted, it will not be included in the HTTP 
+            request. This is standard behavior for radio buttons in HTML.    
+
+            The default value must be sent when the radio button is not selected, so, we could consider using a hidden input 
+            field in our form. This hidden field can hold the default value, which will be sent with the form data when the 
+            form is submitted.
+            --}}
+            @if ($level == -1)
+                <input value="{{ $k }}" type="hidden" name="{{ $obj['name'] }}" class="default-option-value"/>
+            @endif
+        @endforeach
+
+        <input type="text" 
+               name="{{ $as }}" 
+               id="{{ $as }}" 
+               class="d-none select-value {{ $errors->has('option-' . $as) ? ' has-error' : '' }}" 
+               value="{{ $initialValue }}" />
     </div>
+
+    {{-- ERROR LABEL --}}
+    <h6 class="px-2 mb-0 text-danger text-xs error-label">{{ $errors->first('option-' . $as) }}</h6>
 </div>
 @once
     @push('scripts')

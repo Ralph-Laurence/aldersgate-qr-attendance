@@ -126,7 +126,7 @@
                                     <tr>
                                         <th data-orderable="false" class="text-xs text-uppercase text-center fixed-short-column-60 px-1">{{ "No." }}</th>
                                         <th data-orderable="false" class="text-xs text-uppercase fixed-long-column-300x">{{ "Student" }}</th>
-                                        <th data-orderable="false" class="text-xs text-uppercase text-center fixed-short-column-60 px-1">{{ "Grade"}}</th>
+                                        <th data-orderable="false" class="text-xs text-uppercase text-center fixed-short-column-80 px-1">{{ "Year Level"}}</th>
                                         <th data-orderable="false" class="text-xs text-uppercase text-center fixed-medium-column-120">{{ "Time In"}}</th>
                                         <th data-orderable="false" class="text-xs text-uppercase text-center fixed-medium-column-120">{{"Time Out" }}</th>
                                         <th data-orderable="false" class="text-xs text-uppercase text-center fixed-medium-column-140">{{"Duration" }}</th>
@@ -156,8 +156,8 @@
                                                     <p class="mb-0 text-secondary text-xs">{{ $row->student_no }}</p>
                                                 </div>
                                             </td>
-                                            <td class="text-center opacity-75 fixed-short-column-60 px-1">
-                                                <span class="fw-600">{{ $row->grade_level }}</span>
+                                            <td class="text-center opacity-75 fixed-short-column-80 px-1">
+                                                <span class="fw-600">{{ $row->year }}<sup>{{  $row->year_ordinal }}</sup></span>
                                             </td>
                                             </td>
                                             <td class="text-center opacity-75 text-truncate">{{ $row->time_in }}</td>

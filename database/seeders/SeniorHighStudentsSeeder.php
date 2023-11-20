@@ -20,6 +20,6 @@ class SeniorHighStudentsSeeder extends Seeder
 
         $path = base_path().'/database/seeders/sql/seniors_attendance.sql';
         $sql = file_get_contents($path);
-        DB::unprepared($sql);
+        //DB::unprepared($sql);
     }
 }

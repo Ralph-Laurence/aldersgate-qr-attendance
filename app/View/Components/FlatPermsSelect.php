@@ -6,20 +6,14 @@ use App\Models\Security\UserAccountControl as UAC;
 use Illuminate\View\Component;
 
 class FlatPermsSelect extends Component
-{
-    public $FLAG_ATTR_FULL     ; // = '';
-    public $FLAG_ATTR_MODIFY   ; // = '';
-    public $FLAG_ATTR_WRITE    ; // = '';
-    public $FLAG_ATTR_READ     ; // = '';
-    public $FLAG_ATTR_DENY     ; // = '';
-    
-    public $FLAG_EXCEPT_FULL   ; // = '';
-    public $FLAG_EXCEPT_MODIFY ; // = '';
-
+{   
     public $stretchWidth;
     public $as;
     public $caption;
-    public $dataDefault;
+    public $level;
+    public $controls = [];
+    public $initialValue;
+
     /**
      * Create a new component instance.
      *
@@ -27,22 +21,11 @@ class FlatPermsSelect extends Component
      */
     public function __construct($as, $caption = null, $level = null, $stretchWidth = null)
     {
-//         UAC::PERM_FULL_CONTROL) ?
-// UAC::PERM_MODIFY)       ?
-// UAC::PERM_WRITE)        ?
-// UAC::PERM_READ)         ?
-// UAC::PERM_DENIED)       ?
-
-        $this->FLAG_ATTR_FULL   = (!is_null($level) && $level == 4) ? 'checked' : '';
-        $this->FLAG_ATTR_MODIFY = (!is_null($level) && $level == 3) ? 'checked' : '';
-        $this->FLAG_ATTR_WRITE  = (!is_null($level) && $level == 2) ? 'checked' : '';
-        $this->FLAG_ATTR_READ   = (!is_null($level) && $level == 1) ? 'checked' : '';
-        $this->FLAG_ATTR_DENY   = (!is_null($level) && $level == 0) ? 'checked' : '';
-
-        // Only allow permission options according to the level set.
-        // When a permission option is lower than the level specified
-        $this->FLAG_EXCEPT_FULL   = (!is_null($level) && $level < 4) ? 'disabled' : '';
-        $this->FLAG_EXCEPT_MODIFY = (!is_null($level) && $level < 3) ? 'disabled' : '';
+        $uacFull   = UAC::permToString(UAC::PERM_FULL_CONTROL);
+        $uacModify = UAC::permToString(UAC::PERM_MODIFY);
+        $uacWrite  = UAC::permToString(UAC::PERM_WRITE);
+        $uacRead   = UAC::permToString(UAC::PERM_READ);
+        $uacDenied = UAC::permToString(UAC::PERM_DENIED);
 
         if (!is_null($stretchWidth))
             $this->$stretchWidth = 'w-100';
@@ -50,8 +33,34 @@ class FlatPermsSelect extends Component
         $this->as = $as;
         $this->caption = $caption;
 
-        if (!is_null($level))
-            $this->dataDefault = $level;
+        $this->initialValue = old($this->as);
+        $this->level = $level;
+
+        $this->controls = array
+        (
+            $uacFull   => [ 'disable' => '', 'style' => 'success', 'value' => $uacFull  , 'name' => "option-$as", 'id' => "option-$as-full"   ],
+            $uacModify => [ 'disable' => '', 'style' => 'indigo' , 'value' => $uacModify, 'name' => "option-$as", 'id' => "option-$as-modify" ],
+            $uacWrite  => [ 'disable' => '', 'style' => 'warning', 'value' => $uacWrite , 'name' => "option-$as", 'id' => "option-$as-write"  ],
+            $uacRead   => [ 'disable' => '', 'style' => 'primary', 'value' => $uacRead  , 'name' => "option-$as", 'id' => "option-$as-read"   ],
+            $uacDenied => [ 'disable' => '', 'style' => 'danger' , 'value' => $uacDenied, 'name' => "option-$as", 'id' => "option-$as-deny"   ],
+        );
+
+        if (!is_null($this->level))
+        {
+            if ($this->level != 3 && $this->level > -1)
+                $this->controls[$uacFull]['disable'] = 'disabled';
+
+            else if ($this->level == -1)
+            {
+                $this->controls[$uacFull  ]['disable'] = 'disabled';
+                $this->controls[$uacModify]['disable'] = 'disabled';
+                $this->controls[$uacWrite ]['disable'] = 'disabled';
+                $this->controls[$uacRead  ]['disable'] = 'disabled';
+                $this->controls[$uacDenied]['disable'] = 'disabled';
+
+                $this->initialValue = UAC::permToString(UAC::PERM_DENIED);
+            }
+        }
     }
 
     /**

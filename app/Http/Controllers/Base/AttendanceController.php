@@ -3,11 +3,19 @@
 namespace App\Http\Controllers\Base;
 
 use App\Http\Controllers\Controller;
+use App\Http\Extensions\RegexPatterns;
 use App\Http\Extensions\Routes;
 use App\Http\Extensions\Utils;
+use App\Http\Extensions\ValidationMessages;
 use App\Models\Base\Attendance;
+use App\Models\CollegeStudent;
+use App\Models\ElementaryStudent;
+use App\Models\JuniorStudent;
+use App\Models\SeniorStudent;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\Rule;
 
 abstract class AttendanceController extends Controller
 {

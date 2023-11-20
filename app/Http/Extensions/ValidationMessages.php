@@ -17,6 +17,14 @@ class ValidationMessages
         return "$fieldName has already been taken.";
     }
 
+    public static function minLength($length, $fieldName = '') : string
+    {
+        if (!empty($fieldName))
+            return "$fieldName must be atleast $length characters.";
+
+        return "Must be atleast $length characters.";
+    }
+
     public static function maxLength($length, $fieldName = '') : string
     {
         if (!empty($fieldName))
@@ -56,6 +64,14 @@ class ValidationMessages
 
         return 'This field may only contain letters, space, dots and dashes.';
     }
+    
+    public static function alphaNumUnderscore($fieldName = '') : string 
+    {
+        if (!empty($fieldName))
+            return "$fieldName may only contain letters, numbers, and underscores.";
+
+        return 'This field may only contain letters, numbers, and underscores.';
+    }
 
     public static function mobile($fieldName = '') : string
     {
@@ -78,5 +94,10 @@ class ValidationMessages
             return "$fieldName must be between $min and $max.";
 
         return "The value must be between $min and $max.";
+    }
+
+    public static function permission() 
+    {
+        return 'Please assign the appropriate permissions.';
     }
 }

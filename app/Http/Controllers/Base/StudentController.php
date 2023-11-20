@@ -12,6 +12,7 @@ use App\Models\ElementaryStudent;
 use App\Models\JuniorStudent;
 use App\Models\SeniorStudent;
 use App\Models\CollegeStudent;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
@@ -111,8 +112,11 @@ abstract class StudentController extends Controller
             ElementaryStudent::getTableName(),
             JuniorStudent::getTableName(),
             SeniorStudent::getTableName(),
-            CollegeStudent::getTableName()
+            CollegeStudent::getTableName(),
         ];
+
+        if ($field == 'email')
+            $tables[] = User::getTableName();
 
         $rule = ['required'];
 

@@ -23,8 +23,8 @@ class MasterUsersController extends UsersController
         $privilege  = UAC::ROLE_MASTER;
         
         $dataset    = $this->usersModel->getUsers($options, $privilege);
-         
-        return view('backoffice.master-users.index')
+
+        return view('backoffice.users.master.index')
             ->with('usersDataset'   , $dataset)
             ->with('totalRecords'   , $dataset->count())
             ->with('formActions', 
@@ -36,13 +36,18 @@ class MasterUsersController extends UsersController
             ->with('worksheetTabRoutes', $this->getWorksheetTabRoutesExcept('master'));
     }
 
-    public function destroy(Request $request)
+    public function update(Request $request)
     {
-        return $this->deleteUser($request, $this->usersModel);
+        return $this->saveModel($request, parent::MODE_UPDATE, UAC::ROLE_MASTER);
+    }
+ 
+    public function store(Request $request)
+    {
+        return $this->saveModel($request, parent::MODE_CREATE, UAC::ROLE_MASTER);
     }
 
-    public function saveModel(Request $request, $mode = 0)
+    public function destroy(Request $request)
     {
-        dump($request);
+        return $this->deleteUser($request, $this->usersModel, UAC::ROLE_MASTER);
     }
 }

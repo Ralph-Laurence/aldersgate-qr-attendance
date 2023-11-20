@@ -2,9 +2,8 @@ export class FlatPermsSelect
 {
     constructor(elementId)
     {
-        this.$mainControl     = $(elementId);
-        this.$parentContainer = this.$mainControl.closest('.permission-select');
-        this.defaultValue     = this.$mainControl.data('default');
+        this.$mainControl       = $(elementId);//.find('.select-value');
+        this.$parentContainer   = this.$mainControl.closest('.permission-select');
 
         if (this.$mainControl.length < 1 || this.$parentContainer.length < 1)
             throw new Error(`Permission selector control failed to initialize. Make sure that there is an element with id or class name "${elementId}".`);
@@ -29,16 +28,10 @@ export class FlatPermsSelect
         return this.$mainControl.val();
     }
 
-    setValue(value, redraw)
+    setValue(value)
     {
-        // optional bool must be undefined because when redraw is false, 
-        // it returns true because false is a falsy value
-        redraw = redraw === undefined ? true : redraw;
-
         this.$mainControl.val(value);
-
-        if (typeof redraw === 'boolean' && redraw !== false)
-            this.redraw();
+        this.redraw();
     }
 
     reset()
@@ -48,7 +41,7 @@ export class FlatPermsSelect
     
     redraw()
     {
-        var value = this.defaultValue;
+        var value = this.getValue();
 
         // redraw | -> remove the checked appearance
         this.$parentContainer.find('.btn-check').prop('checked', false);
@@ -58,8 +51,16 @@ export class FlatPermsSelect
 
         $.each($labels, (i, label) => 
         {
-            if (value !== '' && value !== undefined && value == $(label).data('item-value'))
+            var hasDefaultValue = (value !== '' && value !== undefined && value == $(label).data('item-value'));
+
+            // default value for disabled-checked option
+            var $hiddenDefault = $(this.$parentContainer).find('.default-option-value');
+
+            if (hasDefaultValue || $hiddenDefault.length > 0)
                 $(label).prev('.btn-check').prop('checked', true);
         });
     }
 }
+
+// TASK TOMORROW :
+//fix validation of username of the same user

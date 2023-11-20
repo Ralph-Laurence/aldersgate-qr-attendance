@@ -22,34 +22,105 @@
     <x-slot name="formInner">
         <div class="container-fluid mb-3">
             <div class="d-none">
-                <textarea id="form-action-container-store">{{ $formActions['storeUser'] }}</textarea>
-                <textarea id="form-action-container-update">{{ $formActions['updateUser'] }}</textarea>
+                <textarea id="form-action-store">{{ $formActions['storeUser'] }}</textarea>
+                <textarea id="form-action-update">{{ $formActions['updateUser'] }}</textarea>
             </div>
             <div class="mb-2">
                 <i class="fas fa-info-circle me-1"></i>
                 <small>{{ "Please fill out the fields marked with an asterisk (*) as they are required." }}</small>
             </div>
             <div class="row">
-                <div class="col">
-                    <x-flat-input as="{{ 'input-fname' }}" fill="{{ 'Firstname' }}" required with-caption />
-                    <x-flat-input as="{{ 'input-mname' }}" fill="{{ 'Middlename' }}" with-caption />
-                    <x-flat-input as="{{ 'input-lname' }}" fill="{{ 'Lastname' }}" required with-caption />
-                    <x-flat-input as="{{ 'input-lname' }}" fill="{{ 'Username' }}" required with-caption />
-                    <x-flat-input as="{{ 'input-email' }}" fill="{{ 'Email' }}" with-caption required />
+                <div class="col-5">
+                    <x-flat-input as="input-fname" fill="Firstname"  with-caption   required />
+                    <x-flat-input as="input-mname" fill="Middlename" with-caption />
+                    <x-flat-input as="input-lname" fill="Lastname"   with-caption   required />
+                    <x-flat-input as="input-uname" fill="Username"   with-caption   required />
+                    <x-flat-input as="input-email" fill="Email"      with-caption   required />
                 </div>
-                <div class="col border-start">
+                <div class="col-7 border-start">
                     <div class="small my-1 fw-600 text-flat-primary-dark">
                         <i class="fas fa-lock me-1"></i>
                         {{ "User Account Control" }}
                     </div>
-                    <div class="small opacity-75">
-                        {{ "This security feature helps protect the system from unauthorized changes. Make sure to allow only necessary permissions." }}
+                    @push('styles')
+                        <style>
+                            .popover {
+                                width: 300px !important;
+                            }
+                        </style>
+                    @endpush
+                    @push('scripts')
+                        <script>
+                            $(() => 
+                            {
+                                const exampleEl = document.getElementById('uac-popover');
+                                const options = 
+                                {
+                                  html: true,
+                                  title: 'Permission Levels',
+                                  content: 
+                                    `<div class="container-fluid">
+                                        <div class="row mb-1">
+                                            <div class="col-4 px-1">
+                                                <div class="perm-legend perm-legend-full small">
+                                                    <i class="fas fa-crown me-1"></i>Full
+                                                </div>
+                                            </div>
+                                            <div class="col small">Full access to every feature.</div>
+                                        </div>
+                                        <div class="row mb-1">
+                                            <div class="col-4 px-1">
+                                                <div class="perm-legend perm-legend-modify small">
+                                                    <i class="fas fa-gear me-1"></i>Modify
+                                                </div>
+                                            </div>
+                                            <div class="col small">Users would be able to read, create, update, and delete data.</div>
+                                        </div>
+                                        <div class="row mb-1">
+                                            <div class="col-4 px-1">
+                                                <div class="perm-legend perm-legend-write small">
+                                                    <i class="fas fa-pen me-1"></i>Write
+                                                </div>
+                                            </div>
+                                            <div class="col small">Users with write access would be able to create and update data, but not delete it.</div>
+                                        </div>
+                                        <div class="row mb-1">
+                                            <div class="col-4 px-1">
+                                                <div class="perm-legend perm-legend-read small">
+                                                    <i class="fas fa-bookmark me-1"></i>Read
+                                                </div>
+                                            </div>
+                                            <div class="col small">Users with read-only access would be able to read data, but not create, update, or delete it.</div>
+                                        </div>
+                                        <div class="row mb-1">
+                                            <div class="col-4 px-1">
+                                                <div class="perm-legend perm-legend-denied small">
+                                                    <i class="fas fa-ban me-1"></i>Denied
+                                                </div>
+                                            </div>
+                                            <div class="col small">Users with no access would not be able to perform any operations.</div>
+                                        </div>
+                                    </div>`,
+                                  trigger: 'hover'
+                                }
+                                window.popover = new mdb.Popover(exampleEl, options);
+                            });
+                        </script>
+                    @endpush
+                    <div class="small opacity-75 uac-tip-text">
+                        <span class="me-4">
+                            {{ "User Account Control is a security feature that protects the system from unauthorized changes. Make sure to assign the appropriate permissions." }}
+                        </span> 
+                        <a role="button" id="uac-popover" class="underline">
+                            <i class="fas fa-info-circle me-1"></i>
+                            <i>{{ 'Learn more' }}</i>
+                        </a>
                     </div>
                     <div class="perms-selector d-flex flex-column gap-1">
-                        <x-flat-perms-select as="input-students-perm"   caption="Manage students"   stretch-width="true" level="4"/>
-                        <x-flat-perms-select as="input-attendance-perm" caption="Manage attendance" stretch-width="true" level="4"/>    
-                        <x-flat-perms-select as="input-users-perm"      caption="Manage users"      stretch-width="true" level="4"/>
-                        <x-flat-perms-select as="input-advanced-perm"   caption="Advanced settings" stretch-width="true" level="4"/>    
+                        <x-flat-perms-select as="perm-students"   caption="Manage students"   stretch-width="true" level="2"/>
+                        <x-flat-perms-select as="perm-attendance" caption="Manage attendance" stretch-width="true" level="2"/>    
+                        <x-flat-perms-select as="perm-users"      caption="Manage users"      stretch-width="true" level="2"/>
+                        <x-flat-perms-select as="perm-advanced"   caption="Advanced settings" stretch-width="true" level="2"/>    
                     </div>
                 </div>
             </div>
@@ -58,7 +129,7 @@
                 value="{{ $errors->any() ? old('form-action', '0') : '0'  }}">
 
             {{-- WILL BE USED DURING UPDATE --}}
-            <input type="text" name="student-key" id="student-key" class="d-none" value="{{ old('student-key') }}">
+            <input type="text" name="user-key" id="user-key" class="d-none" value="{{ old('user-key') }}">
         </div>
     </x-slot>
 </x-modal-form-md>
@@ -81,11 +152,9 @@
                 <div class="col">
                     <x-flat-worksheet-tabs leading-label="Show" trailing-label="users">
                         <x-slot name="navItems">
-                            <x-flat-worksheet-tabs-item to="{{ $worksheetTabRoutes['librarians'] }}"
-                                text="Librarians" />
-                            <x-flat-worksheet-tabs-item to="{{ $worksheetTabRoutes['moderators'] }}"
-                                text="Moderators" />
-                            <x-flat-worksheet-tabs-item text="Master" current />
+                            <x-flat-worksheet-tabs-item to="{{ $worksheetTabRoutes['librarians'] }}" text="Librarians" />
+                            <x-flat-worksheet-tabs-item text="Moderators" current />
+                            <x-flat-worksheet-tabs-item to="{{ $worksheetTabRoutes['master'] }}"  text="Master" />
                         </x-slot>
                     </x-flat-worksheet-tabs>
                 </div>
@@ -100,7 +169,7 @@
                         <div class="card-header pb-0">
 
                             <div class="d-flex flex-row align-items-center gap-2 mb-3">
-                                <h6 class="card-title mb-0">{{ "Master Users" }}</h6>
+                                <h6 class="card-title mb-0">{{ "Moderators" }}</h6>
                                 <div class="attendance-calendar text-sm px-3 me-auto">
                                     <i class="fas fa-user-shield me-2"></i> {{ "$totalRecords Total Records" }}
                                 </div>
@@ -154,7 +223,7 @@
                                 </thead>
                                 <tbody>
 
-                                    @if (!empty($usersDataset))
+                                @if (!empty($usersDataset))
 
                                     @foreach ($usersDataset as $row)
 
@@ -206,14 +275,14 @@
                                                     <i class="fa-solid fa-trash"></i>
                                                 </button>
                                                 <textarea class="data-target d-none">{{ $dataTarget }}</textarea>
-                                                <textarea class="row-data d-none">{{-- $row->rowData --}}</textarea>
+                                                <textarea class="row-data d-none">{{ $row->rowData }}</textarea>
                                             </div>
                                         </td>
                                     </tr>
 
                                     @endforeach
 
-                                    @endif
+                                @endif
 
                                 </tbody>
                             </table>
@@ -244,6 +313,6 @@
 @push('scripts')
 <script src="{{ asset('extensions/datatables/datatables.min.js') }}"></script>
 <script type="module" src="{{ asset('js/backoffice/users/common.js') }}"></script>
-<script type="module" src="{{ asset('js/backoffice/users/master-users.js') }}"></script>
+<script type="module" src="{{ asset('js/backoffice/users/master.js') }}"></script>
 <script src="{{ asset('js/utils.js') }}"></script>
 @endpush

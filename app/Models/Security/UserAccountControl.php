@@ -39,31 +39,48 @@ class UserAccountControl
     public const PERM_FULL_CONTROL   = 'f';
     public const PERM_DENIED         = 'x';
 
-    public static function toArray()
+    private const permMap = 
+    [
+        self::PERM_READ             => 'Read',
+        self::PERM_WRITE            => 'Write',
+        self::PERM_MODIFY           => 'Modify',
+        self::PERM_FULL_CONTROL     => 'Full',
+        self::PERM_DENIED           => 'Denied',
+    ];
+
+    private const roleMap = 
+    [
+        self::ROLE_LIBRARIAN        => 'Librarian',
+        self::ROLE_MODERATOR        => 'Moderator',
+        self::ROLE_MASTER           => 'Master'
+    ];
+
+    private const statMap = 
+    [
+        self::STATUS_ACTIVE         => 'Active',
+        self::STATUS_DISABLED       => 'Disabled',
+    ];
+
+    public static function toArray($returnWhat = 'all')
     {
-        return [ 
-            self::PERM_READ,       
-            self::PERM_WRITE,       
-            self::PERM_MODIFY,      
-            self::PERM_FULL_CONTROL,
-            self::PERM_DENIED
+        $data = 
+        [
+            'values' => array_values(self::permMap),
+            'keys'   => array_keys(self::permMap),
+            'flip'   => array_flip(self::permMap),
+            'all'    => self::permMap
         ];
+
+        return $data[$returnWhat];
     }
 
     public static function permToString(string $perm)
     {
-        $permMap = 
-        [
-            self::PERM_READ           => 'Read',
-            self::PERM_WRITE          => 'Write',
-            self::PERM_MODIFY         => 'Modify',
-            self::PERM_FULL_CONTROL   => 'Full',
-            self::PERM_DENIED         => 'Denied',
-        ];
+        if ( !in_array($perm, array_keys(self::permMap)) )
+            return '';
 
-        return $permMap[$perm];
+        return self::permMap[$perm];
     }
-
     //
     // User Roles
     //
@@ -73,14 +90,7 @@ class UserAccountControl
 
     public static function roleToString(int $role)
     {
-        $roleMap = 
-        [
-            self::ROLE_LIBRARIAN => 'Librarian',
-            self::ROLE_MODERATOR => 'Moderator',
-            self::ROLE_MASTER    => 'Master'
-        ];
-
-        return $roleMap[$role];
+        return self::roleMap[$role];
     }
 
     //
@@ -91,12 +101,6 @@ class UserAccountControl
 
     public static function statusToString(int $status)
     {
-        $statMap = 
-        [
-            self::STATUS_ACTIVE     => 'Active',
-            self::STATUS_DISABLED   => 'Disabled',
-        ];
-
-        return $statMap[$status];
+        return self::statMap[$status];
     }
 }

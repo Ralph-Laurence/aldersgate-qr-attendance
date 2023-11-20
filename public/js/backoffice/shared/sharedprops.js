@@ -36,6 +36,8 @@ export class SharedProps
         this.setEditRoute( $('#form-action-update').val() );
         
         this.setFormAction( this.getFormAction() );
+        window.crud = this.crudFormModal;
+        window.crudForm = this.crudFormModal.getForm();
 
         if (this.crudFormModal.hasErrors())
         {
@@ -211,8 +213,14 @@ export class SharedProps
 
             switch (content.showIn)
             {
-                case 'modal':
-                    this.messageBox.showInfo(message, { title: title });
+                case 'modal-s':
+                    this.messageBox.showInfo(content.response, { title: content.title });
+                    break;
+                case 'modal-w':
+                    this.messageBox.showWarning(content.response, { title: content.title });
+                    break;
+                case 'modal-x':
+                    this.messageBox.showDanger(content.response, { title: content.title });
                     break;
 
                 case 'toast':

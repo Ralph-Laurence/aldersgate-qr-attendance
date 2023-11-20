@@ -87,12 +87,18 @@ Route::controller(CollegeAttendanceController::class)->group(function()
 
 Route::controller(LibrariansController::class)->group(function()
 {
-    Route::get('/backoffice/users/librarian/{sort?}', 'index')->name( Routes::LIBRARIANS['index'] );
+    Route::get('/backoffice/users/librarian/{sort?}',  'index'   )->name( Routes::LIBRARIANS['index']   );
+    Route::post('/backoffice/users/librarian/add',     'store'   )->name( Routes::LIBRARIANS['store']   );
+    Route::post('/backoffice/users/librarian/edit',    'update'  )->name( Routes::LIBRARIANS['update']  );
+    Route::post('/backoffice/users/librarian/destroy', 'destroy' )->name( Routes::LIBRARIANS['destroy'] );
 });
 
 Route::controller(ModeratorsController::class)->group(function()
 {
-    Route::get('/backoffice/users/moderator/{sort?}', 'index')->name( Routes::MODERATORS['index'] );
+    Route::get('/backoffice/users/moderator/{sort?}',  'index'   )->name( Routes::MODERATORS['index']   );
+    Route::post('/backoffice/users/moderator/add',     'store'   )->name( Routes::MODERATORS['store']   );
+    Route::post('/backoffice/users/moderator/edit',    'update'  )->name( Routes::MODERATORS['update']  );
+    Route::post('/backoffice/users/moderator/destroy', 'destroy' )->name( Routes::MODERATORS['destroy'] );
 });
 
 Route::controller(MasterUsersController::class)->group(function()

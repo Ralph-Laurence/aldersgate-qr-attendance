@@ -29,17 +29,20 @@ class User extends Authenticatable
     const FIELD_LAST_LOGOUT     = 'last_logout';
     const FIELD_VERIFIED_AT     = 'email_verified_at';
     const FIELD_PHOTO           = 'photo';
-    
+   
+    protected $guarded = [
+        self::FIELD_ID
+    ];
     /**
      * The attributes that are mass assignable.
      *
      * @var array
      */
-    protected $fillable = [
-        'name',
-        'email',
-        'password',
-    ];
+    // protected $fillable = [
+    //     'name',
+    //     'email',
+    //     'password',
+    // ];
 
     /**
      * The attributes that should be hidden for arrays.
@@ -60,16 +63,7 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
-    // public const PermBadges =
-    // [
-    //     UAC::PERM_FULL_CONTROL  => [ 'type' => 'badge-success', 'icon' => 'fa-crown'    ],
-    //     UAC::PERM_MODIFY        => [ 'type' => 'badge-warning', 'icon' => 'fa-gear'     ],
-    //     UAC::PERM_READ          => [ 'type' => 'badge-info',    'icon' => 'fa-bookmark' ],
-    //     UAC::PERM_WRITE         => [ 'type' => 'badge-warning', 'icon' => 'fa-pen'      ],
-    //     UAC::PERM_DENIED        => [ 'type' => 'badge-danger',  'icon' => 'fa-ban'      ]
-    // ];
-
-    private $UacPermsArray; // = UAC::permsToArray();
+    private $UacPermsArray;
 
     public const AccessBadges =
     [
@@ -94,12 +88,22 @@ class User extends Authenticatable
      */
     public function getUsersBase($level)
     { 
-        $table = self::getTableName();
-        $query = DB::table( "$table as u" )->where(self::FIELD_PRIVILEGE, '=', $level);
+        $users = self::getTableName();
+        $chmod = Chmod::getTableName();
 
-        $fields =  [
+        $query = DB::table( "$users as u" )
+            ->leftJoin("$chmod as c", 'c.' . Chmod::FIELD_USER_FK, '=', 'u.' . User::FIELD_ID)
+            ->where(self::FIELD_PRIVILEGE, '=', $level);
+
+        $fields =  
+        [
             'u.id',    'u.firstname',  'u.middlename', 'u.lastname', 'u.username',
-            'u.email', 'u.permission', 'u.status', 'u.photo'
+            'u.email', 'u.permission', 'u.status',     'u.photo', 
+
+            'c.' . Chmod::FIELD_ACCESS_ADVANCED   . ' as perm_advanced',
+            'c.' . Chmod::FIELD_ACCESS_ATTENDANCE . ' as perm_attendance',
+            'c.' . Chmod::FIELD_ACCESS_STUDENTS   . ' as perm_students',
+            'c.' . Chmod::FIELD_ACCESS_USERS      . ' as perm_users'
         ];
 
         return $query->select($fields);
@@ -126,37 +130,39 @@ class User extends Authenticatable
 
     private function beautifyDataset($dataset)
     {
-        for ($i = 0; $i < $dataset->count(); $i++) 
+        foreach ($dataset as $row) 
         {
-            $row = $dataset[$i];
-
             $row->id = encrypt($row->id);                   // Encrypt user id
-
-            $photo = $row->photo ? $row->photo : '';        // Fix photo path
+            $photo   = $row->photo ? $row->photo : '';        // Fix photo path
 
             $row->photo = Utils::getPhotoPath($photo);
 
-            // Permissions and Badges
-            $row->permBadge  = $this->makeAccessBadge($row->permission);
-            // $row->permission = UAC::permToString($row->permission);
+            $uacPerms = [
+                'perm_advanced'     => $row->perm_advanced,
+                'perm_attendance'   => $row->perm_attendance,
+                'perm_students'     => $row->perm_students,
+                'perm_users'        => $row->perm_users
+            ];
 
+            // Permissions badge
+            $row->permBadge    = $this->makePermsBadge( array_values($uacPerms) );
+
+            // Status badge
             $row->statusBadge = $this->makeStatusBadge($row->status);
-            //$row->status = UAC::statusToString($row->status);
+
+            // Extra data
+            $row->rowData     = $this->bindExtraData($row, $uacPerms);
 
             // Fix the name as one fullname
             $row->name = implode(" ", [$row->lastname . ",", $row->firstname, $row->middlename]);
-
-            $dataset[$i] = $row;                            // Update the current row
         }
 
         return $dataset;
     }
 
-    private function makeAccessBadge($perm)
+    private function makePermsBadge(array $perms)
     {
-        $perms = $this->getUACPerms();
-
-        if (!in_array($perm, $perms))
+        if ( empty($perms) || in_array(null, $perms, true) )
         {
             return [ 
                 'type'  => 'badge-warning', 
@@ -165,13 +171,25 @@ class User extends Authenticatable
             ];
         }
 
-        if ($perm == UAC::PERM_FULL_CONTROL)
-            return self::AccessBadges['full'] + ['label' => 'Full'];
+        $unique_values  = array_unique($perms);
+        $accessModerate = self::AccessBadges['moderate'] + ['label' => 'Moderate'];
 
-        if ($perm == UAC::PERM_DENIED)
-            return self::AccessBadges['denied'] + ['label' => 'Denied'];
+        if (count($unique_values) == 1) 
+        {
+            $value = reset($unique_values);     // move internal array pointer to first element
 
-        return self::AccessBadges['moderate'] + ['label' => 'Moderate'];
+            if ($value === UAC::PERM_FULL_CONTROL) 
+                return self::AccessBadges['full'] + ['label' => 'Full'];
+
+            elseif ($value === UAC::PERM_DENIED) 
+                return self::AccessBadges['denied'] + ['label' => 'Denied'];
+
+            else 
+                return $accessModerate;
+        } 
+        else {
+            return $accessModerate;
+        }
     }
 
     private function makeStatusBadge($status)
@@ -188,11 +206,21 @@ class User extends Authenticatable
         return self::StatusBadges[$status] + ['label' => UAC::statusToString($status)];
     }
 
-    private function getUACPerms()
+    private function bindExtraData(&$row, $uacPerms) : string
     {
-        if (empty($this->UacPermsArray))
-            $this->UacPermsArray = UAC::toArray();
+        $rowData = [
+            'firstname'     => $row->firstname,
+            'middlename'    => $row->middlename,
+            'lastname'      => $row->lastname,
+            'username'      => $row->username,
+            'email'         => $row->email,
 
-        return $this->UacPermsArray;
+            'perm_advanced'     => UAC::permToString($uacPerms['perm_advanced'  ]),
+            'perm_attendance'   => UAC::permToString($uacPerms['perm_attendance']),
+            'perm_students'     => UAC::permToString($uacPerms['perm_students'  ]),
+            'perm_users'        => UAC::permToString($uacPerms['perm_users'      ]),
+        ];
+
+        return json_encode($rowData);
     }
 }

@@ -34,6 +34,10 @@ class Utils
     public const FLASH_MESSAGE_WARN    = 1;
     public const FLASH_MESSAGE_SUCCESS = 0;
 
+    public const MODAL_TYPE_SUCCESS    = 'modal-s';
+    public const MODAL_TYPE_WARN       = 'modal-w';
+    public const MODAL_TYPE_ERROR      = 'modal-x';
+
     /**
      * This builds a path string for the photo file
      */
@@ -150,6 +154,25 @@ class Utils
             'title'     => $title,          // used by modal only
             'response'  => $message,        // used by both toast and modal
             'type'      => $type,           // used by toast
+            'showIn'    => $showIn          // modal | toast
+        ]);
+    }
+
+    public static function flashToastMessage(string $message, int $type, string $title = '')
+    {
+        return json_encode([
+            'title'     => $title,          // used by modal only
+            'response'  => $message,        // used by both toast and modal
+            'type'      => $type,           // used by toast
+            'showIn'    => 'toast'          // modal | toast
+        ]);
+    }
+
+    public static function flashModalMessage(string $message, string $showIn, string $title = '')
+    {
+        return json_encode([
+            'title'     => $title,          // used by modal only
+            'response'  => $message,        // used by both toast and modal
             'showIn'    => $showIn          // modal | toast
         ]);
     }

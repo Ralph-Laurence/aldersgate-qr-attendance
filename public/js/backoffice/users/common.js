@@ -11,6 +11,26 @@ $(document).on('domReady', function ()
     bindEvents();
 });
 
+function populateForm(data, then)
+{
+    var $form = props.$crudFormModalDom;
+
+    $form.find('#input-fname').val(data.firstname);
+    $form.find('#input-mname').val(data.middlename);
+    $form.find('#input-lname').val(data.lastname);
+    $form.find('#input-uname').val(data.username);
+    $form.find('#input-email').val(data.email);
+    $form.find('#user-key').val(data.userKey);
+
+    // This will trigger a custom event called 'onPopulateExtra' and passes
+    // an output param 'data' which comes from the 'data' parameter that
+    // was used above to populate the form
+    $(document).trigger('onPopulateExtra', [data]);
+
+    if (typeof then === 'function')
+        then();
+}
+
 function initializeDataTable(tableId) 
 {
     // Use this to set maximum displayed pagination numbers
@@ -136,13 +156,14 @@ function handleEdit(eventTarget)
         let obj    = JSON.parse($row);
         let target = JSON.parse(dataTarget);
 
-        obj['studentKey'] = target.key;
+        obj['userKey'] = target.key;
 
         props.setActionEdit();
         populateForm(obj, props.showCrudForm());
     }
     catch (ex)
     {
+        console.warn(ex);
         var err = "Unable to edit this record because the data couldn't be read. Please reload the page and try again.<br><br>If this message persists, contact the administrator."
 
         props.messageBox.showDanger(err, {

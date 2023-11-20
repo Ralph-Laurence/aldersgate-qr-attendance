@@ -70,10 +70,8 @@ class Student extends Model
 
     private function beautifyDataset($dataset, $studentLevel)
     {
-        for ($i = 0; $i < $dataset->count(); $i++) 
+        foreach ($dataset as $row) 
         {
-            $row = $dataset[$i];
-
             $row->id = encrypt($row->id);                   // Encrypt student id
 
             $photo = $row->photo ? $row->photo : '';        // Fix photo path
@@ -84,8 +82,6 @@ class Student extends Model
             $row->name = implode(" ", [$row->lastname . ",", $row->firstname, $row->middlename]);
 
             $this->bindExtraData($row, $studentLevel);      // Add extra data to the row
-
-            $dataset[$i] = $row;                            // Update the current row
         }
 
         return $dataset;

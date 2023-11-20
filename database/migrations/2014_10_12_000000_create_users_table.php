@@ -23,7 +23,6 @@ class CreateUsersTable extends Migration
             $table->string(User::FIELD_EMAIL,           64)->unique();
             $table->string(User::FIELD_PASSWORD           );
             $table->integer(User::FIELD_PRIVILEGE         );
-            $table->string(User::FIELD_PERMS,            8);
             $table->integer(User::FIELD_STATUS            );
             $table->integer(User::FIELD_PHOTO             )->nullable();
             $table->timestamp(User::FIELD_VERIFIED_AT     )->nullable();
