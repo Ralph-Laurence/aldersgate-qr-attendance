@@ -17,7 +17,7 @@ export class FlatPermsSelect
         {
             var value = $(e.currentTarget).data('item-value');
 
-            this.$mainControl.val(value);
+            this.$mainControl.val(value).trigger('input');
 
             console.warn('selected -> ' + value);
         });
@@ -30,7 +30,7 @@ export class FlatPermsSelect
 
     setValue(value)
     {
-        this.$mainControl.val(value);
+        this.$mainControl.val(value);//.trigger('input');
         this.redraw();
     }
 

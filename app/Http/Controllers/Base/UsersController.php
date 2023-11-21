@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Base;
 
 use App\Http\Controllers\Controller;
+use App\Http\Extensions\RecordUtils;
 use App\Http\Extensions\RegexPatterns;
 use App\Http\Extensions\Routes;
 use App\Http\Extensions\Utils;
@@ -85,7 +86,16 @@ abstract class UsersController extends Controller
                     if (!$user)
                         abort(500);
 
-                    $user->update($modelData);
+                    $user->update($modelData['user_data']);
+
+                    $chmod = Chmod::where(Chmod::FIELD_USER_FK, '=', $userKey)->first();
+
+                    // If the permission record is not found, do not perform an update
+                    if (!$chmod)
+                        abort(500);
+
+                    $chmod->update($modelData['perm_data']);
+
                     $_flashMsg = self::MSG_SUCCESS_UPDATED;
                 }
             ];
@@ -100,7 +110,7 @@ abstract class UsersController extends Controller
              
             $flashMessage = Utils::makeFlashMessage($_flashMsg, Utils::FLASH_MESSAGE_SUCCESS, 'toast');
 
-            return redirect()->route(self::GoBackRoutes[$privilege], ['sort' => 'recent'])
+            return redirect()->route(self::GoBackRoutes[$privilege], ['sort' => RecordUtils::SORT_MODE_NEWLY_ADDED])
                 ->withInput( ['form-action' => $request->input('form-action')] )
                 ->with('flash-message', $flashMessage);
         }
@@ -180,7 +190,7 @@ abstract class UsersController extends Controller
         $fields = array(
             'input-fname'   => 'required|max:32|regex:' . RegexPatterns::ALPHA_DASH_DOT_SPACE,
             'input-mname'   => 'nullable|max:32|regex:' . RegexPatterns::ALPHA_DASH_DOT_SPACE,
-            'input-lname'   => 'required|max:32|:' . RegexPatterns::ALPHA_DASH_DOT_SPACE,
+            'input-lname'   => 'required|max:32|:'      . RegexPatterns::ALPHA_DASH_DOT_SPACE,
 
             'input-uname'   => $unameRule, 
             'input-email'   => $emailRule,
@@ -258,33 +268,6 @@ abstract class UsersController extends Controller
         return $validationMessage + $extraRules;
     }
 
-    private function createModelData(array $inputs, $privilege)
-    {
-        $data = 
-        [
-            'user_data' => [
-                User::FIELD_FIRSTNAME   => $inputs['input-fname'],
-                User::FIELD_MIDDLENAME  => $inputs['input-mname'],
-                User::FIELD_LASTNAME    => $inputs['input-lname'],
-                User::FIELD_USERNAME    => $inputs['input-uname'],
-                User::FIELD_EMAIL       => $inputs['input-email'],
-                User::FIELD_PASSWORD    => Hash::make('1234'),
-                User::FIELD_STATUS      => UAC::STATUS_ACTIVE,
-                User::FIELD_PRIVILEGE   => $privilege
-            ],
-            
-            'perm_data' => $this->createPermData($privilege, 
-            [
-                Chmod::FIELD_ACCESS_STUDENTS    => $inputs['option-perm-students'],  
-                Chmod::FIELD_ACCESS_ATTENDANCE  => $inputs['option-perm-attendance'],
-                Chmod::FIELD_ACCESS_USERS       => $inputs['option-perm-users'],     
-                Chmod::FIELD_ACCESS_ADVANCED    => $inputs['option-perm-advanced'],  
-            ])
-        ];
-
-        return $data;
-    }
-    
     private function validateFields(Request $request, $recordId = null)
     {
         // Get common validation rules defined in base class
@@ -301,6 +284,41 @@ abstract class UsersController extends Controller
         return $inputs;
     }
 
+    private function createModelData(array $inputs, $privilege): array
+    {
+        $denied = UAC::permToString(UAC::PERM_DENIED);
+        $modify = UAC::permToString(UAC::PERM_MODIFY);
+        $full   = UAC::permToString(UAC::PERM_FULL_CONTROL);
+
+        $perms = [
+            Chmod::FIELD_ACCESS_STUDENTS    => $inputs['option-perm-students'],
+            Chmod::FIELD_ACCESS_ATTENDANCE  => $inputs['option-perm-attendance'],
+            Chmod::FIELD_ACCESS_USERS       => $inputs['option-perm-users'],
+            Chmod::FIELD_ACCESS_ADVANCED    => $inputs['option-perm-advanced'],
+        ];
+
+        if ($privilege == UAC::ROLE_MODERATOR)
+            $perms[Chmod::FIELD_ACCESS_ADVANCED] = $denied;
+
+        $data =
+        [
+            'user_data' => [
+                User::FIELD_FIRSTNAME   => $inputs['input-fname'],
+                User::FIELD_MIDDLENAME  => $inputs['input-mname'],
+                User::FIELD_LASTNAME    => $inputs['input-lname'],
+                User::FIELD_USERNAME    => $inputs['input-uname'],
+                User::FIELD_EMAIL       => $inputs['input-email'],
+                User::FIELD_PASSWORD    => Hash::make('1234'),
+                User::FIELD_STATUS      => UAC::STATUS_ACTIVE,
+                User::FIELD_PRIVILEGE   => $privilege
+            ],
+
+            'perm_data' => $this->createPermData($privilege, $perms, $full, $modify)
+        ];
+
+        return $data;
+    }
+
     /**
     * In this code, array_flip swaps the keys and values of the $uacPerms array. 
     * Then, array_map applies a function to each value of $chmod_data array. 
@@ -311,18 +329,23 @@ abstract class UsersController extends Controller
     * corresponding values from $uacPerms. This new array is then assigned back to $chmod_data. 
     * Now, $chmod_data should have the values we want to insert into the database.
     */
-    public function createPermData($privilege, $perm_data) : array
+    public function createPermData($privilege, $perm_data, $full, $modify): array
     {
         $uacPerms = UAC::toArray('flip');
 
-        $perm_data = array_map(function($value) use($uacPerms, &$privilege)
-        {
-            if ($privilege != UAC::ROLE_MASTER && $value == UAC::permToString(UAC::PERM_FULL_CONTROL))
-                return $uacPerms[UAC::permToString(UAC::PERM_MODIFY)];
+        $perm_data = array_map
+        ( 
+            function ($value) use ($uacPerms, &$privilege, $full, $modify) 
+            {
+                // Force non-master users to use the 'Modify' permission
+                // if the permission from input was set to 'Full'
+                if ($privilege != UAC::ROLE_MASTER && $value == $full)
+                    return $uacPerms[$modify];
 
-            return $uacPerms[$value];
-        }, 
-        $perm_data);
+                return $uacPerms[$value];
+            },
+            $perm_data
+        );
 
         return $perm_data;
     }

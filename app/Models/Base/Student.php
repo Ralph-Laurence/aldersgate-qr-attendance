@@ -2,6 +2,7 @@
 
 namespace App\Models\Base;
 
+use App\Http\Extensions\RecordUtils;
 use App\Http\Extensions\Utils;
 use App\Models\Courses;
 use App\Models\ElementaryStudent;
@@ -55,7 +56,7 @@ class Student extends Model
         
         if ( array_key_exists('sort', $options) )
         {  
-            if ($options['sort'] == 'recent') 
+            if ($options['sort'] == RecordUtils::SORT_MODE_NEWLY_ADDED) 
                 $query->orderBy('s.created_at', 'desc');    // Query for the last added row
             else
                 $query->orderBy('s.lastname', 'asc');       // Default query, sort by lastname

@@ -143,7 +143,7 @@ export class SharedProps
     {
         const requiredFields = this.crudFormModal.getForm().find('input[required]');
         var errorCount = 0;
-
+        
         $.each(requiredFields, (i, f) => 
         {
             const $root = $(f).closest('.flat-controls');
@@ -151,14 +151,14 @@ export class SharedProps
             var $label  = $root.find('.error-label');
             var $text   = $root.find('.input-text');
             var $alias  = $root.data('alias');
-
+            console.warn($alias);
             if ($(f).val())
             {
                 $text.removeClass('has-error');
                 $label.text('');
                 return true;        // continue next iteration
             }
-
+            
             switch ($alias)
             {
                 case 'text':
@@ -169,6 +169,11 @@ export class SharedProps
 
                 case 'select':
                     $label.text('Please choose an option');
+                    break;
+
+                case 'perm-select':
+                    console.log('caught here');
+                    $label.text('Please select an appropriate permission');
                     break;
 
                 default:
@@ -188,10 +193,13 @@ export class SharedProps
         // This eliminates the need for the 'var counter = 0' variable and the $.each loop.
         // This version could be slightly faster because it stops searching as soon as it 
         // finds a non-empty input element or a visible error label.
-        const inputs = $(this.crudFormModal.getForm()).find('.flat-controls input[type="text"]').filter(function () 
-        {
-            return $(this).val();
-        });
+        const inputs = $(this.crudFormModal.getForm())
+            .find('.flat-controls input[type="text"]')
+            .not('.ignore-dirty-check')
+            .filter(function () 
+            {
+                return $(this).val();
+            });
 
         // If there are error labels visible, count them as dirty
         const hasErrors = $('.has-error').length > 0;

@@ -3,7 +3,7 @@
     <link rel="stylesheet" href="{{ asset('css/components/flat-perms-select.css') }}">
 @endpush
 @endonce
-<div {{ $attributes->merge(['class' => "d-flex flex-column " . $stretchWidth ]) }}>
+<div {{ $attributes->merge(['class' => "d-flex flex-column flat-controls " . $stretchWidth ]) }} data-alias="perm-select">
     
     @if (!empty($caption))
     <div class="my-1 px-1">
@@ -11,7 +11,7 @@
     </div>
     @endif
     
-    <div class="btn-group mb-1 permission-select flat-controls {{ $stretchWidth }}">
+    <div class="btn-group mb-1 permission-select {{ $stretchWidth }}" >
     
         @foreach ($controls as $k => $obj)
             @php
@@ -31,15 +31,21 @@
             form is submitted.
             --}}
             @if ($level == -1)
-                <input value="{{ $k }}" type="hidden" name="{{ $obj['name'] }}" class="default-option-value"/>
+                <input value="{{ $k }}" type="hidden" name="{{ $obj['name'] }}" class="default-option-value ignore-dirty-check"/>
             @endif
         @endforeach
 
         <input type="text" 
                name="{{ $as }}" 
                id="{{ $as }}" 
-               class="d-none select-value {{ $errors->has('option-' . $as) ? ' has-error' : '' }}" 
-               value="{{ $initialValue }}" />
+               class="d-none main-control select-value {{ $errors->has('option-' . $as) ? ' has-error' : '' }}" 
+               @if ($level == -1)
+                   value=""
+                @else
+                    value="{{ $initialValue }}"
+                    required
+               @endif
+                />
     </div>
 
     {{-- ERROR LABEL --}}

@@ -87,6 +87,11 @@ export class ModalForm extends ModalsBase
 
     submitForm()
     {
+        [this.positiveButton, this.negativeButton, this.closeButton]
+        .forEach(button => {
+            $(button).prop('disabled', true);
+        });
+
         $(this.getForm()).trigger('submit');
     }
 

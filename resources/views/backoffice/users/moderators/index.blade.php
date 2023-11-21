@@ -120,7 +120,7 @@
                         <x-flat-perms-select as="perm-students"   caption="Manage students"   stretch-width="true" level="2"/>
                         <x-flat-perms-select as="perm-attendance" caption="Manage attendance" stretch-width="true" level="2"/>    
                         <x-flat-perms-select as="perm-users"      caption="Manage users"      stretch-width="true" level="2"/>
-                        <x-flat-perms-select as="perm-advanced"   caption="Advanced settings" stretch-width="true" level="2"/>    
+                        <x-flat-perms-select as="perm-advanced"   caption="Advanced settings" stretch-width="true" level="-1"/>    
                     </div>
                 </div>
             </div>

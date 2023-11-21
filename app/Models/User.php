@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Http\Extensions\RecordUtils;
 use App\Http\Extensions\Utils;
 use App\Models\Base\CommonUser;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
@@ -115,10 +116,20 @@ class User extends Authenticatable
         
         if ( array_key_exists('sort', $options) )
         {  
-            if ($options['sort'] == 'recent') 
-                $query->orderBy('u.created_at', 'desc');    // Query for the last added row
-            else
-                $query->orderBy('u.lastname', 'asc');       // Default query, sort by lastname
+            switch ($options['sort'])
+            {
+                case RecordUtils::SORT_MODE_NEWLY_ADDED:
+                    $query->orderBy('u.created_at', 'desc');    // Query for the last added row
+                    break;
+
+                case RecordUtils::SORT_MODE_LAST_UPDATED:
+                    $query->orderBy('u.updated_at', 'desc');    // Query for the last added row
+                    break;
+
+                default:
+                    $query->orderBy('u.lastname', 'asc');       // Default query, sort by lastname
+                    break;
+            }
         } 
         else
         {

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Base\StudentController;
+use App\Http\Extensions\RecordUtils;
 use App\Http\Extensions\Routes;
 use App\Http\Extensions\Utils;
 use App\Http\Extensions\ValidationMessages;
@@ -108,7 +109,7 @@ class SeniorStudentsController extends StudentController
 
             $flashMessage = Utils::makeFlashMessage($_flashMsg, Utils::FLASH_MESSAGE_SUCCESS, 'toast');
 
-            return redirect()->route(Routes::SENIOR_STUDENT['index'], ['sort' => 'recent'])
+            return redirect()->route(Routes::SENIOR_STUDENT['index'], ['sort' => RecordUtils::SORT_MODE_NEWLY_ADDED])
                 ->withInput( ['form-action' => $request->input('form-action')] )
                 ->with('flash-message', $flashMessage);
         } 
