@@ -45,7 +45,14 @@ export class SharedProps
             this.showCrudForm();
         }
 
+        // Message from server after a successful opration
         this.loadFlashMessage();
+
+        // The first record will be marked with a blinking arrow.
+        // It should stop after 5 seconds
+        setTimeout(() => {
+            $('.td-latest').removeClass('td-latest');
+        }, 3500);
 
         $(document).trigger('domReady');
     }
@@ -151,7 +158,7 @@ export class SharedProps
             var $label  = $root.find('.error-label');
             var $text   = $root.find('.input-text');
             var $alias  = $root.data('alias');
-            console.warn($alias);
+            
             if ($(f).val())
             {
                 $text.removeClass('has-error');

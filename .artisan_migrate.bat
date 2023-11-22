@@ -6,4 +6,5 @@ php artisan db:seed --class SeniorHighStudentsSeeder
 php artisan db:seed --class ElemStudentsSeeder
 php artisan db:seed --class StrandsSeeder
 php artisan db:seed --class UsersSeeder
+php artisan db:seed --class ChmodSeeder
 pause

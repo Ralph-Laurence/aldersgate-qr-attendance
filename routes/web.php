@@ -91,6 +91,8 @@ Route::controller(LibrariansController::class)->group(function()
     Route::post('/backoffice/users/librarian/add',     'store'   )->name( Routes::LIBRARIANS['store']   );
     Route::post('/backoffice/users/librarian/edit',    'update'  )->name( Routes::LIBRARIANS['update']  );
     Route::post('/backoffice/users/librarian/destroy', 'destroy' )->name( Routes::LIBRARIANS['destroy'] );
+    Route::post('/backoffice/users/librarian/disable', 'disable' )->name( Routes::LIBRARIANS['disable'] );
+    Route::post('/backoffice/users/librarian/enable',  'enable'  )->name( Routes::LIBRARIANS['enable']  );
 });
 
 Route::controller(ModeratorsController::class)->group(function()
@@ -99,6 +101,8 @@ Route::controller(ModeratorsController::class)->group(function()
     Route::post('/backoffice/users/moderator/add',     'store'   )->name( Routes::MODERATORS['store']   );
     Route::post('/backoffice/users/moderator/edit',    'update'  )->name( Routes::MODERATORS['update']  );
     Route::post('/backoffice/users/moderator/destroy', 'destroy' )->name( Routes::MODERATORS['destroy'] );
+    Route::post('/backoffice/users/moderator/disable', 'disable' )->name( Routes::MODERATORS['disable'] );
+    Route::post('/backoffice/users/moderator/enable',  'enable'  )->name( Routes::MODERATORS['enable']  );
 });
 
 Route::controller(MasterUsersController::class)->group(function()
@@ -107,6 +111,8 @@ Route::controller(MasterUsersController::class)->group(function()
     Route::post('/backoffice/users/master/add',      'store'   )->name( Routes::MASTER_USERS['store']   );
     Route::post('/backoffice/users/master/edit',     'update'  )->name( Routes::MASTER_USERS['update']  );
     Route::post('/backoffice/users/master/destroy',  'destroy' )->name( Routes::MASTER_USERS['destroy'] );
+    Route::post('/backoffice/users/master/disable',  'disable' )->name( Routes::MASTER_USERS['disable'] );
+    Route::post('/backoffice/users/master/enable',   'enable'  )->name( Routes::MASTER_USERS['enable']  );
 });
 
 //===================================================================

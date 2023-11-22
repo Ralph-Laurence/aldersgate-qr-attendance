@@ -4,8 +4,6 @@ namespace App\Models;
 
 use App\Http\Extensions\RecordUtils;
 use App\Http\Extensions\Utils;
-use App\Models\Base\CommonUser;
-use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -85,7 +83,7 @@ class User extends Authenticatable
     }
 
     /**
-     * Base query builder for selecting students in database
+     * Base query builder for selecting users in database
      */
     public function getUsersBase($level)
     { 
@@ -99,7 +97,7 @@ class User extends Authenticatable
         $fields =  
         [
             'u.id',    'u.firstname',  'u.middlename', 'u.lastname', 'u.username',
-            'u.email', 'u.permission', 'u.status',     'u.photo', 
+            'u.email', 'u.status',     'u.photo', 
 
             'c.' . Chmod::FIELD_ACCESS_ADVANCED   . ' as perm_advanced',
             'c.' . Chmod::FIELD_ACCESS_ATTENDANCE . ' as perm_attendance',
@@ -159,10 +157,17 @@ class User extends Authenticatable
             $row->permBadge    = $this->makePermsBadge( array_values($uacPerms) );
 
             // Status badge
-            $row->statusBadge = $this->makeStatusBadge($row->status);
+            $row->statusBadge  = $this->makeStatusBadge($row->status);
+
+            // Status action button 
+            if ($row->status == UAC::STATUS_DISABLED)
+                $row->statusAction = 'enable';
+
+            else if ($row->status == UAC::STATUS_ACTIVE)
+                $row->statusAction = 'disable';
 
             // Extra data
-            $row->rowData     = $this->bindExtraData($row, $uacPerms);
+            $row->rowData      = $this->bindExtraData($row, $uacPerms);
 
             // Fix the name as one fullname
             $row->name = implode(" ", [$row->lastname . ",", $row->firstname, $row->middlename]);

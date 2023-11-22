@@ -16,6 +16,7 @@ use App\Models\SeniorStudent;
 use App\Models\User;
 use App\Models\Security\UserAccountControl as UAC;
 use App\Rules\UserPermsRule;
+use Exception;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
@@ -29,6 +30,8 @@ abstract class UsersController extends Controller
     public const MODE_CREATE = 0;
     public const MODE_UPDATE = 1;
     
+    public const MSG_SUCCESS_ENABLE         = 'User successfully enabled.';
+    public const MSG_SUCCESS_DISABLE        = 'User successfully disabled.';
     public const MSG_SUCCESS_DELETE         = 'A user has been successfully removed from the system.';
     public const MSG_SUCCESS_ADDED          = 'User successfully added.';
     public const MSG_SUCCESS_UPDATED        = 'User record updated successfully.';
@@ -45,42 +48,52 @@ abstract class UsersController extends Controller
         UAC::ROLE_LIBRARIAN => Routes::LIBRARIANS['index']
     ];
 
-    public function saveModel(Request $request, $mode = 0, $privilege)
+    private function readUserKey(Request $request)
     {
+        if (empty($request->input('user-key')))
+            return '';
+
         $userKey = $request->input('user-key');
         
-        if (!empty($userKey))
-            $userKey = decrypt($userKey);
+        return decrypt($userKey);
+    }
 
-        $inputs = $this->validateFields($request, $userKey);
+    public function saveModel(Request $request, User $userModel, $mode = 0, $privilege)
+    {
+        $userKey = $this->readUserKey($request);
+        $inputs  = $this->validateFields($request, $userKey);
         
         // Check if validation failed and a 'redirect' response was returned
         if ($inputs instanceof \Illuminate\Http\RedirectResponse)
             return $inputs;
 
         $_flashMsg = '';
- 
+        $sortMode  = '';
+
         try 
         {
             $modelData = $this->createModelData($inputs, $privilege);
 
             $transactions =
             [
-                self::MODE_CREATE => function () use ($modelData, &$_flashMsg) {
-                    $user  = User::create($modelData['user_data']);
+                self::MODE_CREATE => function () use ($modelData, &$_flashMsg, &$sortMode, &$userModel) 
+                {
+                    $user  = $userModel->create($modelData['user_data']);
                     $chmod = $modelData['perm_data'] + [Chmod::FIELD_USER_FK => $user->id];
 
                     Chmod::create($chmod);
 
                     $_flashMsg = self::MSG_SUCCESS_ADDED;
+                    $sortMode  = RecordUtils::SORT_MODE_NEWLY_ADDED;
                 },
 
-                self::MODE_UPDATE => function () use ($modelData, &$_flashMsg, $userKey) {
+                self::MODE_UPDATE => function () use ($modelData, &$_flashMsg, &$sortMode, &$userModel, $userKey) 
+                {
                     // There must be a user key present in the input request.
                     if (empty($userKey))
                         abort(500);
 
-                    $user = User::find($userKey);
+                    $user = $userModel->find($userKey);
 
                     // If the student record is not found, do not perform an update
                     if (!$user)
@@ -97,6 +110,7 @@ abstract class UsersController extends Controller
                     $chmod->update($modelData['perm_data']);
 
                     $_flashMsg = self::MSG_SUCCESS_UPDATED;
+                    $sortMode  = RecordUtils::SORT_MODE_LAST_UPDATED;
                 }
             ];
 
@@ -109,10 +123,16 @@ abstract class UsersController extends Controller
             });
              
             $flashMessage = Utils::makeFlashMessage($_flashMsg, Utils::FLASH_MESSAGE_SUCCESS, 'toast');
-
-            return redirect()->route(self::GoBackRoutes[$privilege], ['sort' => RecordUtils::SORT_MODE_NEWLY_ADDED])
+            
+            return redirect()
+                ->route(self::GoBackRoutes[$privilege], ['sort' => $sortMode])
                 ->withInput( ['form-action' => $request->input('form-action')] )
-                ->with('flash-message', $flashMessage);
+                ->with('flash-message', $flashMessage)
+
+                // Does nothing, but will be used to check if there were
+                // CRUD operations done before returning back to view.
+                // We will mark the first record according to sort mode [recent/updated]
+                ->with('withRecent', $sortMode);          
         }
         catch (QueryException $ex) 
         {
@@ -131,7 +151,6 @@ abstract class UsersController extends Controller
                     ->withInput();
             }
             
-            dump($ex->getMessage()); exit;
             abort(500);
         }
     }
@@ -152,28 +171,89 @@ abstract class UsersController extends Controller
         return $routes;
     }
 
+    public function disableUser(Request $request, $privilege)
+    {
+        $userKey = $this->readUserKey($request);
+
+        if (empty($userKey))
+            abort(500);
+
+        try
+        {
+            $user = User::find($userKey);
+
+            if (!$user)
+                abort(500);
+
+            $user->where(User::FIELD_ID, '=', $userKey)
+                ->update([
+                    User::FIELD_STATUS => UAC::STATUS_DISABLED    
+                ]);
+ 
+            $flashMessage = Utils::makeFlashMessage(self::MSG_SUCCESS_DISABLE, Utils::FLASH_MESSAGE_SUCCESS, 'toast');
+
+            return redirect()->route(self::GoBackRoutes[$privilege])
+                ->with('flash-message', $flashMessage);
+        }
+        catch (Exception $ex)
+        {
+            abort(500);
+            dump($ex->getMessage()); exit;
+        }    
+    }
+
+    public function enableUser(Request $request, $privilege)
+    {
+        $userKey = $this->readUserKey($request);
+
+        if (empty($userKey))
+            abort(500);
+
+        try
+        {
+            $user = User::find($userKey);
+
+            if (!$user)
+                abort(500);
+
+            $user->where(User::FIELD_ID, '=', $userKey)
+                ->update([
+                    User::FIELD_STATUS => UAC::STATUS_ACTIVE
+                ]);
+ 
+            $flashMessage = Utils::makeFlashMessage(self::MSG_SUCCESS_ENABLE, Utils::FLASH_MESSAGE_SUCCESS, 'toast');
+
+            return redirect()->route(self::GoBackRoutes[$privilege])
+                ->with('flash-message', $flashMessage);
+        }
+        catch (Exception $ex)
+        {
+            abort(500);
+            dump($ex->getMessage()); exit;
+        }    
+    }
+
     public function deleteUser(Request $request, User $model, $privilege)
     {
-        if (empty($request->input('user-key')))
+        $userKey = $this->readUserKey($request);
+        
+        if ( empty($userKey) )
             abort(500);
 
         try 
         {
-            $id = decrypt($request->input('user-key'));
-
             DB::table($model->getTable())
-                ->where(User::FIELD_ID, '=', $id)
+                ->where(User::FIELD_ID, '=', $userKey)
                 ->delete();
  
             $flashMessage = Utils::makeFlashMessage(self::MSG_SUCCESS_DELETE, Utils::FLASH_MESSAGE_SUCCESS, 'toast');
 
             return redirect()->route(self::GoBackRoutes[$privilege])
                 ->with('flash-message', $flashMessage);
-
         } 
-        catch (\Throwable $th) 
+        catch (Exception $ex) 
         {
-            //throw $th;
+            // dump($ex->getMessage()); exit;
             abort(500);
         }
     }

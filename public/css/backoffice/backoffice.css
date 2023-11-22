@@ -268,6 +268,11 @@ hr {
     background-image: var(--gradient-danger);
 }
 
+.record-actions button.btn-record-options:hover {
+    background-image: linear-gradient(310deg, #627594, #a8b8d8);
+    color: white;
+}
+
 .bg-gradient-warning {
     background-image: var(--gradient-warning) !important;
 }
@@ -345,4 +350,35 @@ hr {
 
 .text-flat-primary-dark {
     color: var(--flat-color-primary-dark) !important;
+}
+
+.td-latest {
+    position: relative !important;
+    animation: tdLatestFadeInset 0.85s infinite;
+}
+
+.td-latest::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 4px;
+    border-width: 6px;
+    border-style: solid;
+    /* arrow direction -> top, right, bottom, left */
+    border-color: transparent transparent transparent var(--flat-color-primary-dark);
+    transform: translateY(-50%);
+    animation: tdLatestFadeArrow 0.85s infinite;
+}
+
+@keyframes tdLatestFadeArrow {
+    0% {opacity: 1;}
+    50% {opacity: 0;}
+    100% {opacity: 1;}
+}
+
+@keyframes tdLatestFadeInset 
+{
+    0% {box-shadow: inset 4px 0 0 0 var(--flat-color-primary-dark);}
+    50% {box-shadow: inset 4px 0 0 0 transparent}
+    100% {box-shadow: inset 4px 0 0 0 var(--flat-color-primary-dark)}
 }

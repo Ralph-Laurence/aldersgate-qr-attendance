@@ -48,6 +48,8 @@ class Routes
         'store'    => 'backoffice.users.librarians.store',
         'update'   => 'backoffice.users.librarians.update',
         'destroy'  => 'backoffice.users.librarians.destroy',
+        'disable'  => 'backoffice.users.librarians.disable',
+        'enable'   => 'backoffice.users.librarians.enable',
     ];
 
     public const MODERATORS =
@@ -56,6 +58,8 @@ class Routes
         'store'    => 'backoffice.users.moderators.store',
         'update'   => 'backoffice.users.moderators.update',
         'destroy'  => 'backoffice.users.moderators.destroy',
+        'disable'  => 'backoffice.users.moderators.disable',
+        'enable'   => 'backoffice.users.moderators.enable',
     ];
 
     public const MASTER_USERS =
@@ -64,6 +68,8 @@ class Routes
         'store'    => 'backoffice.users.master.store',
         'update'   => 'backoffice.users.master.update',
         'destroy'  => 'backoffice.users.master.destroy',
+        'disable'  => 'backoffice.users.master.disable',
+        'enable'   => 'backoffice.users.master.enable',
     ];
 
     public const ELEM_STUDENT =

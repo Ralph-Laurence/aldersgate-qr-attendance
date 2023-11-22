@@ -64,7 +64,9 @@ function bindEvents()
 
     $(document)
         .on('click', '.users-table .btn-delete', (e) => handleDelete(e))
-        .on('click', '.users-table .btn-edit',   (e) => handleEdit(e));
+        .on('click', '.users-table .btn-edit',   (e) => handleEdit(e))
+        .on('click', '.option-disable-user',     (e) => handleDisable(e))
+        .on('click', '.option-enable-user',      (e) => handleEnable(e));
 
     props.crudFormModal.onPositiveClicked(() => 
     {
@@ -169,5 +171,59 @@ function handleEdit(eventTarget)
         props.messageBox.showDanger(err, {
             title: 'Failure'
         });
+    }
+}
+
+function handleDisable(eventTarget)
+{
+    var dataTarget = $(eventTarget.currentTarget).closest('.record-actions').find('.data-target').val();
+
+    if (!dataTarget)
+        props.messageBox.showDanger(props.ERR_COMMON);
+
+    try 
+    {
+        let data = JSON.parse(dataTarget);
+        let msg  = `Heads up!<br><br>You are about to disable the user account "<span class="emphasized">${data.name}</span>". Please note that once disabled, the user will not have access to the system until the account is re-enabled.<br><br>Are you sure you want to proceed?`;
+
+        props.messageBox.showWarning(msg,
+            {
+                positiveButtonText: 'Yes',
+                positiveButtonClick: () => 
+                {
+                    var $disableForm = $("#disableform");
+                    
+                    $disableForm.find("#user-key").val(data.key);
+                    $disableForm.trigger('submit');
+                },
+                useNegativeButton: true,
+                negativeButtonText: 'No'
+            });
+    }
+    catch (error) 
+    {
+        console.log(error)
+        props.messageBox.showDanger(props.ERR_COMMON);
+    }
+}
+
+function handleEnable(eventTarget)
+{
+    var dataTarget = $(eventTarget.currentTarget).closest('.record-actions').find('.data-target').val();
+
+    if (!dataTarget)
+        props.messageBox.showDanger(props.ERR_COMMON);
+
+    try 
+    {
+        let data = JSON.parse(dataTarget);
+        var $enableForm = $("#enableform");
+                    
+        $enableForm.find("#user-key").val(data.key);
+        $enableForm.trigger('submit');
+    }
+    catch (error) 
+    {
+        props.messageBox.showDanger(props.ERR_COMMON);
     }
 }

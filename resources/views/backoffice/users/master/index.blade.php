@@ -227,17 +227,23 @@
 
                                 @if (!empty($usersDataset))
 
-                                    @foreach ($usersDataset as $row)
+                                @php
+                                    $tdLatestMarker = Session::has('withRecent') ? 'td-latest' : '';
+                                @endphp
+                                @foreach ($usersDataset as $row)
 
-                                    @php
+                                @php
                                     $dataTarget = json_encode([
-                                    'name' => $row->name,
-                                    'key' => $row->id
+                                        'name' => $row->name,
+                                        'key' => $row->id
                                     ]);
-                                    @endphp
 
-                                    <tr>
-                                        <td class="fixed-long-column-300 ps-2">
+                                    if (!$loop->first)
+                                        $tdLatestMarker = '';
+                                @endphp
+
+                                <tr>
+                                    <td class="fixed-long-column-300 ps-2 {{ $tdLatestMarker }}">
                                             <div class="d-flex align-items-center px-2 py-1">
                                                 <div class="avatar-profile me-3 rounded-3 overflow-hidden">
                                                     <img src="{{ $row->photo }}" width="36" height="36"
@@ -267,15 +273,7 @@
                                         </td>
                                         <td class="text-center">
                                             <div class="center-flex gap-2 record-actions">
-                                                <button class="btn btn-sm px-2 btn-details">
-                                                    <i class="fa-solid fa-circle-info"></i>
-                                                </button>
-                                                <button class="btn btn-sm px-2 btn-edit">
-                                                    <i class="fa-solid fa-pen"></i>
-                                                </button>
-                                                <button class="btn btn-sm px-2 btn-delete">
-                                                    <i class="fa-solid fa-trash"></i>
-                                                </button>
+                                                @include('backoffice.users.shared.record-action-buttons', ['statusAction' => $row->statusAction])
                                                 <textarea class="data-target d-none">{{ $dataTarget }}</textarea>
                                                 <textarea class="row-data d-none">{{ $row->rowData }}</textarea>
                                             </div>
@@ -298,17 +296,7 @@
         </div>
     </main>
 </div>
-<div class="d-none actions">
-    <textarea id="flash-message">
-        @if (Session::has('flash-message'))
-            {{ Session::get('flash-message') }}
-        @endif
-    </textarea>
-    <form action="{{ $formActions['deleteUser'] }}" method="post" id="deleteform">
-        @csrf
-        <input type="text" name="user-key" id="user-key">
-    </form>
-</div>
+@include('backoffice.users.shared.hidden-actions')
 
 @endsection
 
