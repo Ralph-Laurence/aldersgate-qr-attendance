@@ -26,6 +26,7 @@ class Student extends Model
     const FIELD_EMAIL        = 'email';
     const FIELD_CONTACT      = 'contact';
     const FIELD_BIRTHDAY     = 'birthday';
+    const FIELD_SECTION      = 'section';
     const FIELD_GRADE_LEVEL  = 'grade_level';       // For elementary - highschool students (G1-G10)
     const FIELD_STRAND_ID    = 'strand_id';         // For senior highschool students (k11-k12)
     const FIELD_COURSE_ID    = 'course_id';         // For college students (BS, AB, etc)

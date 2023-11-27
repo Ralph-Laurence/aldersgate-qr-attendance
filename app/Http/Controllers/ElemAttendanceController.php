@@ -34,7 +34,8 @@ class ElemAttendanceController extends AttendanceController
                 ->with('attendanceDataset'  , $dataset)
                 ->with('totalRecords'       , $dataset->count())
                 ->with('backPage'           , $this->landingRoute)
-                ->with('worksheetTabRoutes' , $this->getWorksheetTabRoutes());
+                ->with('worksheetTabRoutes' , $this->getWorksheetTabRoutes())
+                ->with('datalistAsyncRoute' , route(Routes::ASYNC['elem_datalist']));
     }
 
     public function showWeekly($sort = null)

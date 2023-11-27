@@ -1,3 +1,7 @@
+{{-- @php
+    $studentNumDropdown = array();
+@endphp --}}
+
 @extends('layouts.backoffice.master')
 
 @section('title')
@@ -21,7 +25,7 @@
     <x-slot name="formInner">
         <div class="container-fluid mb-3">
             <div class="d-none">
-                <textarea id="form-action-store">{{-- $formActions['storeStudent'] --}}</textarea>
+                <textarea id="form-action-store">{{ $formActions['storeAttendance'] }}</textarea>
                 <textarea id="form-action-update">{{-- $formActions['updateStudent'] --}}</textarea>
             </div>
             <div class="mb-2">
@@ -30,21 +34,19 @@
             </div>
             <div class="row">
                 <div class="col">
-                    {{-- <x-flat-input as="{{ 'input-student-no' }}" fill="{{ 'Student No.' }}"  required with-caption />
-                    <x-flat-input as="{{ 'input-fname' }}"      fill="{{ 'Firstname' }}"    required with-caption />
-                    <x-flat-input as="{{ 'input-mname' }}"      fill="{{ 'Middlename' }}"   required with-caption />
-                    <x-flat-input as="{{ 'input-lname' }}"      fill="{{ 'Lastname' }}"     required with-caption /> --}}
-                </div>
-                <div class="col">
-
-                    {{-- <div class="d-flex justify-content-between">
-                        <x-flat-select as="{{ 'input-course' }}"     caption="Course"     {{ --:items="$coursesList"-- }} use-caption required />
-                        <x-flat-select as="{{ 'input-year-level' }}" caption="Year Level" {{ --:items="$yearLevels" -- }} use-caption required />
+                    <x-flat-input-suggest as="input-student-no" fill="Student Number" required with-caption/>
+                    <x-flat-input as="input-student-name"       fill="Student name"   readonly with-caption />
+                    
+                    <div class="d-flex gap-4 align-items-center">
+                        <x-flat-input as="input-course-year"  fill="Course & Year" readonly with-caption />
+                        <x-flat-input as="input-section"      fill="Section"       readonly with-caption />
                     </div>
 
-                    <x-flat-input  as="{{ 'input-email' }}"     fill="{{ 'Email' }}"        with-caption required />
-                    <x-flat-input  as="{{ 'input-contact' }}"   fill="{{ 'Contact No.' }}"  with-caption />
-                    <x-flat-input  as="{{ 'input-birthday' }}"  fill="{{ 'Birthday' }}"     with-caption readonly/> --}}
+                </div>
+                <div class="col">
+                    <x-flat-date-picker as="input-date" fill="Date" required with-caption/>
+                    <x-flat-time-picker as="input-time-in"  fill="Time In"  required with-caption/>
+                    <x-flat-time-picker as="input-time-out" fill="Time Out" with-caption/>
                 </div>
             </div>
             {{-- WILL BE USED TO TRACK FORM ACTIONS SUCH AS EDIT CREATE --}}
@@ -83,7 +85,8 @@
                 </div>
                 <div class="col mb-4 align-items-center d-flex justify-content-end px-3 gap-2">
                     <x-flat-button as="btn-browse-record" theme="default" text="Browse" icon="fa-folder" url="{{ $backPage }}"/>
-                    <x-flat-button as="btn-add-record" theme="primary" text="Add" icon="fa-plus"/>
+                    <x-flat-button as="btn-popover-add-record" theme="primary-invert" text="Add" icon="fa-plus" data-mdb-toggle="popover" disabled/>
+                    @include('backoffice.attendance.shared.attendance-popover-content')
                 </div>
             </div>
 
@@ -141,10 +144,10 @@
                                         @foreach ($attendanceDataset as $row)
 
                                         {{-- @php
-                                            $dataTarget = json_encode([
+                                            $studentNumDropdown[$row->student_no] = [
                                                 'name' => $row->name,
-                                                'key'  => $row->id
-                                            ]);
+                                                'year' => $row->year
+                                            ];
                                         @endphp --}}
                                         <tr>
                                             <td class="fixed-short-column-60 opacity-55 text-center text-truncate px-1">
@@ -180,7 +183,11 @@
                                                     <button class="btn btn-sm px-2 btn-delete">
                                                         <i class="fa-solid fa-trash"></i>
                                                     </button>
-                                                    <textarea class="data-target d-none">{{-- $dataTarget --}}</textarea>
+                                                    <textarea class="data-target d-none">@json([
+                                                        'name' => $row->name,
+                                                        'key'  => $row->id
+                                                    ])
+                                                    </textarea>
                                                     <textarea class="row-data d-none">{{ $row->rowData }}</textarea>
                                                 </div>
                                             </td>
@@ -201,23 +208,16 @@
         </div>
     </main>
 </div>
-<div class="d-none actions">
-    <textarea id="flash-message">
-        @if (Session::has('flash-message'))
-            {{ Session::get('flash-message') }}
-        @endif
-    </textarea>
-    <form action="{{-- $formActions['deleteStudent'] --}}" method="post" id="deleteform">
-        @csrf
-        <input type="text" name="student-key" id="student-key">
-    </form>
-</div>
-
+@include('backoffice.attendance.shared.hidden-actions')
 @endsection
 
 @push('scripts')
 <script src="{{ asset('extensions/datatables/datatables.min.js') }}"></script>
-<script type="module" src="{{ asset('js/backoffice/attendance/common.js') }}"></script>
-{{-- <script type="module" src="{{ asset('js/backoffice/students/college-students.js') }}"></script> --}}
 <script src="{{ asset('js/utils.js') }}"></script>
+<script>
+    const datalistAsyncRoute = '{{ $datalistAsyncRoute }}';
+</script>
+<script type="module" src="{{ asset('js/components/test.js') }}"></script>
+<script type="module" src="{{ asset('js/backoffice/attendance/common.js') }}"></script>
+<script type="module" src="{{ asset('js/backoffice/attendance/college-attendance.js') }}"></script>
 @endpush

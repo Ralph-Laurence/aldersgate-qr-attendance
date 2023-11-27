@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Ajax\StudentsAsync;
 use App\Http\Controllers\AttendanceHomeController;
 use App\Http\Controllers\CollegeAttendanceController;
 use App\Http\Controllers\DashboardController;
@@ -44,7 +45,7 @@ Route::controller(DashboardController::class)->group(function()
 });
 
 //===================================================================
-// .................... ATTENDANCE CONTROLLERS ......................
+// ...................... ATTENDANCE ROUTES .........................
 //===================================================================
 
 Route::controller(AttendanceHomeController::class)->group(function()
@@ -54,9 +55,9 @@ Route::controller(AttendanceHomeController::class)->group(function()
 
 Route::controller(ElemAttendanceController::class)->group(function()
 {
-    Route::get('/backoffice/attendance/elementary/today/{sort?}',      'index'        )->name( Routes::ATTENDANCE_ELEM['index']);
-    Route::get('/backoffice/attendance/elementary/this-week/{sort?}',  'showWeekly'   )->name( Routes::ATTENDANCE_ELEM['weekly'] );
-    Route::get('/backoffice/attendance/elementary/this-month/{sort?}', 'showMonthly'  )->name( Routes::ATTENDANCE_ELEM['monthly'] );
+    Route::get('/backoffice/attendance/elementary/today/{sort?}',      'index'      )->name( Routes::ATTENDANCE_ELEM['index']);
+    Route::get('/backoffice/attendance/elementary/this-week/{sort?}',  'showWeekly' )->name( Routes::ATTENDANCE_ELEM['weekly'] );
+    Route::get('/backoffice/attendance/elementary/this-month/{sort?}', 'showMonthly')->name( Routes::ATTENDANCE_ELEM['monthly'] );
     //Route::get('/backoffice/attendance/elementary/{mode}/{sort?}',   'index'  )->name( Routes::ATTENDANCE_ELEM['index'] );
 });
 
@@ -79,10 +80,12 @@ Route::controller(CollegeAttendanceController::class)->group(function()
     Route::get('/backoffice/attendance/college/{sort?}',            'index'  )->name( Routes::ATTENDANCE_COLLEGE['index'] );
     Route::get('/backoffice/attendance/college/this-week/{sort?}',  'weekly' )->name( Routes::ATTENDANCE_COLLEGE['weekly'] );
     Route::get('/backoffice/attendance/college/this-month/{sort?}', 'monthly')->name( Routes::ATTENDANCE_COLLEGE['monthly'] );
+
+    Route::post('/backoffice/attendance/college/add',               'store'  )->name(Routes::ATTENDANCE_COLLEGE['store']);
 });
 
 //===================================================================
-// ...................... USERS CONTROLLERS .........................
+// ......................... USERS ROUTES ...........................
 //===================================================================
 
 Route::controller(LibrariansController::class)->group(function()
@@ -116,7 +119,7 @@ Route::controller(MasterUsersController::class)->group(function()
 });
 
 //===================================================================
-// ...................... USERS CONTROLLERS .........................
+// ...................... STUDENTS ROUTES ...........................
 //===================================================================
 
 Route::controller(ElemStudentsController::class)->group(function()
@@ -151,6 +154,18 @@ Route::controller(CollegeStudentsController::class)->group(function()
     Route::post('/backoffice/students/college/delete',  'destroy')->name( Routes::COLLEGE_STUDENT['destroy'] );
 });
 
-Route::get('/test', function() {
-    return view('testground');
+//===================================================================
+// ........................ AJAX ROUTES .............................
+//===================================================================
+
+Route::controller(StudentsAsync::class)->group(function()
+{
+    Route::get( '/async/datalist/students/elem'   , 'getElemDatalist'   )->name(Routes::ASYNC['elem_datalist']);
+    Route::get( '/async/datalist/students/college', 'getCollegeDatalist')->name(Routes::ASYNC['college_datalist']);
+});
+
+Route::get('/test', function() 
+{
+    return view('testground')
+        ->with('datalistAsyncRoute', route(Routes::ASYNC['college_datalist']));
 });

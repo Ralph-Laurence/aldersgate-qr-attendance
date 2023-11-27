@@ -25,33 +25,3 @@
 @else
     </button>
 @endif
-
-{{-- @if ($attributes->has('url'))
-    <a role="button" {{ $attributes->merge([ 'class' => 'btn flat-controls flat-button shadow-0 ' . $alias ]) }} 
-        id      ="{{ $alias }}" 
-        name    ="{{ $alias }}"
-        type    ="{{ $action }}"
-        onclick ="{{ $click }}"
-        theme   ="{{ $theme }}">
-
-        @if ($icon)
-            <i class="fas {{ $icon }} me-2"></i>        
-        @endif
-
-        {{ $text }}
-    </a>
-@else
-    <button {{ $attributes->merge([ 'class' => 'btn flat-controls flat-button shadow-0 ' . $alias ]) }} 
-        id      ="{{ $alias }}" 
-        name    ="{{ $alias }}"
-        type    ="{{ $action }}"
-        onclick ="{{ $click }}"
-        theme   ="{{ $theme }}">
-
-        @if ($icon)
-            <i class="fas {{ $icon }} me-2"></i>        
-        @endif
-
-        {{ $text }}
-    </button>
-@endif --}}

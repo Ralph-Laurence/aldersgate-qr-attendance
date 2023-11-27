@@ -30,6 +30,7 @@ class CreateCollegeAttendancesTable extends Migration
             $table->integer(CollegeAttendance::FIELD_WEEK_NO       );
             $table->integer(CollegeAttendance::FIELD_UPDATED_BY    )->nullable();
             $table->timestamps();
+            $table->timestamp(CollegeAttendance::FIELD_RECORDED_AT )->default( now() );
         });
     }
 

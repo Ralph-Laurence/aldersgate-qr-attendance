@@ -3,16 +3,19 @@ import { SharedProps } from "../shared/sharedprops.js";
 
 window.props = new SharedProps();
 
-$(document).on('domReady', function () 
-{ 
-    initializeDataTable( '.attendance-table' );
+let attendancePopover = null;
 
-    //materialDatePicker('#input-birthday');
+$(document).on('domReady', function () 
+{
+    initializeDataTable('.attendance-table');
+
     new FlatSelect('#search-filter');
+
+    initPopOver_createAttendance();
 
     bindEvents();
 });
- 
+
 function populateForm(data, then)
 {
     var $form = props.$crudFormModalDom;
@@ -42,7 +45,7 @@ function initializeDataTable(tableId)
 
     var dt = $(tableId).DataTable({
         pagingType: "full_numbers",    // Show the First, Previousm Next and Last pagination buttons
-            //lengthChange    : false,
+        //lengthChange    : false,
         searching: false,
         autoWidth: false,
         'order': []
@@ -53,22 +56,35 @@ function initializeDataTable(tableId)
     pagerLength.applyTo($('.pagination-length-control'));
 
     return {
-        'dataTable'     : dt,
-        'lengthFilter'  : pagerLength
+        'dataTable': dt,
+        'lengthFilter': pagerLength
     };
 }
 
 function bindEvents()
 {
-    $("#btn-add-record").on('click', () => 
-    {
-        props.setActionCreate();
-        props.showCrudForm();
-    });
-
     $(document)
-        .on('click', '.attendance-table .btn-delete', (e) => handleDelete(e))
-        .on('click', '.attendance-table .btn-edit',   (e) => handleEdit(e));
+        .on('click', '.attendance-table .btn-delete',   (e) => handleDelete(e))
+        .on('click', '.attendance-table .btn-edit',     (e) => handleEdit(e))
+        .on('click', '.popover-content .popover-close', () => closeAttendancePopover())
+        .on('click', '#btn-add-record-manual', () => 
+        {
+            closeAttendancePopover();
+            props.setActionCreate();
+            props.showCrudForm();
+        })
+        .on('click', function (e) 
+        {
+            var popoverTrigger = $('#btn-add-record-manual');
+            // Don't hide if the click event was in the popover content
+            if (!popoverTrigger.is(e.target) && popoverTrigger.has(e.target).length === 0 && $('.popover').has(e.target).length === 0) {
+                closeAttendancePopover();
+            }
+        });
+
+    $(window).on('blur', function() {
+        closeAttendancePopover()
+    });
 
     props.crudFormModal.onPositiveClicked(() => 
     {
@@ -99,12 +115,12 @@ function bindEvents()
             };
 
             props.messageBox.showWarning("You have unsaved changes. Are you sure you want to close?",
-            {
-                positiveButtonClick: () => props.cleanupForm(),
-                negativeButtonClick: () => showLastForm(),
-                onCanceled:          () => showLastForm(),
-                useNegativeButton: true,
-            });
+                {
+                    positiveButtonClick: () => props.cleanupForm(),
+                    negativeButtonClick: () => showLastForm(),
+                    onCanceled: () => showLastForm(),
+                    useNegativeButton: true,
+                });
         }
         else
         {
@@ -124,7 +140,7 @@ function handleDelete(eventTarget)
     try 
     {
         let data = JSON.parse(dataTarget);
-        let msg  = `Heads up! You are about to remove the student "<span class="emphasized">${data.name}</span>" from the records, which includes erasing their attendance history.<br><br>Do you want to proceed?`;
+        let msg = `Heads up! You are about to remove the student "<span class="emphasized">${data.name}</span>" from the records, which includes erasing their attendance history.<br><br>Do you want to proceed?`;
 
         props.messageBox.showWarning(msg,
             {
@@ -149,15 +165,15 @@ function handleDelete(eventTarget)
 
 function handleEdit(eventTarget)
 {
-    var $row        = $(eventTarget.currentTarget).closest('tr').find('.row-data').val();
-    var dataTarget  = $(eventTarget.currentTarget).closest('.record-actions').find('.data-target').val();
+    var $row = $(eventTarget.currentTarget).closest('tr').find('.row-data').val();
+    var dataTarget = $(eventTarget.currentTarget).closest('.record-actions').find('.data-target').val();
 
     if (!dataTarget)
         props.messageBox.showDanger(props.ERR_COMMON);
 
     try
     {
-        let obj    = JSON.parse($row);
+        let obj = JSON.parse($row);
         let target = JSON.parse(dataTarget);
 
         obj['studentKey'] = target.key;
@@ -173,4 +189,49 @@ function handleEdit(eventTarget)
             title: 'Failure'
         });
     }
+}
+
+function initPopOver_createAttendance()
+{
+    var content = $('#attendance-pop-over-container').children().first().clone();
+
+    const exampleEl = document.getElementById('btn-popover-add-record');
+    const options =
+    {
+        html:    true,
+        title:   'Add new attendance',
+        content: content,
+        trigger: "click"
+    }
+
+    attendancePopover = new mdb.Popover(exampleEl, options);
+    window.popover = attendancePopover;
+}
+
+function closeAttendancePopover()
+{
+    if (attendancePopover == null || attendancePopover == undefined)
+        return;
+
+    attendancePopover.hide();
+}
+
+window.fetchStudentDatalist = function(url, callback)
+{
+    var csrf = $('.ajax_csrf_token').val();
+
+    if (!csrf)
+    {
+        console.warn('No CSRF Token. Request will be cancelled');
+        return;
+    }
+
+    $.ajaxSetup({
+        headers: { 'X-CSRF-TOKEN': csrf },
+        error: (xhr) => console.warn(xhr)
+    });
+
+    $.get(url, function(data) {
+        callback(data);
+    });
 }

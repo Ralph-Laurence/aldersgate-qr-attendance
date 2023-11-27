@@ -9,10 +9,15 @@ class Routes
         'index'    => 'backoffice.dashboard.index'
     ];
 
-    public const ATTENDANCE =
+    public const ASYNC =
     [
-        'index'        => 'backoffice.attendance.index',
+        'elem_datalist'     => 'async.datalist.elem',
+        'jhs_datalist'      => 'async.datalist.jhs',
+        'shs_datalist'      => 'async.datalist.shs',
+        'college_datalist'  => 'async.datalist.college',
     ];
+
+    public const ATTENDANCE = [ 'index' => 'backoffice.attendance.index' ];
 
     public const ATTENDANCE_ELEM = 
     [
@@ -40,6 +45,8 @@ class Routes
         'index'     => 'backoffice.attendance.college.index',
         'weekly'    => 'backoffice.attendance.college.weekly',
         'monthly'   => 'backoffice.attendance.college.monthly',
+
+        'store'     => 'backoffice.attendance.college.store'
     ];
 
     public const LIBRARIANS =
@@ -77,7 +84,7 @@ class Routes
         'index'     => 'backoffice.students.elementary.index',
         'store'     => 'backoffice.students.elementary.store',
         'update'    => 'backoffice.students.elementary.update',
-        'destroy'   => 'backoffice.students.elementary.destroy',
+        'destroy'   => 'backoffice.students.elementary.destroy',  
     ];
 
     public const JUNIOR_STUDENT =

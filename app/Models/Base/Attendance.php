@@ -34,6 +34,7 @@ class Attendance extends Model
     const FIELD_UPDATED_BY          = 'updated_by';
     const FIELD_CREATED_AT          = 'created_at';
     const FIELD_UPDATED_AT          = 'updated_at';
+    const FIELD_RECORDED_AT         = 'recorded_at';
 
     const STATUS_VAL_TIMED_IN       = 'in';
     const STATUS_VAL_TIMED_OUT      = 'out';

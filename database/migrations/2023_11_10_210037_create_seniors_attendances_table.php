@@ -20,16 +20,17 @@ class CreateSeniorsAttendancesTable extends Migration
             $table->id();
 
             $table->foreignId(SeniorsAttendance::FIELD_STUDENT_FK)
-                ->constrained(SeniorStudent::getTableName())
-                ->onUpdate('cascade')
-                ->onDelete('cascade');
+                  ->constrained(SeniorStudent::getTableName())
+                  ->onUpdate('cascade')
+                  ->onDelete('cascade');
 
-            $table->timestamp(SeniorsAttendance::FIELD_TIME_IN)->default(now());
-            $table->timestamp(SeniorsAttendance::FIELD_TIME_OUT)->nullable();
-            $table->string(SeniorsAttendance::FIELD_STATUS);
-            $table->integer(SeniorsAttendance::FIELD_WEEK_NO);
-            $table->integer(SeniorsAttendance::FIELD_UPDATED_BY)->nullable();
+            $table->timestamp(SeniorsAttendance::FIELD_TIME_IN     )->default( now() );
+            $table->timestamp(SeniorsAttendance::FIELD_TIME_OUT    )->nullable();
+            $table->string(SeniorsAttendance::FIELD_STATUS         );
+            $table->integer(SeniorsAttendance::FIELD_WEEK_NO       );
+            $table->integer(SeniorsAttendance::FIELD_UPDATED_BY    )->nullable();
             $table->timestamps();
+            $table->timestamp(SeniorsAttendance::FIELD_RECORDED_AT )->default( now() );
         });
     }
 

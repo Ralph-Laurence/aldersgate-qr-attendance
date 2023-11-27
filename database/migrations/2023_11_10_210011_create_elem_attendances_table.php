@@ -30,6 +30,7 @@ class CreateElemAttendancesTable extends Migration
             $table->integer(ElemAttendance::FIELD_WEEK_NO       );
             $table->integer(ElemAttendance::FIELD_UPDATED_BY    )->nullable();
             $table->timestamps();
+            $table->timestamp(ElemAttendance::FIELD_RECORDED_AT )->default( now() );
         });
     }
 

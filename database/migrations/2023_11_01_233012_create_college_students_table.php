@@ -23,6 +23,7 @@ class CreateCollegeStudentsTable extends Migration
             $table->string(CollegeStudent::FIELD_LNAME,        32);
             $table->string(CollegeStudent::FIELD_CONTACT,      16)->nullable();
             $table->string(CollegeStudent::FIELD_EMAIL,        64)->unique();
+            //$table->string(CollegeStudent::FIELD_SECTION,       8);
             $table->string(CollegeStudent::FIELD_BIRTHDAY,     24)->nullable();
             $table->integer(CollegeStudent::FIELD_COURSE_ID      );
             $table->integer(CollegeStudent::FIELD_YEAR           );

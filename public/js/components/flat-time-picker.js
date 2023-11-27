@@ -4,14 +4,14 @@ class FlatTimePicker
 {
     constructor(elementId)
     {
-        this.$mainControl    = $(`${elementId}-modal`);
+        this.$mainControl    = $(elementId).closest('.flat-time-picker');
         this.$textOutput     = $(elementId);
         
-        this.__initComponents();
+        this.__initComponents(elementId);
         this.__bindEvents();
     }
 
-    __initComponents()
+    __initComponents(elementId)
     {
         this.$hourInput      = this.$mainControl.find('#input-hours');
         this.$minuteInput    = this.$mainControl.find('#input-minutes');
@@ -24,19 +24,25 @@ class FlatTimePicker
         this.$meridiemToggle = this.$mainControl.find('.meridiem-toggle');
         this.$meridiemLabel  = this.$mainControl.find('.meridiem-label');
 
+        this.$cancelButton   = this.$mainControl.find('.btn-cancel');
         this.$clearButton    = this.$mainControl.find('.btn-clear');
         this.$okButton       = this.$mainControl.find('.btn-ok');
+
+        this.dropdownInstance = new mdb.Dropdown($(elementId));
     }
 
     __bindEvents()
     {
-        this.$mainControl.on('show.bs.modal', (e) => {
+        this.$mainControl.on('show.bs.dropdown', (e) => {
 
             var output = this.$textOutput.val();
 
             if (output)
             {
                 var time = moment(output, 'hh:mm A');
+
+                if (!time.isValid())
+                    time = moment();
 
                 this.setHour(time.format('hh'));
                 this.setMinute(time.format('mm'));
@@ -153,8 +159,9 @@ class FlatTimePicker
             }
         });
 
-        this.$clearButton.on('click', () => this.clear());
-        this.$okButton.on('click', () => this.applyOutput());
+        this.$clearButton.on('click',   () => this.clear());
+        this.$okButton.on('click',      () => this.applyOutput());
+        this.$cancelButton.on('click',  () => this.close());
     }
     
     setMeridiem(meridiem)
@@ -260,6 +267,7 @@ class FlatTimePicker
     clear()
     {
         this.$textOutput.val('');
+        this.close();
     }
 
     applyOutput()
@@ -268,6 +276,18 @@ class FlatTimePicker
         var mins  = this.getMinute();
         var ampm  = this.getMeridiem();
 
-        this.$textOutput.val(`${hours}:${mins} ${ampm}`);
+        var out   = moment(`${hours}:${mins} ${ampm}`, 'hh:mm a');
+
+        if (out.isValid())
+            this.$textOutput.val( out.format('hh:mm a') );
+        else
+            this.$textOutput.val( moment().format('hh:mm a') );
+
+        this.close();
+    }
+
+    close()
+    {
+        this.dropdownInstance.hide();
     }
 }

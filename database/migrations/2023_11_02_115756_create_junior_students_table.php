@@ -23,6 +23,7 @@ class CreateJuniorStudentsTable extends Migration
             $table->string(JuniorStudent::FIELD_LNAME,        32);
             $table->string(JuniorStudent::FIELD_CONTACT,      16)->nullable();
             $table->string(JuniorStudent::FIELD_EMAIL,        64)->unique();
+            //$table->string(JuniorStudent::FIELD_SECTION,       8);
             $table->string(JuniorStudent::FIELD_BIRTHDAY,     24)->nullable();
             $table->integer(JuniorStudent::FIELD_GRADE_LEVEL    );
             $table->string(JuniorStudent::FIELD_PHOTO,        64)->nullable();

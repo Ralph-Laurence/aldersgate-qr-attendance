@@ -1,20 +1,20 @@
-.flat-time-picker-modal .modal-dialog {
+.flat-timepicker-menu {
     width: 320px !important;
     max-width: 320px !important;
 }
 
-.flat-time-picker-modal .btn-reset {
+.flat-timepicker-menu .btn-reset {
     background: none;
     outline: none;
     border: none;
     color: var(--text-color-500);
 }
 
-.flat-time-picker-modal .btn-reset:hover {
+.flat-timepicker-menu .btn-reset:hover {
     color: var(--text-color-800);
 }
 
-.flat-time-picker-modal .btn-spinner {
+.flat-timepicker-menu .btn-spinner {
     border: none;
     border-radius: 2rem;
     width: 100%;
@@ -25,19 +25,19 @@
     opacity: 0.5;
 }
 
-.flat-time-picker-modal .btn-spinner:hover {
+.flat-timepicker-menu .btn-spinner:hover {
     background-color: var(--flat-color-control);
     color: var(--text-color-700);
     border: none;
     opacity: 1;
 }
 
-.flat-time-picker-modal .input-text {
+.flat-timepicker-menu .input-text {
     padding-left: 14px !important;
     padding-right: 14px !important;
 }
 
-.flat-time-picker-modal .meridiem-toggle .meridiem-label {
+.flat-timepicker-menu .meridiem-toggle .meridiem-label {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -51,7 +51,7 @@
     box-shadow: 0 0 8px rgb(241, 230, 191);
 }
 
-.flat-time-picker-modal .meridiem-toggle 
+.flat-timepicker-menu .meridiem-toggle 
 {
     border: none;
     outline: none;
@@ -71,22 +71,22 @@
     padding: 3px;
 }
 
-.meridiem-toggle[data-time-period="night"] {
+.flat-timepicker-menu .meridiem-toggle[data-time-period="night"] {
     background-image: url('../../img/meridiem-bg-night.png');
 }
 
-.meridiem-toggle[data-time-period="noon"] {
+.flat-timepicker-menu .meridiem-toggle[data-time-period="noon"] {
     background-image: url('../../img/meridiem-bg-noon.png');
 }
 
-.meridiem-toggle[data-time-period="morning"] {
+.flat-timepicker-menu .meridiem-toggle[data-time-period="morning"] {
     background-image: url('../../img/meridiem-bg-morning.png');
 }
 
-.meridiem-toggle[data-meridiem="am"] {
+.flat-timepicker-menu .meridiem-toggle[data-meridiem="am"] {
     justify-content: start;
 }
 
-.meridiem-toggle[data-meridiem="pm"] {
+.flat-timepicker-menu .meridiem-toggle[data-meridiem="pm"] {
     justify-content: end;
 }

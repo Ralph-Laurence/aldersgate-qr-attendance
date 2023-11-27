@@ -22,6 +22,7 @@ class CreateElementaryStudentsTable extends Migration
             $table->string(ElementaryStudent::FIELD_LNAME,        32);
             $table->string(ElementaryStudent::FIELD_CONTACT,      16)->nullable();
             $table->string(ElementaryStudent::FIELD_EMAIL,        64)->unique();
+            //$table->string(ElementaryStudent::FIELD_SECTION,       8);
             $table->string(ElementaryStudent::FIELD_BIRTHDAY,     24)->nullable();
             $table->integer(ElementaryStudent::FIELD_GRADE_LEVEL    );
             $table->string(ElementaryStudent::FIELD_PHOTO,        64)->nullable();

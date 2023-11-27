@@ -66,6 +66,9 @@ hr {
     letter-spacing: -0.025rem;
 }
 
+.display-none {
+    display: none;
+}
 /*
 =======================
      MAIN CONTENT

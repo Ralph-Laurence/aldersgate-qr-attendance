@@ -15,7 +15,8 @@ class CreateJuniorsAttendancesTable extends Migration
      */
     public function up()
     {
-        Schema::create('juniors_attendances', function (Blueprint $table) {
+        Schema::create('juniors_attendances', function (Blueprint $table) 
+        {
             $table->id();
             
             $table->foreignId(JuniorsAttendance::FIELD_STUDENT_FK)
@@ -29,6 +30,7 @@ class CreateJuniorsAttendancesTable extends Migration
             $table->integer(JuniorsAttendance::FIELD_WEEK_NO       );
             $table->integer(JuniorsAttendance::FIELD_UPDATED_BY    )->nullable();
             $table->timestamps();
+            $table->timestamp(JuniorsAttendance::FIELD_RECORDED_AT )->default( now() );
         });
     }
 

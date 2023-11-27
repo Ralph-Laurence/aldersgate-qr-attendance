@@ -26,6 +26,8 @@
  
     @yield('content')
 
+    @stack('hidden-layouts')
+
     {{-- FRAMEWORK SPECIFIC SCRIPTS --}}
     <script src="{{ asset('js/lib/jquery/jquery-3.7.1.min.js') }}"></script>
     <script src="{{ asset('js/lib/momentjs/moment-with-locales.js') }}"></script>

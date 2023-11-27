@@ -7,7 +7,9 @@ use App\Http\Extensions\Routes;
 use App\Models\Base\Attendance;
 use App\Models\Base\Student;
 use App\Models\CollegeAttendance;
+use App\Models\CollegeStudent;
 use Carbon\Carbon;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 
 class CollegeAttendanceController extends AttendanceController
@@ -33,7 +35,14 @@ class CollegeAttendanceController extends AttendanceController
                 ->with('attendanceDataset'  , $dataset)
                 ->with('totalRecords'       , $dataset->count())
                 ->with('backPage'           , $this->landingRoute)
-                ->with('worksheetTabRoutes' , $this->getWorksheetTabRoutes());
+                ->with('worksheetTabRoutes' , $this->getWorksheetTabRoutes())
+                ->with('formActions', 
+                [
+                    'storeAttendance'  => route(Routes::ATTENDANCE_COLLEGE['store']  ),
+                    // 'updateAttendance' => route(Routes::SENIOR_STUDENT['update'] ),
+                    // 'deleteAttendance' => route(Routes::SENIOR_STUDENT['destroy']),
+                ])
+                ->with('datalistAsyncRoute' , route(Routes::ASYNC['college_datalist']));
     }
 
     
@@ -95,6 +104,43 @@ class CollegeAttendanceController extends AttendanceController
     public function saveAttendance(Request $request, Attendance $model)
     {
 
+    }
+
+    public function store(Request $request)
+    {
+        $inputs = $this->validateFields($request);
+
+        // Check if validation failed and a 'redirect' response was returned
+        if ($inputs instanceof \Illuminate\Http\RedirectResponse)
+            return $inputs;
+
+        try
+        {
+            $studentNo = $inputs['input-student-no'];
+
+            // Find the student using his student number
+            $student = CollegeStudent::where(CollegeStudent::FIELD_STUDENT_NUM, '=', $studentNo)->first();
+
+            // Make sure that the student really exists
+            if (!$student)
+                abort(500);
+
+            $data = 
+            [
+                CollegeAttendance::FIELD_STUDENT_FK => $student->id,
+                CollegeAttendance::FIELD_TIME_IN    => $inputs['input-time-in']
+            ];
+
+            CollegeAttendance::create($data);
+        }
+        catch (QueryException $ex)
+        {
+
+        }
+
+        // if (empty($studentNo) || empty($timeIn))
+
+        //return $this->saveModel($request, self::MODE_CREATE);
     }
 
     // public function index()

@@ -1,14 +1,13 @@
 @extends('layouts.backoffice.master')
 
 @section('content')
-<div class="dropdown">
-    <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-mdb-toggle="dropdown" aria-expanded="false">
-        Dropdown button
-    </button>
-    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-        <li><a class="dropdown-item" href="#">Action</a></li>
-        <li><a class="dropdown-item" href="#">Another action</a></li>
-        <li><a class="dropdown-item" href="#">Something else here</a></li>
-    </ul>
-</div>>
+<x-flat-date-picker as="input-date"/>
 @endsection
+
+@push('scripts')
+{{-- <script type="module" src="{{ asset('js/components/flat-date-picker.js') }}"></script> --}}
+<script type="module">
+import { FlatDatePicker } from "{{ asset('js/components/flat-date-picker.js') }}"
+window.datePicker = new FlatDatePicker("#input-date")
+</script>
+@endpush

@@ -15,4 +15,9 @@ class CollegeAttendance extends Attendance
     {
         return (new self)->getTable();
     }
+
+    public function createAttendance($studentId, $timeIn, $timeOut = null)
+    {
+        
+    }
 }

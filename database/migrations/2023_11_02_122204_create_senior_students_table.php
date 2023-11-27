@@ -23,6 +23,7 @@ class CreateSeniorStudentsTable extends Migration
             $table->string(SeniorStudent::FIELD_LNAME,        32);
             $table->string(SeniorStudent::FIELD_CONTACT,      16)->nullable();
             $table->string(SeniorStudent::FIELD_EMAIL,        64)->unique();
+            //$table->string(SeniorStudent::FIELD_SECTION,       8);
             $table->string(SeniorStudent::FIELD_BIRTHDAY,     24)->nullable();
             $table->integer(SeniorStudent::FIELD_GRADE_LEVEL    );
             $table->integer(SeniorStudent::FIELD_STRAND_ID      );

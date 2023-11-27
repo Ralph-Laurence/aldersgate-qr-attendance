@@ -45,7 +45,7 @@
     @endpush
 @endonce
 
-<div {{ $attributes->merge(['class' => 'flat-controls flat-input']) }} data-alias="text">
+<div class="flat-controls flat-input" data-alias="text">
 
     {{-- OPTIONAL LABEL --}}
     @if ($attributes->has('with-caption'))
@@ -60,13 +60,12 @@
         <input  type="text" 
                 name="{{ $inputName }}" 
                 id="{{ $inputName }}" 
-                class="main-control {{ $gravity }} {{ $acceptData }}"
                 maxlength="{{ $maxLength }}"
                 value="{{ $defaultValue }}" 
                 aria-autocomplete="none" 
                 {{ $isReadOnly }}
                 placeholder="{{ $inputHint }}"
-                {{ $attributes }} />
+                {{ $attributes->merge(['class' => "main-control " . $gravity ." ". $acceptData ]) }} />
 
         <i class="fa-solid fa-circle-xmark ms-2 input-trailing-icon"></i>
 
